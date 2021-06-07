@@ -1,0 +1,47 @@
+#!/bin/sh
+
+printf "PRE-COMMIT\n"
+
+# Get all staged GO files
+STAGED_GO_FILES=$(git diff --cached --name-only | grep ".go$")
+
+# Exit if there are none
+if [[ "$STAGED_GO_FILES" = "" ]]; then
+  exit 0
+fi
+
+# Formatting
+for FILE in $STAGED_GO_FILES
+do
+  # Format the file
+  goimports -w $FILE
+  # Stage any changes from the file
+  git stage $FILE
+done
+
+# Linting
+PASS=true
+for FILE in $STAGED_GO_FILES
+do
+  # Lint the file and set pass to true on error
+  golint "-set_exit_status" $FILE
+  if [[ $? == 1 ]]; then
+    PASS=false
+  fi
+done
+
+# Vet the whole project
+go vet ./...
+if [[ $? != 0 ]]; then
+  PASS=false
+fi
+
+# Print result
+if ! $PASS; then
+  printf "COMMIT FAILED\n"
+  exit 1
+else
+  printf "COMMIT SUCCEEDED\n"
+fi
+
+exit 0

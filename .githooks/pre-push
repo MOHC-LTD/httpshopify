@@ -1,0 +1,14 @@
+#!/bin/sh
+
+printf "PRE-PUSH\n"
+
+# Run tests
+go test ./...
+if [[ $? == 1 ]]; then
+  printf "PUSH FAILED\n"
+  exit 1
+else
+  printf "PUSH SUCCEEDED\n"
+fi
+
+exit 0
