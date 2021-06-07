@@ -4,10 +4,8 @@ An HTTP implementation of the [shopify](https://github.com/MOHC-LTD/shopify) pac
 
 ## Contents
 
-- [Github authentication](#github-authentication)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Docker](#docker)
 - [How to contribute](#how-to-contribute)
 
 ## Installation
