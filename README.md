@@ -10,23 +10,6 @@ An HTTP implementation of the [shopify](https://github.com/MOHC-LTD/shopify) pac
 - [Docker](#docker)
 - [How to contribute](#how-to-contribute)
 
-## Github authentication
-
-As this is a private Github repository, you will need to set up private go modules.
-
-First set the `GOPRIVATE` go environment variable.
-
-```sh
-go env -w GOPRIVATE=github.com/MOHC-LTD
-```
-
-Generate a [Github personal access token](https://github.com/settings/tokens), and set up
-global Github authentication on your machine
-
-```sh
-git config --global url."https://${username}:${access_token}@github.com".insteadOf "https://github.com"
-```
-
 ## Installation
 
 Install the module using
@@ -57,24 +40,6 @@ func main() {
     order, err := shop.Orders().Get("184190283")
 }
 ```
-
-## Docker
-
-To build applications that consuming this module using docker, you will need to allow the docker container to authenticate with Github.
-
-Do this by adding the following lines to your Dockerfile.
-
-```sh
-ARG authToken
-
-RUN go env -w GOPRIVATE=github.com/MOHC-LTD
-
-RUN apk add git
-
-RUN git config --global url."https://golang:$authToken@github.com".insteadOf "https://github.com"
-```
-
-Then, when building your container, set the docker argument `authToken` to the value of your Github access token.
 
 ## How to contribute
 
