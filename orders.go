@@ -102,6 +102,8 @@ type orderDTO struct {
 	Customer          customerDTO      `json:"customer"`
 	Fulfillments      fulfillmentDTOs  `json:"fulfillments"`
 	LineItems         lineItemDTOs     `json:"line_items"`
+	BillingAddress    addressDTO       `json:"billing_address"`
+	ShippingAddress   addressDTO       `json:"shipping_address"`
 }
 
 func (dto orderDTO) toDomain() shopify.Order {
@@ -117,6 +119,8 @@ func (dto orderDTO) toDomain() shopify.Order {
 		Customer:          dto.Customer.toDomain(),
 		Fulfillments:      dto.Fulfillments.toDomain(),
 		LineItems:         dto.LineItems.toDomain(),
+		BillingAddress:    dto.BillingAddress.toDomain(),
+		ShippingAddress:   dto.ShippingAddress.toDomain(),
 	}
 }
 
