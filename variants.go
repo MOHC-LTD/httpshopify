@@ -22,6 +22,18 @@ func newVariantRepository(client http.Client, createURL func(endpoint string) st
 	}
 }
 
+type variantDTOs []variantDTO
+
+func (dtos variantDTOs) toDomain() shopify.Variants {
+	variants := make(shopify.Variants, 0, len(dtos))
+
+	for _, dto := range dtos {
+		variants = append(variants, dto.toDomain())
+	}
+
+	return variants
+}
+
 type variantDTO struct {
 	ID              int64     `json:"id"`
 	SKU             string    `json:"sku"`
