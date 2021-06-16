@@ -27,7 +27,7 @@ func newOrderRepository(client http.Client, createURL func(endpoint string) stri
 func (repository orderRepository) List(query shopify.OrderQuery) (shopify.Orders, error) {
 	orders := make(shopify.Orders, 0)
 
-	url := repository.createURL(fmt.Sprintf("orders.json%v", parseQuery(query)))
+	url := repository.createURL(fmt.Sprintf("orders.json%v", parseOrderQuery(query)))
 
 	for {
 		body, headers, err := repository.client.Get(url, nil)
@@ -124,7 +124,7 @@ func (dto orderDTO) toDomain() shopify.Order {
 	}
 }
 
-func parseQuery(query shopify.OrderQuery) string {
+func parseOrderQuery(query shopify.OrderQuery) string {
 	queryStrings := make([]string, 0)
 
 	if query.Status != "" {

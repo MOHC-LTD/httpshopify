@@ -6,3 +6,5 @@ github.com/MOHC-LTD/shopify v1.3.1 h1:eULSJ3bSEych5AFs5VxgQecRDM2J1qc+Uk+Y6/DY4G
 github.com/MOHC-LTD/shopify v1.3.1/go.mod h1:ZqEEOCrFlhlQxqxzpfE9lah5uvjiGQNvcGERxaTACPQ=
 github.com/MOHC-LTD/shopify v1.4.0 h1:TfR9KV3TY2VytHt15NlrYZHn1OEsAGox7qyIDGH4MHw=
 github.com/MOHC-LTD/shopify v1.4.0/go.mod h1:ZqEEOCrFlhlQxqxzpfE9lah5uvjiGQNvcGERxaTACPQ=
+github.com/MOHC-LTD/shopify v1.6.0 h1:e0POgc4WSgkjgOkJBLZ8d0ynY/Y1wp+Pxwem8fqZIOE=
+github.com/MOHC-LTD/shopify v1.6.0/go.mod h1:ZqEEOCrFlhlQxqxzpfE9lah5uvjiGQNvcGERxaTACPQ=
