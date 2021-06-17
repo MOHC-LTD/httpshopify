@@ -34,12 +34,12 @@ func (repository productRepository) List(query shopify.ProductQuery) (shopify.Pr
 		}
 
 		var resultDTO struct {
-			Products productDTOs `json:"products"`
+			Products ProductDTOs `json:"products"`
 		}
 		json.Unmarshal(body, &resultDTO)
 
 		for _, dto := range resultDTO.Products {
-			products = append(products, dto.toDomain())
+			products = append(products, dto.ToShopify())
 		}
 
 		links := ParseLinkHeader(headers.Get("Link"))
@@ -54,19 +54,22 @@ func (repository productRepository) List(query shopify.ProductQuery) (shopify.Pr
 	return products, nil
 }
 
-type productDTOs []productDTO
+// ProductDTOs is a collection of Product DTOs
+type ProductDTOs []ProductDTO
 
-func (dtos productDTOs) toDomain() shopify.Products {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos ProductDTOs) ToShopify() shopify.Products {
 	products := make(shopify.Products, 0, len(dtos))
 
 	for _, dto := range dtos {
-		products = append(products, dto.toDomain())
+		products = append(products, dto.ToShopify())
 	}
 
 	return products
 }
 
-type productDTO struct {
+// ProductDTO represents a Shopify product in HTTP requests and responses
+type ProductDTO struct {
 	ID          int64       `json:"id"`
 	CreatedAt   time.Time   `json:"created_at"`
 	BodyHTML    string      `json:"body_html"`
@@ -76,11 +79,12 @@ type productDTO struct {
 	Tags        string      `json:"tags"`
 	Title       string      `json:"title"`
 	UpdatedAt   time.Time   `json:"updated_at"`
-	Variants    variantDTOs `json:"variants"`
+	Variants    VariantDTOs `json:"variants"`
 	Vendor      string      `json:"vendor"`
 }
 
-func (dto productDTO) toDomain() shopify.Product {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto ProductDTO) ToShopify() shopify.Product {
 	return shopify.Product{
 		ID:          dto.ID,
 		CreatedAt:   dto.CreatedAt,
@@ -91,7 +95,7 @@ func (dto productDTO) toDomain() shopify.Product {
 		Tags:        dto.Tags,
 		Title:       dto.Title,
 		UpdatedAt:   dto.UpdatedAt,
-		Variants:    dto.Variants.toDomain(),
+		Variants:    dto.Variants.ToShopify(),
 		Vendor:      dto.Vendor,
 	}
 }

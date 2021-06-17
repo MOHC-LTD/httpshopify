@@ -2,15 +2,18 @@ package httpshopify
 
 import "github.com/MOHC-LTD/shopify"
 
-type shippingLineDTOs []shippingLineDTO
+// ShippingLineDTOs is a collection of ShippingLine DTOs
+type ShippingLineDTOs []ShippingLineDTO
 
-type shippingLineDTO struct {
+// ShippingLineDTO represents a Shopify shipping line in HTTP requests and responses
+type ShippingLineDTO struct {
 	ID    int64  `json:"id"`
 	Code  string `json:"code"`
 	Title string `json:"title"`
 }
 
-func (dto shippingLineDTO) toDomain() shopify.ShippingLine {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto ShippingLineDTO) ToShopify() shopify.ShippingLine {
 	return shopify.ShippingLine{
 		ID:    dto.ID,
 		Code:  dto.Code,
@@ -18,11 +21,12 @@ func (dto shippingLineDTO) toDomain() shopify.ShippingLine {
 	}
 }
 
-func (dtos shippingLineDTOs) toDomain() []shopify.ShippingLine {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos ShippingLineDTOs) ToShopify() []shopify.ShippingLine {
 	shippingLines := make([]shopify.ShippingLine, 0, len(dtos))
 
 	for _, dto := range dtos {
-		shippingLines = append(shippingLines, dto.toDomain())
+		shippingLines = append(shippingLines, dto.ToShopify())
 	}
 
 	return shippingLines

@@ -2,7 +2,8 @@ package httpshopify
 
 import "github.com/MOHC-LTD/shopify"
 
-type lineItemDTO struct {
+// LineItemDTO represents a Shopify line item in HTTP requests and responses
+type LineItemDTO struct {
 	ID       int64  `json:"id"`
 	Title    string `json:"title"`
 	Name     string `json:"name"`
@@ -10,7 +11,8 @@ type lineItemDTO struct {
 	Quantity int    `json:"quantity"`
 }
 
-func (dto lineItemDTO) toDomain() shopify.LineItem {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto LineItemDTO) ToShopify() shopify.LineItem {
 	return shopify.LineItem{
 		ID:       dto.ID,
 		Title:    dto.Title,
@@ -20,8 +22,8 @@ func (dto lineItemDTO) toDomain() shopify.LineItem {
 	}
 }
 
-func buildLineItemDTO(lineItem shopify.LineItem) lineItemDTO {
-	return lineItemDTO{
+func buildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
+	return LineItemDTO{
 		ID:       lineItem.ID,
 		Title:    lineItem.Title,
 		Name:     lineItem.Name,
@@ -30,20 +32,22 @@ func buildLineItemDTO(lineItem shopify.LineItem) lineItemDTO {
 	}
 }
 
-type lineItemDTOs []lineItemDTO
+// LineItemDTOs is a collection of LineItem DTOs
+type LineItemDTOs []LineItemDTO
 
-func (dtos lineItemDTOs) toDomain() shopify.LineItems {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos LineItemDTOs) ToShopify() shopify.LineItems {
 	lineItems := make(shopify.LineItems, 0, len(dtos))
 
 	for _, dto := range dtos {
-		lineItems = append(lineItems, dto.toDomain())
+		lineItems = append(lineItems, dto.ToShopify())
 	}
 
 	return lineItems
 }
 
-func buildLineItemDTOs(lineItems shopify.LineItems) []lineItemDTO {
-	dtos := make([]lineItemDTO, 0, len(lineItems))
+func buildLineItemDTOs(lineItems shopify.LineItems) []LineItemDTO {
+	dtos := make([]LineItemDTO, 0, len(lineItems))
 
 	for _, lineItem := range lineItems {
 		dtos = append(dtos, buildLineItemDTO(lineItem))
