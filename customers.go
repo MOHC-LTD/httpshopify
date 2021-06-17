@@ -6,7 +6,8 @@ import (
 	"github.com/MOHC-LTD/shopify"
 )
 
-type customerDTO struct {
+// CustomerDTO represents a Shopify customer in HTTP requests and responses
+type CustomerDTO struct {
 	ID        int64     `json:"id"`
 	Email     string    `json:"email"`
 	FirstName string    `json:"first_name"`
@@ -15,7 +16,8 @@ type customerDTO struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (dto customerDTO) toDomain() shopify.Customer {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto CustomerDTO) ToShopify() shopify.Customer {
 	return shopify.Customer{
 		ID:        dto.ID,
 		Email:     dto.Email,

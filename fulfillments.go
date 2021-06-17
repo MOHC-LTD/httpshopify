@@ -23,7 +23,7 @@ func newFulfillmentRepository(client http.Client, createURL func(endpoint string
 }
 
 func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopify.Fulfillment) (shopify.Fulfillment, error) {
-	createDTO := fulfillmentDTO{
+	createDTO := FulfillmentDTO{
 		LocationID:      fulfillment.LocationID,
 		TrackingNumbers: fulfillment.TrackingNumbers,
 		NotifyCustomer:  fulfillment.NotifyCustomer,
@@ -31,7 +31,7 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 	}
 
 	request := struct {
-		Fulfillment fulfillmentDTO `json:"fulfillment"`
+		Fulfillment FulfillmentDTO `json:"fulfillment"`
 	}{
 		Fulfillment: createDTO,
 	}
@@ -49,7 +49,7 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 	}
 
 	var response struct {
-		Fulfillment fulfillmentDTO `json:"fulfillment"`
+		Fulfillment FulfillmentDTO `json:"fulfillment"`
 	}
 
 	err = json.Unmarshal(respBody, &response)
@@ -57,18 +57,18 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 		return shopify.Fulfillment{}, err
 	}
 
-	return response.Fulfillment.toDomain(), nil
+	return response.Fulfillment.ToShopify(), nil
 }
 
 func (repository fulfillmentRepository) Update(orderID int64, fulfillmentID int64, update shopify.Fulfillment) (shopify.Fulfillment, error) {
-	updateDTO := fulfillmentDTO{
+	updateDTO := FulfillmentDTO{
 		ID:              fulfillmentID,
 		TrackingNumbers: update.TrackingNumbers,
 		NotifyCustomer:  update.NotifyCustomer,
 	}
 
 	request := struct {
-		Fulfillment fulfillmentDTO `json:"fulfillment"`
+		Fulfillment FulfillmentDTO `json:"fulfillment"`
 	}{
 		Fulfillment: updateDTO,
 	}
@@ -86,7 +86,7 @@ func (repository fulfillmentRepository) Update(orderID int64, fulfillmentID int6
 	}
 
 	var response struct {
-		Fulfillment fulfillmentDTO `json:"fulfillment"`
+		Fulfillment FulfillmentDTO `json:"fulfillment"`
 	}
 
 	err = json.Unmarshal(respBody, &response)
@@ -94,7 +94,7 @@ func (repository fulfillmentRepository) Update(orderID int64, fulfillmentID int6
 		return shopify.Fulfillment{}, err
 	}
 
-	return response.Fulfillment.toDomain(), nil
+	return response.Fulfillment.ToShopify(), nil
 }
 
 func (repository fulfillmentRepository) Cancel(orderID int64, fulfillmentID int64) error {
@@ -108,9 +108,11 @@ func (repository fulfillmentRepository) Cancel(orderID int64, fulfillmentID int6
 	return nil
 }
 
-type fulfillmentDTOs []fulfillmentDTO
+// FulfillmentDTOs is a collection of Fulfillment DTOs
+type FulfillmentDTOs []FulfillmentDTO
 
-type fulfillmentDTO struct {
+// FulfillmentDTO represents and Shopify fulfillment in HTTP requests and responses
+type FulfillmentDTO struct {
 	ID              int64        `json:"id"`
 	OrderID         int64        `json:"order_id"`
 	TrackingNumbers []string     `json:"tracking_numbers"`
@@ -120,10 +122,11 @@ type fulfillmentDTO struct {
 	NotifyCustomer  bool         `json:"notify_customer"`
 	ShipmentStatus  string       `json:"shipment_status"`
 	LocationID      int64        `json:"location_id"`
-	LineItems       lineItemDTOs `json:"lineItems"`
+	LineItems       LineItemDTOs `json:"lineItems"`
 }
 
-func (dto fulfillmentDTO) toDomain() shopify.Fulfillment {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 	return shopify.Fulfillment{
 		ID:              dto.ID,
 		OrderID:         dto.OrderID,
@@ -134,15 +137,16 @@ func (dto fulfillmentDTO) toDomain() shopify.Fulfillment {
 		NotifyCustomer:  dto.NotifyCustomer,
 		ShipmentStatus:  dto.ShipmentStatus,
 		LocationID:      dto.LocationID,
-		LineItems:       dto.LineItems.toDomain(),
+		LineItems:       dto.LineItems.ToShopify(),
 	}
 }
 
-func (dtos fulfillmentDTOs) toDomain() []shopify.Fulfillment {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos FulfillmentDTOs) ToShopify() []shopify.Fulfillment {
 	fulfillments := make([]shopify.Fulfillment, 0, len(dtos))
 
 	for _, dto := range dtos {
-		fulfillments = append(fulfillments, dto.toDomain())
+		fulfillments = append(fulfillments, dto.ToShopify())
 	}
 
 	return fulfillments
