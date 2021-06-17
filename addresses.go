@@ -2,7 +2,8 @@ package httpshopify
 
 import "github.com/MOHC-LTD/shopify"
 
-type addressDTO struct {
+// AddressDTO represents a Shopify Address in HTTP requests and responses
+type AddressDTO struct {
 	Address1     string  `json:"address1"`
 	Address2     string  `json:"address2"`
 	City         string  `json:"city"`
@@ -20,7 +21,8 @@ type addressDTO struct {
 	Zip          string  `json:"zip"`
 }
 
-func (dto addressDTO) toDomain() shopify.Address {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto AddressDTO) ToShopify() shopify.Address {
 	return shopify.Address{
 		Address1:     dto.Address1,
 		Address2:     dto.Address2,

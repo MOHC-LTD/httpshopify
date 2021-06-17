@@ -23,12 +23,12 @@ func newFulfillmentEventRepository(client http.Client, createURL func(endpoint s
 }
 
 func (repository fulfillmentEventRepository) Create(orderID int64, fulfillmentID int64, event shopify.FulfillmentEvent) (shopify.FulfillmentEvent, error) {
-	createDTO := fulfillmentEventDTO{
+	createDTO := FulfillmentEventDTO{
 		Status: event.Status,
 	}
 
 	request := struct {
-		FulfillmentEvent fulfillmentEventDTO `json:"event"`
+		FulfillmentEvent FulfillmentEventDTO `json:"event"`
 	}{
 		FulfillmentEvent: createDTO,
 	}
@@ -46,7 +46,7 @@ func (repository fulfillmentEventRepository) Create(orderID int64, fulfillmentID
 	}
 
 	var response struct {
-		FulfillmentEvent fulfillmentEventDTO `json:"fulfillment_event"`
+		FulfillmentEvent FulfillmentEventDTO `json:"fulfillment_event"`
 	}
 
 	err = json.Unmarshal(respBody, &response)
@@ -54,7 +54,7 @@ func (repository fulfillmentEventRepository) Create(orderID int64, fulfillmentID
 		return shopify.FulfillmentEvent{}, err
 	}
 
-	return response.FulfillmentEvent.toDomain(), nil
+	return response.FulfillmentEvent.ToShopify(), nil
 }
 
 func (repository fulfillmentEventRepository) Delete(orderID int64, fulfillmentID int64, eventID int64) error {
@@ -77,7 +77,7 @@ func (repository fulfillmentEventRepository) List(orderID int64, fulfillmentID i
 	}
 
 	var response struct {
-		FulfillmentEvents []fulfillmentEventDTO `json:"fulfillment_events"`
+		FulfillmentEvents []FulfillmentEventDTO `json:"fulfillment_events"`
 	}
 
 	err = json.Unmarshal(respBody, &response)
@@ -87,13 +87,14 @@ func (repository fulfillmentEventRepository) List(orderID int64, fulfillmentID i
 
 	events := make([]shopify.FulfillmentEvent, 0, len(response.FulfillmentEvents))
 	for _, dto := range response.FulfillmentEvents {
-		events = append(events, dto.toDomain())
+		events = append(events, dto.ToShopify())
 	}
 
 	return events, nil
 }
 
-type fulfillmentEventDTO struct {
+// FulfillmentEventDTO represents a Shopify fulfillment event in HTTP requests and responses
+type FulfillmentEventDTO struct {
 	ID            int64     `json:"id"`
 	FulfillmentID int64     `json:"fulfillment_id"`
 	Status        string    `json:"status"`
@@ -101,7 +102,8 @@ type fulfillmentEventDTO struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 }
 
-func (dto fulfillmentEventDTO) toDomain() shopify.FulfillmentEvent {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto FulfillmentEventDTO) ToShopify() shopify.FulfillmentEvent {
 	return shopify.FulfillmentEvent{
 		ID:            dto.ID,
 		FulfillmentID: dto.FulfillmentID,

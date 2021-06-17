@@ -36,12 +36,12 @@ func (repository orderRepository) List(query shopify.OrderQuery) (shopify.Orders
 		}
 
 		var resultDTO struct {
-			Orders []orderDTO `json:"orders"`
+			Orders []OrderDTO `json:"orders"`
 		}
 		json.Unmarshal(body, &resultDTO)
 
 		for _, dto := range resultDTO.Orders {
-			orders = append(orders, dto.toDomain())
+			orders = append(orders, dto.ToShopify())
 		}
 
 		links := ParseLinkHeader(headers.Get("Link"))
@@ -65,7 +65,7 @@ func (repository orderRepository) Get(id int64) (shopify.Order, error) {
 	}
 
 	var response struct {
-		Order orderDTO `json:"order"`
+		Order OrderDTO `json:"order"`
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
@@ -76,7 +76,7 @@ func (repository orderRepository) Get(id int64) (shopify.Order, error) {
 		return shopify.Order{}, shopify.NewErrOrderNotFound(id)
 	}
 
-	return response.Order.toDomain(), nil
+	return response.Order.ToShopify(), nil
 }
 
 func (repository orderRepository) Close(id int64) error {
@@ -90,7 +90,8 @@ func (repository orderRepository) Close(id int64) error {
 	return nil
 }
 
-type orderDTO struct {
+// OrderDTO represents a Shopify order in HTTP requests and responses
+type OrderDTO struct {
 	ID                int64            `json:"id"`
 	Name              string           `json:"name"`
 	UpdatedAt         time.Time        `json:"updated_at"`
@@ -98,15 +99,16 @@ type orderDTO struct {
 	ClosedAt          time.Time        `json:"closed_at"`
 	FulfillmentStatus string           `json:"fulfillment_status"`
 	FinancialStatus   string           `json:"financial_status"`
-	ShippingLines     shippingLineDTOs `json:"shipping_lines"`
-	Customer          customerDTO      `json:"customer"`
-	Fulfillments      fulfillmentDTOs  `json:"fulfillments"`
-	LineItems         lineItemDTOs     `json:"line_items"`
-	BillingAddress    addressDTO       `json:"billing_address"`
-	ShippingAddress   addressDTO       `json:"shipping_address"`
+	ShippingLines     ShippingLineDTOs `json:"shipping_lines"`
+	Customer          CustomerDTO      `json:"customer"`
+	Fulfillments      FulfillmentDTOs  `json:"fulfillments"`
+	LineItems         LineItemDTOs     `json:"line_items"`
+	BillingAddress    AddressDTO       `json:"billing_address"`
+	ShippingAddress   AddressDTO       `json:"shipping_address"`
 }
 
-func (dto orderDTO) toDomain() shopify.Order {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto OrderDTO) ToShopify() shopify.Order {
 	return shopify.Order{
 		ID:                dto.ID,
 		Name:              dto.Name,
@@ -115,12 +117,12 @@ func (dto orderDTO) toDomain() shopify.Order {
 		ClosedAt:          dto.ClosedAt,
 		FulfillmentStatus: dto.FulfillmentStatus,
 		FinancialStatus:   dto.FinancialStatus,
-		ShippingLines:     dto.ShippingLines.toDomain(),
-		Customer:          dto.Customer.toDomain(),
-		Fulfillments:      dto.Fulfillments.toDomain(),
-		LineItems:         dto.LineItems.toDomain(),
-		BillingAddress:    dto.BillingAddress.toDomain(),
-		ShippingAddress:   dto.ShippingAddress.toDomain(),
+		ShippingLines:     dto.ShippingLines.ToShopify(),
+		Customer:          dto.Customer.ToShopify(),
+		Fulfillments:      dto.Fulfillments.ToShopify(),
+		LineItems:         dto.LineItems.ToShopify(),
+		BillingAddress:    dto.BillingAddress.ToShopify(),
+		ShippingAddress:   dto.ShippingAddress.ToShopify(),
 	}
 }
 

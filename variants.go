@@ -22,19 +22,22 @@ func newVariantRepository(client http.Client, createURL func(endpoint string) st
 	}
 }
 
-type variantDTOs []variantDTO
+// VariantDTOs is a collection of Variant DTOs
+type VariantDTOs []VariantDTO
 
-func (dtos variantDTOs) toDomain() shopify.Variants {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos VariantDTOs) ToShopify() shopify.Variants {
 	variants := make(shopify.Variants, 0, len(dtos))
 
 	for _, dto := range dtos {
-		variants = append(variants, dto.toDomain())
+		variants = append(variants, dto.ToShopify())
 	}
 
 	return variants
 }
 
-type variantDTO struct {
+// VariantDTO represents a Shopify variant in HTTP requests and responses
+type VariantDTO struct {
 	ID              int64     `json:"id"`
 	SKU             string    `json:"sku"`
 	Title           string    `json:"title"`
@@ -45,7 +48,8 @@ type variantDTO struct {
 	UpdatedAt       time.Time `json:"updated_at"`
 }
 
-func (dto variantDTO) toDomain() shopify.Variant {
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto VariantDTO) ToShopify() shopify.Variant {
 	return shopify.Variant{
 		ID:              dto.ID,
 		SKU:             dto.SKU,
@@ -67,7 +71,7 @@ func (repository variantRepository) Get(id int64) (shopify.Variant, error) {
 	}
 
 	var response struct {
-		Variant variantDTO `json:"variant"`
+		Variant VariantDTO `json:"variant"`
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
@@ -78,5 +82,5 @@ func (repository variantRepository) Get(id int64) (shopify.Variant, error) {
 		return shopify.Variant{}, shopify.NewErrVariantNotFound(id)
 	}
 
-	return response.Variant.toDomain(), nil
+	return response.Variant.ToShopify(), nil
 }
