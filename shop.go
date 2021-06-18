@@ -15,6 +15,7 @@ type Shop struct {
 	fulfillmentEvents fulfillmentEventRepository
 	variants          variantRepository
 	products          productRepository
+	inventoryLevels   inventoryLevelRepository
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
@@ -63,6 +64,7 @@ func NewCustomShop(url string, accessToken string) Shop {
 		fulfillmentEvents: newFulfillmentEventRepository(client, createURL),
 		variants:          newVariantRepository(client, createURL),
 		products:          newProductRepository(client, createURL),
+		inventoryLevels:   newInventoryLevelRepository(client, createURL),
 	}
 }
 
@@ -89,4 +91,9 @@ func (shop Shop) Variants() shopify.VariantRepository {
 // Products returns an http implementation of a shopify product repository
 func (shop Shop) Products() shopify.ProductRepository {
 	return shop.products
+}
+
+// InventoryLevels returns an http implementation of a shopify inventory level repository
+func (shop Shop) InventoryLevels() shopify.InventoryLevelRepository {
+	return shop.inventoryLevels
 }
