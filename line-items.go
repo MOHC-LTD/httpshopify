@@ -22,6 +22,9 @@ func (dto LineItemDTO) ToShopify() shopify.LineItem {
 		Name:     dto.Name,
 		SKU:      dto.SKU,
 		Quantity: dto.Quantity,
+		Price:    dto.PriceSet.ShopMoney.ToShopify(),
+		Discount: dto.TotalDiscountSet.ShopMoney.ToShopify(),
+		Taxes:    dto.TaxLines.ToShopify(),
 	}
 }
 

@@ -17,9 +17,11 @@ type ShippingLineDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ShippingLineDTO) ToShopify() shopify.ShippingLine {
 	return shopify.ShippingLine{
-		ID:    dto.ID,
-		Code:  dto.Code,
-		Title: dto.Title,
+		ID:       dto.ID,
+		Code:     dto.Code,
+		Title:    dto.Title,
+		Price:    dto.PriceSet.ToShopify(),
+		Discount: dto.PriceSet.ToShopify(),
 	}
 }
 
