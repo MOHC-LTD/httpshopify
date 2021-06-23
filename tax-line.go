@@ -2,7 +2,7 @@ package httpshopify
 
 import "github.com/MOHC-LTD/shopify"
 
-type TaxLinesDTO []TaxLineDTO
+type TaxLineDTOs []TaxLineDTO
 
 type TaxLineDTO struct {
 	Title string  `json:"title"`

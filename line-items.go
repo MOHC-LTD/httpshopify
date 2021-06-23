@@ -11,7 +11,7 @@ type LineItemDTO struct {
 	Quantity         int         `json:"quantity"`
 	PriceSet         PriceSetDTO `json:"price_set"`
 	TotalDiscountSet PriceSetDTO `json:"total_discount_set"`
-	TaxLines         TaxLinesDTO `json:"tax_lines"`
+	TaxLines         TaxLineDTOs `json:"tax_lines"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
