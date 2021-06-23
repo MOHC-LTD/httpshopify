@@ -4,11 +4,14 @@ import "github.com/MOHC-LTD/shopify"
 
 // LineItemDTO represents a Shopify line item in HTTP requests and responses
 type LineItemDTO struct {
-	ID       int64  `json:"id"`
-	Title    string `json:"title"`
-	Name     string `json:"name"`
-	SKU      string `json:"sku"`
-	Quantity int    `json:"quantity"`
+	ID               int64       `json:"id"`
+	Title            string      `json:"title"`
+	Name             string      `json:"name"`
+	SKU              string      `json:"sku"`
+	Quantity         int         `json:"quantity"`
+	PriceSet         PriceSetDTO `json:"price_set"`
+	TotalDiscountSet PriceSetDTO `json:"total_discount_set"`
+	TaxLines         TaxLinesDTO `json:"tax_lines"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
