@@ -20,8 +20,8 @@ func (dto ShippingLineDTO) ToShopify() shopify.ShippingLine {
 		ID:       dto.ID,
 		Code:     dto.Code,
 		Title:    dto.Title,
-		Price:    dto.PriceSet.ToShopify(),
-		Discount: dto.PriceSet.ToShopify(),
+		Price:    dto.PriceSet.ShopMoney.ToShopify(),
+		Discount: dto.PriceSet.ShopMoney.ToShopify(),
 	}
 }
 
