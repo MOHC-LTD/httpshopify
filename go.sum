@@ -12,3 +12,5 @@ github.com/MOHC-LTD/shopify v1.7.1 h1:yIbziu70N5qNu6O8ccHIOdXLhVb1D+T8+DphGWljik
 github.com/MOHC-LTD/shopify v1.7.1/go.mod h1:ZqEEOCrFlhlQxqxzpfE9lah5uvjiGQNvcGERxaTACPQ=
 github.com/MOHC-LTD/shopify v1.8.0 h1:+hTi4iuuJolnXkux+NeTzpXzuB1Gv5y385hit7z2cgk=
 github.com/MOHC-LTD/shopify v1.8.0/go.mod h1:ZqEEOCrFlhlQxqxzpfE9lah5uvjiGQNvcGERxaTACPQ=
+github.com/MOHC-LTD/shopify v1.9.0 h1:nTJSvkKnCDhc2KAG9kzWdszpf8CZSuiwDxWe/yNIbJI=
+github.com/MOHC-LTD/shopify v1.9.0/go.mod h1:ZqEEOCrFlhlQxqxzpfE9lah5uvjiGQNvcGERxaTACPQ=

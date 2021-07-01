@@ -92,19 +92,40 @@ func (repository orderRepository) Close(id int64) error {
 
 // OrderDTO represents a Shopify order in HTTP requests and responses
 type OrderDTO struct {
-	ID                int64            `json:"id"`
-	Name              string           `json:"name"`
-	UpdatedAt         time.Time        `json:"updated_at"`
-	CreatedAt         time.Time        `json:"created_at"`
-	ClosedAt          time.Time        `json:"closed_at"`
-	FulfillmentStatus string           `json:"fulfillment_status"`
-	FinancialStatus   string           `json:"financial_status"`
-	ShippingLines     ShippingLineDTOs `json:"shipping_lines"`
-	Customer          CustomerDTO      `json:"customer"`
-	Fulfillments      FulfillmentDTOs  `json:"fulfillments"`
-	LineItems         LineItemDTOs     `json:"line_items"`
-	BillingAddress    AddressDTO       `json:"billing_address"`
-	ShippingAddress   AddressDTO       `json:"shipping_address"`
+	BillingAddress           AddressDTO       `json:"billing_address"`
+	ClosedAt                 time.Time        `json:"closed_at"`
+	CreatedAt                time.Time        `json:"created_at"`
+	Currency                 string           `json:"currency"`
+	CurrentTotalDiscounts    string           `json:"current_total_discounts"`
+	CurrentTotalDiscountsSet PriceSetDTO      `json:"current_total_discounts_set"`
+	CurrentTotalPrice        string           `json:"current_total_price"`
+	CurrentTotalPriceSet     PriceSetDTO      `json:"current_total_price_set"`
+	CurrentSubtotalPrice     string           `json:"current_subtotal_price"`
+	CurrentSubtotalPriceSet  PriceSetDTO      `json:"current_subtotal_price_set"`
+	CurrentTotalTax          string           `json:"current_total_tax"`
+	CurrentTotalTaxSet       PriceSetDTO      `json:"current_total_tax_set"`
+	Customer                 CustomerDTO      `json:"customer"`
+	Email                    string           `json:"email"`
+	FinancialStatus          string           `json:"financial_status"`
+	Fulfillments             FulfillmentDTOs  `json:"fulfillments"`
+	FulfillmentStatus        string           `json:"fulfillment_status"`
+	ID                       int64            `json:"id"`
+	LineItems                LineItemDTOs     `json:"line_items"`
+	Name                     string           `json:"name"`
+	PresentmentCurrency      string           `json:"presentment_currency"`
+	ShippingAddress          AddressDTO       `json:"shipping_address"`
+	ShippingLines            ShippingLineDTOs `json:"shipping_lines"`
+	SubtotalPrice            string           `json:"subtotal_price"`
+	SubtotalPriceSet         PriceSetDTO      `json:"subtotal_price_set"`
+	TotalDiscounts           string           `json:"total_discounts"`
+	TotalDiscountsSet        PriceSetDTO      `json:"total_discounts_set"`
+	TotalLineItemsPrice      string           `json:"total_line_items_price"`
+	TotalLineItemsPriceSet   PriceSetDTO      `json:"total_line_items_price_set"`
+	TotalPrice               string           `json:"total_price"`
+	TotalPriceSet            PriceSetDTO      `json:"total_price_set"`
+	TotalTax                 string           `json:"total_tax"`
+	TotalTaxSet              PriceSetDTO      `json:"total_tax_set"`
+	UpdatedAt                time.Time        `json:"updated_at"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
