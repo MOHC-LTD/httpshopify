@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/sh
 
 printf "PRE-PUSH\n"
 
