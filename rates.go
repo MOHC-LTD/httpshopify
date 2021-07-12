@@ -1,14 +1,6 @@
 package httpshopify
 
-// RateLimit represents a Shopify rest rate limit.
-/*
-	These limits use the leaky bucket algorithm.
-	For more details, see https://shopify.dev/api/usage/rate-limits.
-*/
-type RateLimit struct {
-	BucketSize int
-	LeakRate   int
-}
+import "github.com/MOHC-LTD/httpshopify/internal/http"
 
 // RateLimitDefault builds the default rate limit for the rest API.
 /*
@@ -18,11 +10,11 @@ type RateLimit struct {
 
 	Source: https://shopify.dev/api/usage/rate-limits.
 */
-func RateLimitDefault() RateLimit {
-	return RateLimit{
-		BucketSize: 40,
-		LeakRate:   2,
-	}
+func RateLimitDefault() http.Option {
+	return http.WithRateLimit(
+		40,
+		2,
+	)
 }
 
 // RateLimitPlus builds the rate limit for the rest API of a Shopify plus store.
@@ -33,9 +25,16 @@ func RateLimitDefault() RateLimit {
 
 	Source: https://shopify.dev/api/usage/rate-limits.
 */
-func RateLimitPlus() RateLimit {
-	return RateLimit{
-		BucketSize: 40,
-		LeakRate:   2,
-	}
+func RateLimitPlus() http.Option {
+	return http.WithRateLimit(
+		80,
+		4,
+	)
 }
+
+const (
+	// IsPlus represents a shop being a plus store
+	IsPlus = true
+	// IsDefault represents a shop being a default store
+	IsDefault = false
+)
