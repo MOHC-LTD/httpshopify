@@ -63,12 +63,12 @@ func (client Client) Do(method string, url string, headers RequestHeaders, body 
 		return nil, ResponseHeaders{}, err
 	}
 
-	err = HandleStatus(resp.StatusCode)
+	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ResponseHeaders{}, err
 	}
 
-	responseBody, err := ioutil.ReadAll(resp.Body)
+	err = HandleStatus(resp.StatusCode, responseBody)
 	if err != nil {
 		return nil, ResponseHeaders{}, err
 	}
