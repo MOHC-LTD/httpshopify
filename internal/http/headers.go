@@ -36,3 +36,26 @@ type ResponseHeaders struct {
 func (h ResponseHeaders) Get(name string) string {
 	return h.header.Get(name)
 }
+
+// OptionDefaultHeader holds configuration for a default header that will be placed on the requests made by the client.
+type OptionDefaultHeader struct {
+	name  string
+	value string
+}
+
+func (option OptionDefaultHeader) configure(client *Client) error {
+	client.defaultHeaders = append(client.defaultHeaders, RequestHeader{
+		Name:  option.name,
+		Value: option.value,
+	})
+
+	return nil
+}
+
+// WithDefaultHeader allows configuring the default headers of the requests made by the client.
+func WithDefaultHeader(name string, value string) OptionDefaultHeader {
+	return OptionDefaultHeader{
+		name,
+		value,
+	}
+}

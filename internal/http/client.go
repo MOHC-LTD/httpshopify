@@ -17,10 +17,9 @@ type Client struct {
 }
 
 // NewClient builds a new HTTP client
-func NewClient(defaultHeaders RequestHeaders, options ...Option) Client {
+func NewClient(options ...Option) Client {
 	client := Client{
-		Client:         &http.Client{},
-		defaultHeaders: defaultHeaders,
+		Client: &http.Client{},
 	}
 
 	for _, option := range options {

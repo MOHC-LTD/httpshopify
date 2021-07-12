@@ -44,15 +44,10 @@ func NewShop(shop string, accessToken string) Shop {
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
 func NewCustomShop(url string, accessToken string) Shop {
-	client := http.NewClient(http.RequestHeaders{
-		{
-			Name:  "X-Shopify-Access-Token",
-			Value: accessToken,
-		}, {
-			Name:  "Content-Type",
-			Value: "application/json",
-		},
-	})
+	client := http.NewClient(
+		http.WithDefaultHeader("X-Shopify-Access-Token", accessToken),
+		http.WithDefaultHeader("Content-Type", "application/json"),
+	)
 
 	createURL := func(endpoint string) string {
 		return fmt.Sprintf("%v/%v", url, endpoint)
