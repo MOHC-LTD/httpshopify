@@ -1,19 +1,27 @@
 package http
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 // HandleStatus maps a status to the corresponding error
-func HandleStatus(status int) error {
+func HandleStatus(status int, body []byte) error {
+	var err error
+
 	switch status {
 	case http.StatusUnauthorized:
-		return UnauthorizedErr{}
+		err = UnauthorizedErr{}
 	case http.StatusBadRequest:
-		return BadRequestErr{}
+		err = BadRequestErr{}
 	case http.StatusInternalServerError:
-		return InternalServerErr{}
+		err = InternalServerErr{}
 	default:
-		return nil
 	}
+
+	fmt.Printf("Status: %v\nError: %v\n Body:%v\n", status, err, string(body))
+
+	return err
 }
 
 // UnauthorizedErr thrown when the user is unauthorized
