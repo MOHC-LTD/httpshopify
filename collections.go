@@ -24,7 +24,7 @@ func newCollectionRepository(client http.Client, createURL func(endpoint string)
 func (repository CollectionRepository) List() (shopify.Collections, error) {
 	collections := make(shopify.collections, 0)
 
-	url := repository.createURL(fmt.Sprintf("collections.json%v", parseProductQuery(query)))
+	url := repository.createURL(fmt.Sprintf("collections.json%v", parseCollectionQuery()))
 
 	for {
 		body, headers, err := repository.client.Get(url, nil)
