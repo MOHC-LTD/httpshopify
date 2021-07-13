@@ -31,6 +31,25 @@ func NewShop(shop string, accessToken string) Shop {
 	return NewCustomShop(
 		fmt.Sprintf("https://%v.myshopify.com/admin/api/2021-04", shop),
 		accessToken,
+		IsDefault,
+	)
+}
+
+// NewPlusShop builds a shopify plus shop based on the shopify admin REST API
+/*
+	This shop uses the Shopify plus rate limits allowing for higher throughput.
+	This constructor automatically determines the URL of the store from the store name.
+	If you would like to use a custom store URL use the `NewCustomShop` constructor instread.
+	Example:
+	shop := shopify.NewShop("my-shop-name", "shppy_21u92h2184ho912h29r01")
+	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
+	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
+*/
+func NewPlusShop(shop string, accessToken string) Shop {
+	return NewCustomShop(
+		fmt.Sprintf("https://%v.myshopify.com/admin/api/2021-04", shop),
+		accessToken,
+		IsPlus,
 	)
 }
 
@@ -39,20 +58,23 @@ func NewShop(shop string, accessToken string) Shop {
 	This constructor automatically uses the URL passed to it to communicate with the store.
 	If you would like to use an auto store URL use the `NewShop` constructor instread.
 	Example:
-	shop := shopify.NewCustomShop("https://my-shop-domain.com/foo/bar", "shppy_21u92h2184ho912h29r01")
+	shop := shopify.NewCustomShop("https://my-shop-domain.com/foo/bar", "shppy_21u92h2184ho912h29r01", httpshopify.IsPlus)
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewCustomShop(url string, accessToken string) Shop {
-	client := http.NewClient(http.RequestHeaders{
-		{
-			Name:  "X-Shopify-Access-Token",
-			Value: accessToken,
-		}, {
-			Name:  "Content-Type",
-			Value: "application/json",
-		},
-	})
+func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
+	var rateLimitOption http.Option
+	if isPlus {
+		rateLimitOption = RateLimitPlus()
+	} else {
+		rateLimitOption = RateLimitDefault()
+	}
+
+	client := http.NewClient(
+		http.WithDefaultHeader("X-Shopify-Access-Token", accessToken),
+		http.WithDefaultHeader("Content-Type", "application/json"),
+		rateLimitOption,
+	)
 
 	createURL := func(endpoint string) string {
 		return fmt.Sprintf("%v/%v", url, endpoint)
