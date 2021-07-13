@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/MOHC-LTD/httpshopify/internal/http"
-	"github.com/MOHC-LTD/httpshopify/internal/slices"
 	"github.com/MOHC-LTD/shopify"
 )
 
@@ -22,8 +21,8 @@ func newCollectionRepository(client http.Client, createURL func(endpoint string)
 	}
 }
 
-func (repository CollectionRepository) List(query shopify.CollectionQuery) (shopify.Products, error) {
-	products := make(shopify.Products, 0)
+func (repository CollectionRepository) List() (shopify.Collections, error) {
+	collections := make(shopify.collections, 0)
 
 	url := repository.createURL(fmt.Sprintf("collections.json%v", parseProductQuery(query)))
 
@@ -34,12 +33,12 @@ func (repository CollectionRepository) List(query shopify.CollectionQuery) (shop
 		}
 
 		var resultDTO struct {
-			Collections collectionDTO `json:"collections"`
+			Collections CollectionDTOs `json:"collections"`
 		}
 		json.Unmarshal(body, &resultDTO)
 
 		for _, dto := range resultDTO.Collections {
-			products = append(products, dto.ToShopify())
+			collections = append(collections, dto.ToShopify())
 		}
 
 		links := ParseLinkHeader(headers.Get("Link"))
@@ -51,11 +50,11 @@ func (repository CollectionRepository) List(query shopify.CollectionQuery) (shop
 		url = links.Next
 	}
 
-	return products, nil
+	return collections, nil
 }
 
 // CollectionDTOs is a collection of Product DTOs
-type CollectionDTOs []collectionDTO
+type CollectionDTOs []CollectionDTO
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dtos CollectionDTOs) ToShopify() shopify.Collections {
@@ -69,7 +68,7 @@ func (dtos CollectionDTOs) ToShopify() shopify.Collections {
 }
 
 // ProductDTO represents a Shopify product in HTTP requests and responses
-type collectionDTO struct {
+type CollectionDTO struct {
 	ID             int64     `json:"id"`
 	Title          string    `json:"title"`
 	BodyHTML       string    `json:"body_html"`
@@ -77,12 +76,13 @@ type collectionDTO struct {
 	PublishedAt    time.Time `json:"published_at"`
 	PublishedScope string    `json:"published_scope"`
 	SortOrder      string    `json:"sort_order"`
+	Image          ImageDTO  `json:"image"`
 	TemplateSuffix string    `json:"template_suffix"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
-func (dto collectionDTO) ToShopify() shopify.Collection {
+func (dto CollectionDTO) ToShopify() shopify.Collection {
 	return shopify.Collection{
 		ID:             dto.ID,
 		Title:          dto.Title,
@@ -90,18 +90,15 @@ func (dto collectionDTO) ToShopify() shopify.Collection {
 		Handle:         dto.Handle,
 		PublishedAt:    dto.PublishedAt,
 		PublishedScope: dto.PublishedScope,
+		Image:          dto.Image.ToShopify(),
 		SortOrder:      dto.SortOrder,
 		TemplateSuffix: dto.TemplateSuffix,
 		UpdatedAt:      dto.UpdatedAt,
 	}
 }
 
-func parseCollectionQuery(query shopify.CollectionQuery) string {
+func parseCollectionQuery() string {
 	queryStrings := make([]string, 0)
-
-	if query.IDs != nil {
-		queryStrings = append(queryStrings, fmt.Sprintf("ids=%v", slices.JoinInt64(query.IDs, ",")))
-	}
 
 	if len(queryStrings) == 0 {
 		return ""
