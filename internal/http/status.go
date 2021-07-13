@@ -12,6 +12,8 @@ func HandleStatus(status int, body []byte) error {
 	switch status {
 	case http.StatusUnauthorized:
 		err = UnauthorizedErr{}
+	case http.StatusNotFound:
+		err = ErrNotFound{}
 	case http.StatusBadRequest:
 		err = BadRequestErr{}
 	case http.StatusInternalServerError:
@@ -43,4 +45,11 @@ type InternalServerErr struct{}
 
 func (err InternalServerErr) Error() string {
 	return "internal server error"
+}
+
+// ErrNotFound thrown when not found
+type ErrNotFound struct{}
+
+func (err ErrNotFound) Error() string {
+	return "not found"
 }
