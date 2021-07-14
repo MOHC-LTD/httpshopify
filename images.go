@@ -1,6 +1,10 @@
 package httpshopify
 
-import "time"
+import (
+	"time"
+
+	"github.com/MOHC-LTD/shopify"
+)
 
 type ImageDTO struct {
 	CreatedAt time.Time `json:"created_at"`

@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/MOHC-LTD/httpshopify/internal/slices"
+	"github.com/MOHC-LTD/shopify"
 )
 
 // ProductImagesDTOs is a collection of productImage DTOs
@@ -100,3 +103,4 @@ func parseProductImagesQuery(query shopify.ProductImagesQuery) string {
 	}
 
 	return queryString
+}
