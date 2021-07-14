@@ -21,36 +21,39 @@ func newCollectionRepository(client http.Client, createURL func(endpoint string)
 	}
 }
 
-func (repository CollectionRepository) List() (shopify.Collections, error) {
-	collections := make(shopify.collections, 0)
+func (repository CollectionRepository) Get(ID int64) (shopify.Collection, error) {
 
-	url := repository.createURL(fmt.Sprintf("collections.json%v", parseCollectionQuery()))
+	url := repository.createURL(fmt.Sprintf("collections/%v.json%v", ID, parseCollectionQuery()))
 
-	for {
-		body, headers, err := repository.client.Get(url, nil)
-		if err != nil {
-			return nil, err
-		}
-
-		var resultDTO struct {
-			Collections CollectionDTOs `json:"collections"`
-		}
-		json.Unmarshal(body, &resultDTO)
-
-		for _, dto := range resultDTO.Collections {
-			collections = append(collections, dto.ToShopify())
-		}
-
-		links := ParseLinkHeader(headers.Get("Link"))
-
-		if !links.HasNext() {
-			break
-		}
-
-		url = links.Next
+	body, _, err := repository.client.Get(url, nil)
+	if err != nil {
+		return nil, err
 	}
 
-	return collections, nil
+	var resultDTO struct {
+		Collection CollectionDTO `json:"collection"`
+	}
+
+	json.Unmarshal(body, &resultDTO)
+
+	return resultDTO.Collection.ToShopify(), nil
+}
+
+func (repository CollectionRepository) Products(ID int64) (shopify.Products, error) {
+
+	url := repository.createURL(fmt.Sprintf("collections/%v/products.json%v", ID, parseCollectionQuery()))
+
+	body, _, err := repository.client.Get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var resultDTO struct {
+		Products ProductDTOs `json:"products"`
+	}
+	json.Unmarshal(body, &resultDTO)
+
+	return resultDTO.Products.ToShopify(), nil
 }
 
 // CollectionDTOs is a collection of Product DTOs
