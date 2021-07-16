@@ -22,8 +22,7 @@ func newCollectionRepository(client http.Client, createURL func(endpoint string)
 }
 
 func (repository collectionRepository) Get(ID int64) (shopify.Collection, error) {
-
-	url := repository.createURL(fmt.Sprintf("collections/%v.json%v", ID, parseCollectionQuery()))
+	url := repository.createURL(fmt.Sprintf("collections/%v.json%v", ID))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
@@ -41,7 +40,7 @@ func (repository collectionRepository) Get(ID int64) (shopify.Collection, error)
 
 func (repository collectionRepository) Products(ID int64) (shopify.Products, error) {
 
-	url := repository.createURL(fmt.Sprintf("collections/%v/products.json%v", ID, parseCollectionQuery()))
+	url := repository.createURL(fmt.Sprintf("collections/%v/products.json%v", ID))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
@@ -56,7 +55,7 @@ func (repository collectionRepository) Products(ID int64) (shopify.Products, err
 	return resultDTO.Products.ToShopify(), nil
 }
 
-// CollectionDTOs is a collection of Product DTOs
+// CollectionDTOs represents a list of shopify collections in HTTP requests and responses
 type CollectionDTOs []CollectionDTO
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -70,7 +69,7 @@ func (dtos CollectionDTOs) ToShopify() shopify.Collections {
 	return collections
 }
 
-// ProductDTO represents a Shopify product in HTTP requests and responses
+// CollectionDTO represents a Shopify collection in HTTP requests and responses
 type CollectionDTO struct {
 	ID             int64     `json:"id"`
 	Title          string    `json:"title"`
@@ -98,24 +97,4 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 		TemplateSuffix: dto.TemplateSuffix,
 		UpdatedAt:      dto.UpdatedAt,
 	}
-}
-
-func parseCollectionQuery() string {
-	queryStrings := make([]string, 0)
-
-	if len(queryStrings) == 0 {
-		return ""
-	}
-
-	queryString := "?"
-
-	for i, str := range queryStrings {
-		if i != 0 {
-			queryString = queryString + "&"
-		}
-
-		queryString = queryString + str
-	}
-
-	return queryString
 }
