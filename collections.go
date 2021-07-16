@@ -40,7 +40,7 @@ func (repository collectionRepository) Get(ID int64) (shopify.Collection, error)
 
 func (repository collectionRepository) Products(ID int64) (shopify.Products, error) {
 
-	url := repository.createURL(fmt.Sprintf("collections/%v/products.json%v", ID))
+	url := repository.createURL(fmt.Sprintf("collections/%v/products.json", ID))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
