@@ -54,6 +54,37 @@ func (repository productRepository) List(query shopify.ProductQuery) (shopify.Pr
 	return products, nil
 }
 
+func (repository productRepository) Get(ID int64) (shopify.Product, error) {
+
+	var product ProductDTO
+
+	url := repository.createURL(fmt.Sprintf("products.json/%v", ID))
+
+	for {
+		body, headers, err := repository.client.Get(url, nil)
+		if err != nil {
+			return shopify.Product{}, err
+		}
+
+		var resultDTO struct {
+			Product ProductDTO `json:"product"`
+		}
+		json.Unmarshal(body, &resultDTO)
+
+		product = resultDTO.Product
+
+		links := ParseLinkHeader(headers.Get("Link"))
+
+		if !links.HasNext() {
+			break
+		}
+
+		url = links.Next
+	}
+
+	return product.ToShopify(), nil
+}
+
 // ProductDTOs is a collection of Product DTOs
 type ProductDTOs []ProductDTO
 
