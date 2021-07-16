@@ -9,19 +9,19 @@ import (
 	"github.com/MOHC-LTD/shopify"
 )
 
-type CollectionRepository struct {
+type collectionRepository struct {
 	client    http.Client
 	createURL func(endpoint string) string
 }
 
-func newCollectionRepository(client http.Client, createURL func(endpoint string) string) CollectionRepository {
-	return CollectionRepository{
+func newCollectionRepository(client http.Client, createURL func(endpoint string) string) collectionRepository {
+	return collectionRepository{
 		client,
 		createURL,
 	}
 }
 
-func (repository CollectionRepository) Get(ID int64) (shopify.Collection, error) {
+func (repository collectionRepository) Get(ID int64) (shopify.Collection, error) {
 
 	url := repository.createURL(fmt.Sprintf("collections/%v.json%v", ID, parseCollectionQuery()))
 
@@ -39,7 +39,7 @@ func (repository CollectionRepository) Get(ID int64) (shopify.Collection, error)
 	return resultDTO.Collection.ToShopify(), nil
 }
 
-func (repository CollectionRepository) Products(ID int64) (shopify.Products, error) {
+func (repository collectionRepository) Products(ID int64) (shopify.Products, error) {
 
 	url := repository.createURL(fmt.Sprintf("collections/%v/products.json%v", ID, parseCollectionQuery()))
 
