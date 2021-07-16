@@ -99,6 +99,7 @@ func (shop Shop) InventoryLevels() shopify.InventoryLevelRepository {
 	return shop.inventoryLevels
 }
 
+// Collections returns an http implementation of a shopify collection repository
 func (shop Shop) Collections() shopify.CollectionRepository {
-	return shop.Collections()
+	return shop.collection
 }
