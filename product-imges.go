@@ -36,7 +36,7 @@ func (dtos ProductImageDTOs) ToShopify() shopify.ProductImages {
 	return productImages
 }
 
-func (repository productImagesRepository) List(productID int64) (shopify.ProductImages, error) {
+func (repository productImagesRepository) List(productID int64, query shopify.ProductImageQuery) (shopify.ProductImages, error) {
 	productImages := make(shopify.ProductImages, 0)
 
 	url := repository.createURL(fmt.Sprintf("products/%v/images.json%v", productID, parseProductImagesQuery(query)))
