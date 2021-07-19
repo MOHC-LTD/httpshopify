@@ -15,14 +15,14 @@ type productImagesRepository struct {
 	createURL func(endpoint string) string
 }
 
-func newProductImagesRepository(client http.Client, createURL func(endpoint string) string) productRepository {
-	return productRepository{
+func newProductImagesRepository(client http.Client, createURL func(endpoint string) string) productImagesRepository {
+	return productImagesRepository{
 		client,
 		createURL,
 	}
 }
 
-// ProductImagesDTOs is a collection of productImage DTOs
+// ProductImageDTOs is a collection of productImage DTOs
 type ProductImageDTOs []ProductImageDTO
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -68,7 +68,7 @@ func (repository productImagesRepository) List(productID int64, query shopify.Pr
 	return productImages, nil
 }
 
-// ProductImagesDTO represents a Shopify product images in HTTP requests and responses
+// ProductImageDTO represents a Shopify product images in HTTP requests and responses
 type ProductImageDTO struct {
 	ImageDTO
 	ID         int64     `json:"id"`
