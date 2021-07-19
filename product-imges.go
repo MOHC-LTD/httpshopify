@@ -15,8 +15,8 @@ type productImagesRepository struct {
 	createURL func(endpoint string) string
 }
 
-func newProductImagesRepository(client http.Client, createURL func(endpoint string) string) productRepository {
-	return productRepository{
+func newProductImagesRepository(client http.Client, createURL func(endpoint string) string) productImagesRepository {
+	return productImagesRepository{
 		client,
 		createURL,
 	}
