@@ -66,6 +66,7 @@ func NewCustomShop(url string, accessToken string) Shop {
 		variants:          newVariantRepository(client, createURL),
 		products:          newProductRepository(client, createURL),
 		inventoryLevels:   newInventoryLevelRepository(client, createURL),
+		collection:        newCollectionRepository(client, createURL),
 	}
 }
 
