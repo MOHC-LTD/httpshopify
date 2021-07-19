@@ -21,8 +21,8 @@ func newCollectionRepository(client http.Client, createURL func(endpoint string)
 	}
 }
 
-func (repository collectionRepository) Get(ID int64) (shopify.Collection, error) {
-	url := repository.createURL(fmt.Sprintf("collections/%v.json", ID))
+func (repository collectionRepository) Get(id int64) (shopify.Collection, error) {
+	url := repository.createURL(fmt.Sprintf("collections/%v.json", id))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
@@ -38,9 +38,9 @@ func (repository collectionRepository) Get(ID int64) (shopify.Collection, error)
 	return resultDTO.Collection.ToShopify(), nil
 }
 
-func (repository collectionRepository) Products(ID int64) (shopify.Products, error) {
+func (repository collectionRepository) Products(id int64) (shopify.Products, error) {
 
-	url := repository.createURL(fmt.Sprintf("collections/%v/products.json", ID))
+	url := repository.createURL(fmt.Sprintf("collections/%v/products.json", id))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
@@ -71,30 +71,30 @@ func (dtos CollectionDTOs) ToShopify() shopify.Collections {
 
 // CollectionDTO represents a Shopify collection in HTTP requests and responses
 type CollectionDTO struct {
-	ID             int64     `json:"id"`
-	Title          string    `json:"title"`
 	BodyHTML       string    `json:"body_html"`
 	Handle         string    `json:"handle"`
+	Image          ImageDTO  `json:"image"`
+	ID             int64     `json:"id"`
 	PublishedAt    time.Time `json:"published_at"`
 	PublishedScope string    `json:"published_scope"`
 	SortOrder      string    `json:"sort_order"`
-	Image          ImageDTO  `json:"image"`
 	TemplateSuffix string    `json:"template_suffix"`
+	Title          string    `json:"title"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CollectionDTO) ToShopify() shopify.Collection {
 	return shopify.Collection{
-		ID:             dto.ID,
-		Title:          dto.Title,
 		BodyHTML:       dto.BodyHTML,
 		Handle:         dto.Handle,
+		Image:          dto.Image.ToShopify(),
+		ID:             dto.ID,
 		PublishedAt:    dto.PublishedAt,
 		PublishedScope: dto.PublishedScope,
-		Image:          dto.Image.ToShopify(),
 		SortOrder:      dto.SortOrder,
 		TemplateSuffix: dto.TemplateSuffix,
+		Title:          dto.Title,
 		UpdatedAt:      dto.UpdatedAt,
 	}
 }
