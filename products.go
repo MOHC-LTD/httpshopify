@@ -22,6 +22,29 @@ func newProductRepository(client http.Client, createURL func(endpoint string) st
 	}
 }
 
+func (repository productRepository) Get(id int64) (shopify.Product, error) {
+	url := repository.createURL(fmt.Sprintf("products/%v.json", id))
+
+	body, _, err := repository.client.Get(url, nil)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	var response struct {
+		Product ProductDTO `json:"product"`
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	if response.Product.ID == 0 {
+		return shopify.Product{}, shopify.NewErrProductNotFound(id)
+	}
+
+	return response.Product.ToShopify(), nil
+}
+
 func (repository productRepository) List(query shopify.ProductQuery) (shopify.Products, error) {
 	products := make(shopify.Products, 0)
 
