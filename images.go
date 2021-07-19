@@ -6,7 +6,7 @@ import (
 	"github.com/MOHC-LTD/shopify"
 )
 
-// ImageDTO represents a Shopify Image in HTTP requests and response
+// ImageDTO represents a Shopify Image in HTTP requests and responses
 type ImageDTO struct {
 	CreatedAt time.Time `json:"created_at"`
 	SRC       string    `json:"src"`
