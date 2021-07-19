@@ -22,7 +22,7 @@ func newCollectionRepository(client http.Client, createURL func(endpoint string)
 }
 
 func (repository collectionRepository) Get(id int64) (shopify.Collection, error) {
-	url := repository.createURL(fmt.Sprintf("collections/%v.json", ID))
+	url := repository.createURL(fmt.Sprintf("collections/%v.json", id))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
@@ -40,7 +40,7 @@ func (repository collectionRepository) Get(id int64) (shopify.Collection, error)
 
 func (repository collectionRepository) Products(id int64) (shopify.Products, error) {
 
-	url := repository.createURL(fmt.Sprintf("collections/%v/products.json", ID))
+	url := repository.createURL(fmt.Sprintf("collections/%v/products.json", id))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
