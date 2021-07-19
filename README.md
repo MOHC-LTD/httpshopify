@@ -29,11 +29,21 @@ func main() {
 }
 ```
 
+You can also specify a Shopify plus shop which will used the increased rate limit.
+
+```go
+func main() {
+    shop := httpshopify.NewPlusShop("shop-name", "shopify-access-token")
+
+    order, err := shop.Orders().Get("184190283")
+}
+```
+
 If talking to a custom shopify API, specify the entire URL with the `NewCustomShop` contructor.
 
 ```go
 func main() {
-    shop := httpshopify.NewCustomShop("https://myhost.com", "shopify-access-token")
+    shop := httpshopify.NewCustomShop("https://myhost.com", "shopify-access-token", shopify.IsPlus)
 
     order, err := shop.Orders().Get("184190283")
 }

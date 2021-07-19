@@ -1,38 +1,37 @@
 package http
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 // HandleStatus maps a status to the corresponding error
-func HandleStatus(status int) error {
-	switch status {
-	case http.StatusUnauthorized:
-		return UnauthorizedErr{}
-	case http.StatusBadRequest:
-		return BadRequestErr{}
-	case http.StatusInternalServerError:
-		return InternalServerErr{}
-	default:
-		return nil
+func HandleStatus(status int, body []byte) error {
+	if status >= http.StatusBadRequest {
+		err := NewErrHTTP(
+			status,
+			string(body),
+		)
+
+		fmt.Println(err)
+
+		return err
 	}
+
+	return nil
 }
 
-// UnauthorizedErr thrown when the user is unauthorized
-type UnauthorizedErr struct{}
-
-func (err UnauthorizedErr) Error() string {
-	return "unauthorized"
+// ErrHTTP thrown when the http error code is >= http.StatusBadRequest
+type ErrHTTP struct {
+	Code int
+	Body string
 }
 
-// BadRequestErr thrown when the request is bad
-type BadRequestErr struct{}
-
-func (err BadRequestErr) Error() string {
-	return "bad request"
+func (err ErrHTTP) Error() string {
+	return fmt.Sprintf("%v %v", err.Code, err.Body)
 }
 
-// InternalServerErr thrown when there is an internal server error
-type InternalServerErr struct{}
-
-func (err InternalServerErr) Error() string {
-	return "internal server error"
+// NewErrHTTP builds the error
+func NewErrHTTP(code int, body string) ErrHTTP {
+	return ErrHTTP{code, body}
 }
