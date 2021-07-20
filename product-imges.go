@@ -22,7 +22,7 @@ func newProductImagesRepository(client http.Client, createURL func(endpoint stri
 	}
 }
 
-// ProductImageDTOs is a collection of productImage DTOs
+// ProductImageDTOs is a collection of ProductImage DTOs
 type ProductImageDTOs []ProductImageDTO
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -100,7 +100,7 @@ func parseProductImagesQuery(query shopify.ProductImageQuery) string {
 	queryStrings := make([]string, 0)
 
 	if query.SinceID != 0 {
-		queryStrings = append(queryStrings, fmt.Sprintf("since_ids=%v", query.SinceID))
+		queryStrings = append(queryStrings, fmt.Sprintf("since_id=%v", query.SinceID))
 	}
 
 	if len(queryStrings) == 0 {

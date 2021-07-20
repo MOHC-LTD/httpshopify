@@ -93,10 +93,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		products:          newProductRepository(client, createURL),
 		inventoryLevels:   newInventoryLevelRepository(client, createURL),
 		collections:       newCollectionRepository(client, createURL),
-<<<<<<< HEAD
 		productImages:     newProductImagesRepository(client, createURL),
-=======
->>>>>>> develop
 	}
 }
 
