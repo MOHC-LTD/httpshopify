@@ -17,7 +17,10 @@ type Shop struct {
 	products          productRepository
 	inventoryLevels   inventoryLevelRepository
 	collections       collectionRepository
+<<<<<<< HEAD
 	productImages     productImagesRepository
+=======
+>>>>>>> develop
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
@@ -90,7 +93,10 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		products:          newProductRepository(client, createURL),
 		inventoryLevels:   newInventoryLevelRepository(client, createURL),
 		collections:       newCollectionRepository(client, createURL),
+<<<<<<< HEAD
 		productImages:     newProductImagesRepository(client, createURL),
+=======
+>>>>>>> develop
 	}
 }
 
