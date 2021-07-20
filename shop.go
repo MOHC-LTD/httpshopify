@@ -17,10 +17,7 @@ type Shop struct {
 	products          productRepository
 	inventoryLevels   inventoryLevelRepository
 	collections       collectionRepository
-<<<<<<< HEAD
 	productImages     productImagesRepository
-=======
->>>>>>> develop
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
