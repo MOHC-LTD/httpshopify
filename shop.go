@@ -16,6 +16,7 @@ type Shop struct {
 	variants          variantRepository
 	products          productRepository
 	inventoryLevels   inventoryLevelRepository
+	collections       collectionRepository
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
@@ -87,35 +88,41 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		variants:          newVariantRepository(client, createURL),
 		products:          newProductRepository(client, createURL),
 		inventoryLevels:   newInventoryLevelRepository(client, createURL),
+		collections:       newCollectionRepository(client, createURL),
 	}
 }
 
-// Orders returns an http implementation of a shopify order repository
+// Orders returns an HTTP implementation of a Shopify order repository
 func (shop Shop) Orders() shopify.OrderRepository {
 	return shop.orders
 }
 
-// Fulfillments returns an http implementation of a shopify fulfillment repository
+// Fulfillments returns an HTTP implementation of a Shopify fulfillment repository
 func (shop Shop) Fulfillments() shopify.FulfillmentRepository {
 	return shop.fulfillments
 }
 
-// FulfillmentEvents returns an http implementation of a shopify fulfillment event repository
+// FulfillmentEvents returns an HTTP implementation of a Shopify fulfillment event repository
 func (shop Shop) FulfillmentEvents() shopify.FulfillmentEventRepository {
 	return shop.fulfillmentEvents
 }
 
-// Variants returns an http implementation of a shopify variant repository
+// Variants returns an HTTP implementation of a Shopify variant repository
 func (shop Shop) Variants() shopify.VariantRepository {
 	return shop.variants
 }
 
-// Products returns an http implementation of a shopify product repository
+// Products returns an HTTP implementation of a Shopify product repository
 func (shop Shop) Products() shopify.ProductRepository {
 	return shop.products
 }
 
-// InventoryLevels returns an http implementation of a shopify inventory level repository
+// InventoryLevels returns an HTTP implementation of a Shopify inventory level repository
 func (shop Shop) InventoryLevels() shopify.InventoryLevelRepository {
 	return shop.inventoryLevels
+}
+
+// Collections returns an HTTP implementation of a Shopify collection repository
+func (shop Shop) Collections() shopify.CollectionRepository {
+	return shop.collections
 }
