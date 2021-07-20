@@ -81,7 +81,6 @@ type ProductImageDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
 	return shopify.ProductImage{
-		ID: dto.ID,
 		Image: shopify.Image{
 			CreatedAt: dto.CreatedAt,
 			SRC:       dto.SRC,
@@ -89,6 +88,7 @@ func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
 			Height:    dto.Height,
 			Alt:       dto.Alt,
 		},
+		ID:         dto.ID,
 		Position:   dto.Position,
 		ProductID:  dto.ProductID,
 		VariantIDs: dto.VariantIDs,
