@@ -77,6 +77,7 @@ type CollectionDTO struct {
 	ID             int64     `json:"id"`
 	PublishedAt    time.Time `json:"published_at"`
 	PublishedScope string    `json:"published_scope"`
+	Rules          RuleDTOs  `json:"rules"`
 	SortOrder      string    `json:"sort_order"`
 	TemplateSuffix string    `json:"template_suffix"`
 	Title          string    `json:"title"`
@@ -92,6 +93,7 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 		ID:             dto.ID,
 		PublishedAt:    dto.PublishedAt,
 		PublishedScope: dto.PublishedScope,
+		Rules:          dto.Rules.ToShopify(),
 		SortOrder:      dto.SortOrder,
 		TemplateSuffix: dto.TemplateSuffix,
 		Title:          dto.Title,
