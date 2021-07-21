@@ -80,6 +80,7 @@ type CollectionDTO struct {
 	Rules          RuleDTOs  `json:"rules"`
 	SortOrder      string    `json:"sort_order"`
 	TemplateSuffix string    `json:"template_suffix"`
+	ProductCount   int       `json:"product_count"`
 	Title          string    `json:"title"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
@@ -96,6 +97,7 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 		Rules:          dto.Rules.ToShopify(),
 		SortOrder:      dto.SortOrder,
 		TemplateSuffix: dto.TemplateSuffix,
+		ProductCount:   dto.ProductCount,
 		Title:          dto.Title,
 		UpdatedAt:      dto.UpdatedAt,
 	}
