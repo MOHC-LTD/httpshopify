@@ -41,3 +41,8 @@ func (dto AddressDTO) ToShopify() shopify.Address {
 		Zip:          dto.Zip,
 	}
 }
+
+// BuildAddressDTO converts a Shopify address to its DTO equivalent
+func BuildAddressDTO(address shopify.Address) AddressDTO {
+	return AddressDTO(address)
+}
