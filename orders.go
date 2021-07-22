@@ -90,6 +90,28 @@ func (repository orderRepository) Close(id int64) error {
 	return nil
 }
 
+func (repository orderRepository) Create(order shopify.Order) error {
+	url := repository.createURL("orders.json")
+
+	bodyData := struct {
+		Order OrderDTO `json:"order"`
+	}{
+		Order: BuildOrderDTO(order),
+	}
+
+	body, err := json.Marshal(&bodyData)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = repository.client.Post(url, body, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // OrderDTO represents a Shopify order in HTTP requests and responses
 type OrderDTO struct {
 	BillingAddress           AddressDTO       `json:"billing_address"`
@@ -165,6 +187,46 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		TotalTax:                 dto.TotalTax,
 		TotalTaxSet:              dto.TotalTaxSet.ToShopify(),
 		UpdatedAt:                dto.UpdatedAt,
+	}
+}
+
+// BuildOrderDTO converts a Shopify order to the DTO equivalent
+func BuildOrderDTO(order shopify.Order) OrderDTO {
+	return OrderDTO{
+		BillingAddress:           BuildAddressDTO(order.BillingAddress),
+		ClosedAt:                 order.ClosedAt,
+		CreatedAt:                order.CreatedAt,
+		Currency:                 order.Currency,
+		CurrentTotalDiscounts:    order.CurrentTotalDiscounts,
+		CurrentTotalDiscountsSet: BuildPriceSetDTO(order.CurrentTotalDiscountsSet),
+		CurrentTotalPrice:        order.CurrentTotalPrice,
+		CurrentTotalPriceSet:     BuildPriceSetDTO(order.CurrentTotalPriceSet),
+		CurrentSubtotalPrice:     order.CurrentSubtotalPrice,
+		CurrentSubtotalPriceSet:  BuildPriceSetDTO(order.CurrentSubtotalPriceSet),
+		CurrentTotalTax:          order.CurrentTotalTax,
+		CurrentTotalTaxSet:       BuildPriceSetDTO(order.CurrentTotalTaxSet),
+		Customer:                 BuildCustomerDTO(order.Customer),
+		Email:                    order.Email,
+		FinancialStatus:          order.FinancialStatus,
+		Fulfillments:             BuildFulfillmentDTOs(order.Fulfillments),
+		FulfillmentStatus:        order.FulfillmentStatus,
+		ID:                       order.ID,
+		LineItems:                buildLineItemDTOs(order.LineItems),
+		Name:                     order.Name,
+		PresentmentCurrency:      order.PresentmentCurrency,
+		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
+		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
+		SubtotalPrice:            order.SubtotalPrice,
+		SubtotalPriceSet:         BuildPriceSetDTO(order.SubtotalPriceSet),
+		TotalDiscounts:           order.TotalDiscounts,
+		TotalDiscountsSet:        BuildPriceSetDTO(order.TotalDiscountsSet),
+		TotalLineItemsPrice:      order.TotalLineItemsPrice,
+		TotalLineItemsPriceSet:   BuildPriceSetDTO(order.TotalLineItemsPriceSet),
+		TotalPrice:               order.TotalPrice,
+		TotalPriceSet:            BuildPriceSetDTO(order.TotalPriceSet),
+		TotalTax:                 order.TotalTax,
+		TotalTaxSet:              BuildPriceSetDTO(order.TotalTaxSet),
+		UpdatedAt:                order.UpdatedAt,
 	}
 }
 
