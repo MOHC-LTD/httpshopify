@@ -36,6 +36,16 @@ func (dtos ProductImageDTOs) ToShopify() shopify.ProductImages {
 	return productImages
 }
 
+func buildProductImageDTOs(productImages shopify.ProductImages) ProductImageDTOs {
+	dtos := make(ProductImageDTOs, 0, len(productImages))
+
+	for _, productImage := range productImages {
+		dtos = append(dtos, buildProductImageDTO(productImage))
+	}
+
+	return dtos
+}
+
 func (repository productImagesRepository) List(productID int64, query shopify.ProductImageQuery) (shopify.ProductImages, error) {
 	productImages := make(shopify.ProductImages, 0)
 
@@ -71,11 +81,11 @@ func (repository productImagesRepository) List(productID int64, query shopify.Pr
 // ProductImageDTO represents a Shopify product images in HTTP requests and responses
 type ProductImageDTO struct {
 	ImageDTO
-	ID         int64     `json:"id"`
-	Position   int       `json:"position"`
-	ProductID  int64     `json:"product_id"`
-	VariantIDs []int64   `json:"variant_ids"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	ID         int64     `json:"id,omitempty"`
+	Position   int       `json:"position,omitempty"`
+	ProductID  int64     `json:"product_id,omitempty"`
+	VariantIDs []int64   `json:"variant_ids,omitempty"`
+	UpdatedAt  time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -93,6 +103,17 @@ func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
 		ProductID:  dto.ProductID,
 		VariantIDs: dto.VariantIDs,
 		UpdatedAt:  dto.UpdatedAt,
+	}
+}
+
+func buildProductImageDTO(productImage shopify.ProductImage) ProductImageDTO {
+	return ProductImageDTO{
+		ImageDTO:   ImageDTO(productImage.Image),
+		ID:         productImage.ID,
+		Position:   productImage.Position,
+		ProductID:  productImage.ProductID,
+		VariantIDs: productImage.VariantIDs,
+		UpdatedAt:  productImage.UpdatedAt,
 	}
 }
 

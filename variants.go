@@ -36,16 +36,26 @@ func (dtos VariantDTOs) ToShopify() shopify.Variants {
 	return variants
 }
 
+func buildVariantDTOs(variants shopify.Variants) VariantDTOs {
+	dtos := make([]VariantDTO, 0, len(variants))
+
+	for _, variant := range variants {
+		dtos = append(dtos, VariantDTO(variant))
+	}
+
+	return dtos
+}
+
 // VariantDTO represents a Shopify variant in HTTP requests and responses
 type VariantDTO struct {
-	ID              int64     `json:"id"`
-	SKU             string    `json:"sku"`
-	Title           string    `json:"title"`
-	InventoryItemID int64     `json:"inventory_item_id"`
-	Price           string    `json:"price"`
-	Barcode         string    `json:"barcode"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	ID              int64     `json:"id,omitempty"`
+	SKU             string    `json:"sku,omitempty"`
+	Title           string    `json:"title,omitempty"`
+	InventoryItemID int64     `json:"inventory_item_id,omitempty"`
+	Price           string    `json:"price,omitempty"`
+	Barcode         string    `json:"barcode,omitempty"`
+	CreatedAt       time.Time `json:"created_at,omitempty"`
+	UpdatedAt       time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent

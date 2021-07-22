@@ -22,6 +22,53 @@ func newProductRepository(client http.Client, createURL func(endpoint string) st
 	}
 }
 
+func (repository productRepository) Create(product shopify.Product) (shopify.Product, error) {
+	createDTO := ProductDTO{
+		ID:          product.ID,
+		CreatedAt:   product.CreatedAt,
+		BodyHTML:    product.BodyHTML,
+		ProductType: product.ProductType,
+		Images:      buildProductImageDTOs(product.Images),
+		PublishedAt: product.PublishedAt,
+		Status:      product.Status,
+		Tags:        product.Tags,
+		Title:       product.Title,
+		UpdatedAt:   product.UpdatedAt,
+		Variants:    buildVariantDTOs(product.Variants),
+		Vendor:      product.Vendor,
+	}
+
+	request := struct {
+		Product ProductDTO `json:"product"`
+	}{
+		Product: createDTO,
+	}
+
+	body, err := json.Marshal(request)
+
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	url := repository.createURL("products.json")
+
+	respBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	var response struct {
+		Product ProductDTO `json:"product"`
+	}
+
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	return response.Product.ToShopify(), nil
+}
+
 func (repository productRepository) Get(id int64) (shopify.Product, error) {
 	url := repository.createURL(fmt.Sprintf("products/%v.json", id))
 
@@ -93,18 +140,18 @@ func (dtos ProductDTOs) ToShopify() shopify.Products {
 
 // ProductDTO represents a Shopify product in HTTP requests and responses
 type ProductDTO struct {
-	ID          int64            `json:"id"`
-	CreatedAt   time.Time        `json:"created_at"`
-	BodyHTML    string           `json:"body_html"`
-	ProductType string           `json:"product_type"`
-	Images      ProductImageDTOs `json:"images"`
-	PublishedAt time.Time        `json:"published_at"`
-	Status      string           `json:"status"`
-	Tags        string           `json:"tags"`
-	Title       string           `json:"title"`
-	UpdatedAt   time.Time        `json:"updated_at"`
-	Variants    VariantDTOs      `json:"variants"`
-	Vendor      string           `json:"vendor"`
+	ID          int64            `json:"id,omitempty"`
+	CreatedAt   time.Time        `json:"created_at,omitempty"`
+	BodyHTML    string           `json:"body_html,omitempty"`
+	ProductType string           `json:"product_type,omitempty"`
+	Images      ProductImageDTOs `json:"images,omitempty"`
+	PublishedAt time.Time        `json:"published_at,omitempty"`
+	Status      string           `json:"status,omitempty"`
+	Tags        string           `json:"tags,omitempty"`
+	Title       string           `json:"title,omitempty"`
+	UpdatedAt   time.Time        `json:"updated_at,omitempty"`
+	Variants    VariantDTOs      `json:"variants,omitempty"`
+	Vendor      string           `json:"vendor,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
