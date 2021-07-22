@@ -90,7 +90,7 @@ func (repository orderRepository) Close(id int64) error {
 	return nil
 }
 
-func (repository orderRepository) Create(order shopify.Order) error {
+func (repository orderRepository) Create(order shopify.Order) (shopify.Order, error) {
 	url := repository.createURL("orders.json")
 
 	bodyData := struct {
@@ -101,15 +101,23 @@ func (repository orderRepository) Create(order shopify.Order) error {
 
 	body, err := json.Marshal(&bodyData)
 	if err != nil {
-		return err
+		return shopify.Order{}, err
 	}
 
-	_, _, err = repository.client.Post(url, body, nil)
+	responseBody, _, err := repository.client.Post(url, body, nil)
 	if err != nil {
-		return err
+		return shopify.Order{}, err
 	}
 
-	return nil
+	var response struct {
+		Order OrderDTO `json:"order"`
+	}
+	err = json.Unmarshal(responseBody, &response)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	return response.Order.ToShopify(), nil
 }
 
 // OrderDTO represents a Shopify order in HTTP requests and responses
