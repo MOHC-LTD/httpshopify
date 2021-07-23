@@ -219,7 +219,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		Fulfillments:             BuildFulfillmentDTOs(order.Fulfillments),
 		FulfillmentStatus:        order.FulfillmentStatus,
 		ID:                       order.ID,
-		LineItems:                buildLineItemDTOs(order.LineItems),
+		LineItems:                BuildLineItemDTOs(order.LineItems),
 		Name:                     order.Name,
 		PresentmentCurrency:      order.PresentmentCurrency,
 		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
