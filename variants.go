@@ -36,7 +36,7 @@ func (dtos VariantDTOs) ToShopify() shopify.Variants {
 	return variants
 }
 
-func buildVariantDTOs(variants shopify.Variants) VariantDTOs {
+func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 	dtos := make([]VariantDTO, 0, len(variants))
 
 	for _, variant := range variants {

@@ -28,7 +28,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 		CreatedAt:   product.CreatedAt,
 		BodyHTML:    product.BodyHTML,
 		ProductType: product.ProductType,
-		Images:      buildProductImageDTOs(product.Images),
+		Images:      BuildProductImageDTOs(product.Images),
 		PublishedAt: product.PublishedAt,
 		Status:      product.Status,
 		Tags:        product.Tags,

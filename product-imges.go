@@ -36,11 +36,11 @@ func (dtos ProductImageDTOs) ToShopify() shopify.ProductImages {
 	return productImages
 }
 
-func buildProductImageDTOs(productImages shopify.ProductImages) ProductImageDTOs {
+func BuildProductImageDTOs(productImages shopify.ProductImages) ProductImageDTOs {
 	dtos := make(ProductImageDTOs, 0, len(productImages))
 
 	for _, productImage := range productImages {
-		dtos = append(dtos, buildProductImageDTO(productImage))
+		dtos = append(dtos, BuildProductImageDTO(productImage))
 	}
 
 	return dtos
@@ -106,7 +106,7 @@ func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
 	}
 }
 
-func buildProductImageDTO(productImage shopify.ProductImage) ProductImageDTO {
+func BuildProductImageDTO(productImage shopify.ProductImage) ProductImageDTO {
 	return ProductImageDTO{
 		ImageDTO:   ImageDTO(productImage.Image),
 		ID:         productImage.ID,
