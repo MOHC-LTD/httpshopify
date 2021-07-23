@@ -27,3 +27,15 @@ func (dto CustomerDTO) ToShopify() shopify.Customer {
 		UpdatedAt: dto.UpdatedAt,
 	}
 }
+
+// BuildCustomerDTO converts a Shopify customer to the DTO equivalent
+func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
+	return CustomerDTO{
+		ID:        customer.ID,
+		Email:     customer.Email,
+		FirstName: customer.FirstName,
+		LastName:  customer.LastName,
+		CreatedAt: customer.CreatedAt,
+		UpdatedAt: customer.UpdatedAt,
+	}
+}

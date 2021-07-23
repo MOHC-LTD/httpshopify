@@ -141,6 +141,22 @@ func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 	}
 }
 
+// BuildFulfilmentDTO converts the fulfillment into its DTO equivalent
+func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
+	return FulfillmentDTO{
+		ID:              fulfillment.ID,
+		OrderID:         fulfillment.OrderID,
+		TrackingNumbers: fulfillment.TrackingNumbers,
+		Status:          fulfillment.Status,
+		CreatedAt:       fulfillment.CreatedAt,
+		UpdatedAt:       fulfillment.UpdatedAt,
+		NotifyCustomer:  fulfillment.NotifyCustomer,
+		ShipmentStatus:  fulfillment.ShipmentStatus,
+		LocationID:      fulfillment.LocationID,
+		LineItems:       buildLineItemDTOs(fulfillment.LineItems),
+	}
+}
+
 // ToShopify converts the DTO to the Shopify equivalent
 func (dtos FulfillmentDTOs) ToShopify() []shopify.Fulfillment {
 	fulfillments := make([]shopify.Fulfillment, 0, len(dtos))
@@ -150,4 +166,15 @@ func (dtos FulfillmentDTOs) ToShopify() []shopify.Fulfillment {
 	}
 
 	return fulfillments
+}
+
+// BuildFulfillmentDTOs converts the fulfillments into their DTO equivalents
+func BuildFulfillmentDTOs(fulfillments []shopify.Fulfillment) FulfillmentDTOs {
+	dtos := make(FulfillmentDTOs, 0, len(fulfillments))
+
+	for _, fulfillment := range fulfillments {
+		dtos = append(dtos, BuildFulfilmentDTO(fulfillment))
+	}
+
+	return dtos
 }
