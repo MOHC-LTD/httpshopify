@@ -27,7 +27,7 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 		LocationID:      fulfillment.LocationID,
 		TrackingNumbers: fulfillment.TrackingNumbers,
 		NotifyCustomer:  fulfillment.NotifyCustomer,
-		LineItems:       buildLineItemDTOs(fulfillment.LineItems),
+		LineItems:       BuildLineItemDTOs(fulfillment.LineItems),
 	}
 
 	request := struct {
@@ -113,16 +113,16 @@ type FulfillmentDTOs []FulfillmentDTO
 
 // FulfillmentDTO represents and Shopify fulfillment in HTTP requests and responses
 type FulfillmentDTO struct {
-	ID              int64        `json:"id"`
-	OrderID         int64        `json:"order_id"`
-	TrackingNumbers []string     `json:"tracking_numbers"`
-	Status          string       `json:"status"`
-	CreatedAt       time.Time    `json:"created_at"`
-	UpdatedAt       time.Time    `json:"updated_at"`
-	NotifyCustomer  bool         `json:"notify_customer"`
-	ShipmentStatus  string       `json:"shipment_status"`
-	LocationID      int64        `json:"location_id"`
-	LineItems       LineItemDTOs `json:"lineItems"`
+	ID              int64        `json:"id,omitempty"`
+	OrderID         int64        `json:"order_id,omitempty"`
+	TrackingNumbers []string     `json:"tracking_numbers,omitempty"`
+	Status          string       `json:"status,omitempty"`
+	CreatedAt       time.Time    `json:"created_at,omitempty"`
+	UpdatedAt       time.Time    `json:"updated_at,omitempty"`
+	NotifyCustomer  bool         `json:"notify_customer,omitempty"`
+	ShipmentStatus  string       `json:"shipment_status,omitempty"`
+	LocationID      int64        `json:"location_id,omitempty"`
+	LineItems       LineItemDTOs `json:"lineItems,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -141,6 +141,22 @@ func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 	}
 }
 
+// BuildFulfilmentDTO converts the fulfillment into its DTO equivalent
+func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
+	return FulfillmentDTO{
+		ID:              fulfillment.ID,
+		OrderID:         fulfillment.OrderID,
+		TrackingNumbers: fulfillment.TrackingNumbers,
+		Status:          fulfillment.Status,
+		CreatedAt:       fulfillment.CreatedAt,
+		UpdatedAt:       fulfillment.UpdatedAt,
+		NotifyCustomer:  fulfillment.NotifyCustomer,
+		ShipmentStatus:  fulfillment.ShipmentStatus,
+		LocationID:      fulfillment.LocationID,
+		LineItems:       BuildLineItemDTOs(fulfillment.LineItems),
+	}
+}
+
 // ToShopify converts the DTO to the Shopify equivalent
 func (dtos FulfillmentDTOs) ToShopify() []shopify.Fulfillment {
 	fulfillments := make([]shopify.Fulfillment, 0, len(dtos))
@@ -150,4 +166,15 @@ func (dtos FulfillmentDTOs) ToShopify() []shopify.Fulfillment {
 	}
 
 	return fulfillments
+}
+
+// BuildFulfillmentDTOs converts the fulfillments into their DTO equivalents
+func BuildFulfillmentDTOs(fulfillments []shopify.Fulfillment) FulfillmentDTOs {
+	dtos := make(FulfillmentDTOs, 0, len(fulfillments))
+
+	for _, fulfillment := range fulfillments {
+		dtos = append(dtos, BuildFulfilmentDTO(fulfillment))
+	}
+
+	return dtos
 }

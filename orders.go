@@ -90,42 +90,74 @@ func (repository orderRepository) Close(id int64) error {
 	return nil
 }
 
+func (repository orderRepository) Create(order shopify.Order) (shopify.Order, error) {
+	url := repository.createURL("orders.json")
+
+	bodyData := struct {
+		Order OrderDTO `json:"order"`
+	}{
+		Order: BuildOrderDTO(order),
+	}
+
+	body, err := json.Marshal(&bodyData)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	responseBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	var response struct {
+		Order OrderDTO `json:"order"`
+	}
+	err = json.Unmarshal(responseBody, &response)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	return response.Order.ToShopify(), nil
+}
+
 // OrderDTO represents a Shopify order in HTTP requests and responses
 type OrderDTO struct {
-	BillingAddress           AddressDTO       `json:"billing_address"`
-	ClosedAt                 time.Time        `json:"closed_at"`
-	CreatedAt                time.Time        `json:"created_at"`
-	Currency                 string           `json:"currency"`
-	CurrentTotalDiscounts    string           `json:"current_total_discounts"`
-	CurrentTotalDiscountsSet PriceSetDTO      `json:"current_total_discounts_set"`
-	CurrentTotalPrice        string           `json:"current_total_price"`
-	CurrentTotalPriceSet     PriceSetDTO      `json:"current_total_price_set"`
-	CurrentSubtotalPrice     string           `json:"current_subtotal_price"`
-	CurrentSubtotalPriceSet  PriceSetDTO      `json:"current_subtotal_price_set"`
-	CurrentTotalTax          string           `json:"current_total_tax"`
-	CurrentTotalTaxSet       PriceSetDTO      `json:"current_total_tax_set"`
-	Customer                 CustomerDTO      `json:"customer"`
-	Email                    string           `json:"email"`
-	FinancialStatus          string           `json:"financial_status"`
-	Fulfillments             FulfillmentDTOs  `json:"fulfillments"`
-	FulfillmentStatus        string           `json:"fulfillment_status"`
-	ID                       int64            `json:"id"`
-	LineItems                LineItemDTOs     `json:"line_items"`
-	Name                     string           `json:"name"`
-	PresentmentCurrency      string           `json:"presentment_currency"`
-	ShippingAddress          AddressDTO       `json:"shipping_address"`
-	ShippingLines            ShippingLineDTOs `json:"shipping_lines"`
-	SubtotalPrice            string           `json:"subtotal_price"`
-	SubtotalPriceSet         PriceSetDTO      `json:"subtotal_price_set"`
-	TotalDiscounts           string           `json:"total_discounts"`
-	TotalDiscountsSet        PriceSetDTO      `json:"total_discounts_set"`
-	TotalLineItemsPrice      string           `json:"total_line_items_price"`
-	TotalLineItemsPriceSet   PriceSetDTO      `json:"total_line_items_price_set"`
-	TotalPrice               string           `json:"total_price"`
-	TotalPriceSet            PriceSetDTO      `json:"total_price_set"`
-	TotalTax                 string           `json:"total_tax"`
-	TotalTaxSet              PriceSetDTO      `json:"total_tax_set"`
-	UpdatedAt                time.Time        `json:"updated_at"`
+	BillingAddress           AddressDTO       `json:"billing_address,omitempty"`
+	ClosedAt                 time.Time        `json:"closed_at,omitempty"`
+	CreatedAt                time.Time        `json:"created_at,omitempty"`
+	Currency                 string           `json:"currency,omitempty"`
+	CurrentTotalDiscounts    string           `json:"current_total_discounts,omitempty"`
+	CurrentTotalDiscountsSet PriceSetDTO      `json:"current_total_discounts_set,omitempty"`
+	CurrentTotalPrice        string           `json:"current_total_price,omitempty"`
+	CurrentTotalPriceSet     PriceSetDTO      `json:"current_total_price_set,omitempty"`
+	CurrentSubtotalPrice     string           `json:"current_subtotal_price,omitempty"`
+	CurrentSubtotalPriceSet  PriceSetDTO      `json:"current_subtotal_price_set,omitempty"`
+	CurrentTotalTax          string           `json:"current_total_tax,omitempty"`
+	CurrentTotalTaxSet       PriceSetDTO      `json:"current_total_tax_set,omitempty"`
+	Customer                 CustomerDTO      `json:"customer,omitempty"`
+	Email                    string           `json:"email,omitempty"`
+	FinancialStatus          string           `json:"financial_status,omitempty"`
+	Fulfillments             FulfillmentDTOs  `json:"fulfillments,omitempty"`
+	FulfillmentStatus        string           `json:"fulfillment_status,omitempty"`
+	ID                       int64            `json:"id,omitempty"`
+	LineItems                LineItemDTOs     `json:"line_items,omitempty"`
+	Name                     string           `json:"name,omitempty"`
+	OrderNumber              int              `json:"order_number,omitempty"`
+	PresentmentCurrency      string           `json:"presentment_currency,omitempty"`
+	ProcessedAt              time.Time        `json:"processed_at,omitempty"`
+	ShippingAddress          AddressDTO       `json:"shipping_address,omitempty"`
+	ShippingLines            ShippingLineDTOs `json:"shipping_lines,omitempty"`
+	SubtotalPrice            string           `json:"subtotal_price,omitempty"`
+	SubtotalPriceSet         PriceSetDTO      `json:"subtotal_price_set,omitempty"`
+	TotalDiscounts           string           `json:"total_discounts,omitempty"`
+	TotalDiscountsSet        PriceSetDTO      `json:"total_discounts_set,omitempty"`
+	TotalLineItemsPrice      string           `json:"total_line_items_price,omitempty"`
+	TotalLineItemsPriceSet   PriceSetDTO      `json:"total_line_items_price_set,omitempty"`
+	TotalPrice               string           `json:"total_price,omitempty"`
+	TotalPriceSet            PriceSetDTO      `json:"total_price_set,omitempty"`
+	TotalTax                 string           `json:"total_tax,omitempty"`
+	TotalTaxSet              PriceSetDTO      `json:"total_tax_set,omitempty"`
+	UpdatedAt                time.Time        `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -151,7 +183,9 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		ID:                       dto.ID,
 		LineItems:                dto.LineItems.ToShopify(),
 		Name:                     dto.Name,
+		OrderNumber:              dto.OrderNumber,
 		PresentmentCurrency:      dto.PresentmentCurrency,
+		ProcessedAt:              dto.ProcessedAt,
 		ShippingAddress:          dto.ShippingAddress.ToShopify(),
 		ShippingLines:            dto.ShippingLines.ToShopify(),
 		SubtotalPrice:            dto.SubtotalPrice,
@@ -165,6 +199,48 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		TotalTax:                 dto.TotalTax,
 		TotalTaxSet:              dto.TotalTaxSet.ToShopify(),
 		UpdatedAt:                dto.UpdatedAt,
+	}
+}
+
+// BuildOrderDTO converts a Shopify order to the DTO equivalent
+func BuildOrderDTO(order shopify.Order) OrderDTO {
+	return OrderDTO{
+		BillingAddress:           BuildAddressDTO(order.BillingAddress),
+		ClosedAt:                 order.ClosedAt,
+		CreatedAt:                order.CreatedAt,
+		Currency:                 order.Currency,
+		CurrentTotalDiscounts:    order.CurrentTotalDiscounts,
+		CurrentTotalDiscountsSet: BuildPriceSetDTO(order.CurrentTotalDiscountsSet),
+		CurrentTotalPrice:        order.CurrentTotalPrice,
+		CurrentTotalPriceSet:     BuildPriceSetDTO(order.CurrentTotalPriceSet),
+		CurrentSubtotalPrice:     order.CurrentSubtotalPrice,
+		CurrentSubtotalPriceSet:  BuildPriceSetDTO(order.CurrentSubtotalPriceSet),
+		CurrentTotalTax:          order.CurrentTotalTax,
+		CurrentTotalTaxSet:       BuildPriceSetDTO(order.CurrentTotalTaxSet),
+		Customer:                 BuildCustomerDTO(order.Customer),
+		Email:                    order.Email,
+		FinancialStatus:          order.FinancialStatus,
+		Fulfillments:             BuildFulfillmentDTOs(order.Fulfillments),
+		FulfillmentStatus:        order.FulfillmentStatus,
+		ID:                       order.ID,
+		LineItems:                BuildLineItemDTOs(order.LineItems),
+		Name:                     order.Name,
+		OrderNumber:              order.OrderNumber,
+		PresentmentCurrency:      order.PresentmentCurrency,
+		ProcessedAt:              order.ProcessedAt,
+		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
+		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
+		SubtotalPrice:            order.SubtotalPrice,
+		SubtotalPriceSet:         BuildPriceSetDTO(order.SubtotalPriceSet),
+		TotalDiscounts:           order.TotalDiscounts,
+		TotalDiscountsSet:        BuildPriceSetDTO(order.TotalDiscountsSet),
+		TotalLineItemsPrice:      order.TotalLineItemsPrice,
+		TotalLineItemsPriceSet:   BuildPriceSetDTO(order.TotalLineItemsPriceSet),
+		TotalPrice:               order.TotalPrice,
+		TotalPriceSet:            BuildPriceSetDTO(order.TotalPriceSet),
+		TotalTax:                 order.TotalTax,
+		TotalTaxSet:              BuildPriceSetDTO(order.TotalTaxSet),
+		UpdatedAt:                order.UpdatedAt,
 	}
 }
 

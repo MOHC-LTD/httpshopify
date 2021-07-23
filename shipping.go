@@ -7,13 +7,13 @@ type ShippingLineDTOs []ShippingLineDTO
 
 // ShippingLineDTO represents a Shopify shipping line in HTTP requests and responses
 type ShippingLineDTO struct {
-	Code               string      `json:"code"`
-	Price              string      `json:"price"`
-	PriceSet           PriceSetDTO `json:"price_set"`
-	DiscountedPrice    string      `json:"discounted_price"`
-	DiscountedPriceSet PriceSetDTO `json:"discounted_price_set"`
-	ID                 int64       `json:"id"`
-	Title              string      `json:"title"`
+	Code               string      `json:"code,omitempty"`
+	Price              string      `json:"price,omitempty"`
+	PriceSet           PriceSetDTO `json:"price_set,omitempty"`
+	DiscountedPrice    string      `json:"discounted_price,omitempty"`
+	DiscountedPriceSet PriceSetDTO `json:"discounted_price_set,omitempty"`
+	ID                 int64       `json:"id,omitempty"`
+	Title              string      `json:"title,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -29,6 +29,19 @@ func (dto ShippingLineDTO) ToShopify() shopify.ShippingLine {
 	}
 }
 
+// BuildShippingLineDTO converts the shopify shipping line to its DTO equivalent
+func BuildShippingLineDTO(shippingLine shopify.ShippingLine) ShippingLineDTO {
+	return ShippingLineDTO{
+		Code:               shippingLine.Code,
+		Price:              shippingLine.Price,
+		PriceSet:           BuildPriceSetDTO(shippingLine.PriceSet),
+		DiscountedPrice:    shippingLine.DiscountedPrice,
+		DiscountedPriceSet: BuildPriceSetDTO(shippingLine.DiscountedPriceSet),
+		ID:                 shippingLine.ID,
+		Title:              shippingLine.Title,
+	}
+}
+
 // ToShopify converts the DTO to the Shopify equivalent
 func (dtos ShippingLineDTOs) ToShopify() shopify.ShippingLines {
 	shippingLines := make(shopify.ShippingLines, 0, len(dtos))
@@ -38,4 +51,15 @@ func (dtos ShippingLineDTOs) ToShopify() shopify.ShippingLines {
 	}
 
 	return shippingLines
+}
+
+// BuildShippingLineDTOs converts the shopify shipping line to its DTO equivalent
+func BuildShippingLineDTOs(shippingLines shopify.ShippingLines) ShippingLineDTOs {
+	dtos := make(ShippingLineDTOs, 0, len(shippingLines))
+
+	for _, shippingLine := range shippingLines {
+		dtos = append(dtos, BuildShippingLineDTO(shippingLine))
+	}
+
+	return dtos
 }
