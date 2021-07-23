@@ -142,7 +142,9 @@ type OrderDTO struct {
 	ID                       int64            `json:"id,omitempty"`
 	LineItems                LineItemDTOs     `json:"line_items,omitempty"`
 	Name                     string           `json:"name,omitempty"`
+	OrderNumber              int              `json:"order_number,omitempty"`
 	PresentmentCurrency      string           `json:"presentment_currency,omitempty"`
+	ProcessedAt              time.Time        `json:"processed_at,omitempty"`
 	ShippingAddress          AddressDTO       `json:"shipping_address,omitempty"`
 	ShippingLines            ShippingLineDTOs `json:"shipping_lines,omitempty"`
 	SubtotalPrice            string           `json:"subtotal_price,omitempty"`
@@ -181,7 +183,9 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		ID:                       dto.ID,
 		LineItems:                dto.LineItems.ToShopify(),
 		Name:                     dto.Name,
+		OrderNumber:              dto.OrderNumber,
 		PresentmentCurrency:      dto.PresentmentCurrency,
+		ProcessedAt:              dto.ProcessedAt,
 		ShippingAddress:          dto.ShippingAddress.ToShopify(),
 		ShippingLines:            dto.ShippingLines.ToShopify(),
 		SubtotalPrice:            dto.SubtotalPrice,
@@ -221,7 +225,9 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		ID:                       order.ID,
 		LineItems:                BuildLineItemDTOs(order.LineItems),
 		Name:                     order.Name,
+		OrderNumber:              order.OrderNumber,
 		PresentmentCurrency:      order.PresentmentCurrency,
+		ProcessedAt:              order.ProcessedAt,
 		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
 		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
 		SubtotalPrice:            order.SubtotalPrice,
