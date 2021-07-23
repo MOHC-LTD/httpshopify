@@ -113,16 +113,16 @@ type FulfillmentDTOs []FulfillmentDTO
 
 // FulfillmentDTO represents and Shopify fulfillment in HTTP requests and responses
 type FulfillmentDTO struct {
-	ID              int64        `json:"id"`
-	OrderID         int64        `json:"order_id"`
-	TrackingNumbers []string     `json:"tracking_numbers"`
-	Status          string       `json:"status"`
-	CreatedAt       time.Time    `json:"created_at"`
-	UpdatedAt       time.Time    `json:"updated_at"`
-	NotifyCustomer  bool         `json:"notify_customer"`
-	ShipmentStatus  string       `json:"shipment_status"`
-	LocationID      int64        `json:"location_id"`
-	LineItems       LineItemDTOs `json:"lineItems"`
+	ID              int64        `json:"id,omitempty"`
+	OrderID         int64        `json:"order_id,omitempty"`
+	TrackingNumbers []string     `json:"tracking_numbers,omitempty"`
+	Status          string       `json:"status,omitempty"`
+	CreatedAt       time.Time    `json:"created_at,omitempty"`
+	UpdatedAt       time.Time    `json:"updated_at,omitempty"`
+	NotifyCustomer  bool         `json:"notify_customer,omitempty"`
+	ShipmentStatus  string       `json:"shipment_status,omitempty"`
+	LocationID      int64        `json:"location_id,omitempty"`
+	LineItems       LineItemDTOs `json:"lineItems,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent

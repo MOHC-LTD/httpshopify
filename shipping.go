@@ -7,13 +7,13 @@ type ShippingLineDTOs []ShippingLineDTO
 
 // ShippingLineDTO represents a Shopify shipping line in HTTP requests and responses
 type ShippingLineDTO struct {
-	Code               string      `json:"code"`
-	Price              string      `json:"price"`
-	PriceSet           PriceSetDTO `json:"price_set"`
-	DiscountedPrice    string      `json:"discounted_price"`
-	DiscountedPriceSet PriceSetDTO `json:"discounted_price_set"`
-	ID                 int64       `json:"id"`
-	Title              string      `json:"title"`
+	Code               string      `json:"code,omitempty"`
+	Price              string      `json:"price,omitempty"`
+	PriceSet           PriceSetDTO `json:"price_set,omitempty"`
+	DiscountedPrice    string      `json:"discounted_price,omitempty"`
+	DiscountedPriceSet PriceSetDTO `json:"discounted_price_set,omitempty"`
+	ID                 int64       `json:"id,omitempty"`
+	Title              string      `json:"title,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
