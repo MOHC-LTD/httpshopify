@@ -7,7 +7,7 @@ type RuleDTOs []RuleDTO
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dtos RuleDTOs) ToShopify() shopify.Rules {
-	rules := make(shopify.Variants, 0, len(dtos))
+	rules := make(shopify.Rules, 0, len(dtos))
 
 	for _, dto := range dtos {
 		rules = append(rules, dto.ToShopify())

@@ -72,6 +72,7 @@ func (dtos CollectionDTOs) ToShopify() shopify.Collections {
 // CollectionDTO represents a Shopify collection in HTTP requests and responses
 type CollectionDTO struct {
 	BodyHTML       string    `json:"body_html"`
+	CollectionType string    `json:"collection_type"`
 	Handle         string    `json:"handle"`
 	Image          ImageDTO  `json:"image"`
 	ID             int64     `json:"id"`
@@ -87,18 +88,35 @@ type CollectionDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CollectionDTO) ToShopify() shopify.Collection {
-	return shopify.Collection{
-		BodyHTML:       dto.BodyHTML,
-		Handle:         dto.Handle,
-		Image:          dto.Image.ToShopify(),
-		ID:             dto.ID,
-		PublishedAt:    dto.PublishedAt,
-		PublishedScope: dto.PublishedScope,
-		Rules:          dto.Rules.ToShopify(),
-		SortOrder:      dto.SortOrder,
-		TemplateSuffix: dto.TemplateSuffix,
-		ProductCount:   dto.ProductCount,
-		Title:          dto.Title,
-		UpdatedAt:      dto.UpdatedAt,
+	switch dto.CollectionType {
+	case "smart":
+		return NewSmartCollection(
+			dto.BodyHTML,
+			dto.CollectionType,
+			dto.Handle,
+			dto.Image.ToShopify(),
+			dto.ID,
+			dto.PublishedAt,
+			dto.PublishedScope,
+			dto.Rules,
+			dto.TemplateSuffix,
+			dto.ProductCount,
+			dto.Title,
+			dto.UpdatedAt,
+		)
+	default:
+		return NewCustomCollection(
+			dto.BodyHTML,
+			dto.CollectionType,
+			dto.Handle,
+			dto.Image.ToShopify(),
+			dto.ID,
+			dto.PublishedAt,
+			dto.PublishedScope,
+			dto.TemplateSuffix,
+			dto.ProductCount,
+			dto.Title,
+			dto.UpdatedAt,
+		)
 	}
 }
