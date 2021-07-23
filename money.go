@@ -4,8 +4,8 @@ import "github.com/MOHC-LTD/shopify"
 
 // PriceSetDTO represents a price set in Shopify HTTP requests and responses
 type PriceSetDTO struct {
-	ShopMoney        MoneyDTO `json:"shop_money"`
-	PresentmentMoney MoneyDTO `json:"presentment_money"`
+	ShopMoney        MoneyDTO `json:"shop_money,omitempty"`
+	PresentmentMoney MoneyDTO `json:"presentment_money,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -26,8 +26,8 @@ func BuildPriceSetDTO(priceSet shopify.PriceSet) PriceSetDTO {
 
 // MoneyDTO represents a quantity of money in HTTP requests and responses
 type MoneyDTO struct {
-	Amount       string `json:"amount"`
-	CurrencyCode string `json:"currency_code"`
+	Amount       string `json:"amount,omitempty"`
+	CurrencyCode string `json:"currency_code,omitempty"`
 }
 
 // ToShopify converts this DTO to the Shopify equivalent
