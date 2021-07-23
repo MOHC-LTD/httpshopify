@@ -34,7 +34,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 		Tags:        product.Tags,
 		Title:       product.Title,
 		UpdatedAt:   product.UpdatedAt,
-		Variants:    buildVariantDTOs(product.Variants),
+		Variants:    BuildVariantDTOs(product.Variants),
 		Vendor:      product.Vendor,
 	}
 
