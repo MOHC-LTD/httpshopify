@@ -27,7 +27,7 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 		LocationID:      fulfillment.LocationID,
 		TrackingNumbers: fulfillment.TrackingNumbers,
 		NotifyCustomer:  fulfillment.NotifyCustomer,
-		LineItems:       buildLineItemDTOs(fulfillment.LineItems),
+		LineItems:       BuildLineItemDTOs(fulfillment.LineItems),
 	}
 
 	request := struct {
