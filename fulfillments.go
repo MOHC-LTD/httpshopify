@@ -153,7 +153,7 @@ func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
 		NotifyCustomer:  fulfillment.NotifyCustomer,
 		ShipmentStatus:  fulfillment.ShipmentStatus,
 		LocationID:      fulfillment.LocationID,
-		LineItems:       buildLineItemDTOs(fulfillment.LineItems),
+		LineItems:       BuildLineItemDTOs(fulfillment.LineItems),
 	}
 }
 
