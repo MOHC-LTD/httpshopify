@@ -70,7 +70,7 @@ func (dtos LineItemDTOs) ToShopify() shopify.LineItems {
 	return lineItems
 }
 
-func buildLineItemDTOs(lineItems shopify.LineItems) []LineItemDTO {
+func BuildLineItemDTOs(lineItems shopify.LineItems) []LineItemDTO {
 	dtos := make([]LineItemDTO, 0, len(lineItems))
 
 	for _, lineItem := range lineItems {
