@@ -36,6 +36,7 @@ func (dtos VariantDTOs) ToShopify() shopify.Variants {
 	return variants
 }
 
+// BuildVariantDTOs builds the DTOs from the Shopify equivalent
 func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 	dtos := make([]VariantDTO, 0, len(variants))
 

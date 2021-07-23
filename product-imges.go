@@ -36,6 +36,7 @@ func (dtos ProductImageDTOs) ToShopify() shopify.ProductImages {
 	return productImages
 }
 
+// BuildProductImageDTOs builds the DTOs from the Shopify equivalent
 func BuildProductImageDTOs(productImages shopify.ProductImages) ProductImageDTOs {
 	dtos := make(ProductImageDTOs, 0, len(productImages))
 
@@ -106,6 +107,7 @@ func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
 	}
 }
 
+// BuildProductImageDTO builds the DTO from the Shopify equivalent
 func BuildProductImageDTO(productImage shopify.ProductImage) ProductImageDTO {
 	return ProductImageDTO{
 		ImageDTO:   ImageDTO(productImage.Image),

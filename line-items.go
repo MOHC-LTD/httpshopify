@@ -38,7 +38,8 @@ func (dto LineItemDTO) ToShopify() shopify.LineItem {
 	}
 }
 
-func buildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
+// BuildLineItemDTO builds the DTO from the Shopify equivalent
+func BuildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
 	return LineItemDTO{
 		ID:               lineItem.ID,
 		Price:            lineItem.Price,
@@ -70,11 +71,12 @@ func (dtos LineItemDTOs) ToShopify() shopify.LineItems {
 	return lineItems
 }
 
+// BuildLineItemDTOs builds the DTOs from the Shopify equivalent
 func BuildLineItemDTOs(lineItems shopify.LineItems) []LineItemDTO {
 	dtos := make([]LineItemDTO, 0, len(lineItems))
 
 	for _, lineItem := range lineItems {
-		dtos = append(dtos, buildLineItemDTO(lineItem))
+		dtos = append(dtos, BuildLineItemDTO(lineItem))
 	}
 
 	return dtos
