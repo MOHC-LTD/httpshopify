@@ -71,6 +71,7 @@ func (dtos CollectionDTOs) ToShopify() shopify.Collections {
 
 // CollectionDTO represents a Shopify collection in HTTP requests and responses
 type CollectionDTO struct {
+<<<<<<< HEAD
 	BodyHTML       string    `json:"body_html"`
 	CollectionType string    `json:"collection_type"`
 	Handle         string    `json:"handle"`
@@ -85,6 +86,18 @@ type CollectionDTO struct {
 	ProductCount   int       `json:"product_count"`
 	Title          string    `json:"title"`
 	UpdatedAt      time.Time `json:"updated_at"`
+=======
+	BodyHTML       string    `json:"body_html,omitempty"`
+	Handle         string    `json:"handle,omitempty"`
+	Image          ImageDTO  `json:"image,omitempty"`
+	ID             int64     `json:"id,omitempty"`
+	PublishedAt    time.Time `json:"published_at,omitempty"`
+	PublishedScope string    `json:"published_scope,omitempty"`
+	SortOrder      string    `json:"sort_order,omitempty"`
+	TemplateSuffix string    `json:"template_suffix,omitempty"`
+	Title          string    `json:"title,omitempty"`
+	UpdatedAt      time.Time `json:"updated_at,omitempty"`
+>>>>>>> develop
 }
 
 // ToShopify converts the DTO to the Shopify equivalent

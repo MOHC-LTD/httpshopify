@@ -18,8 +18,8 @@ func (dto TaxLineDTOs) ToShopify() []shopify.TaxLine {
 
 // TaxLineDTO represents a Shopify tax line in HTTP requests and responses
 type TaxLineDTO struct {
-	Title string  `json:"title"`
-	Rate  float32 `json:"rate"`
+	Title string  `json:"title,omitempty"`
+	Rate  float32 `json:"rate,omitempty"`
 }
 
 // ToShopify converts this DTO to the Shopify equivalent

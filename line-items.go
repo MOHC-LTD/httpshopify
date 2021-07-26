@@ -4,19 +4,19 @@ import "github.com/MOHC-LTD/shopify"
 
 // LineItemDTO represents a Shopify line item in HTTP requests and responses
 type LineItemDTO struct {
-	ID               int64       `json:"id"`
-	Price            string      `json:"price"`
-	PriceSet         PriceSetDTO `json:"price_set"`
-	ProductID        int64       `json:"product_id"`
-	Quantity         int         `json:"quantity"`
-	SKU              string      `json:"sku"`
-	Title            string      `json:"title"`
-	VariantID        int64       `json:"variant_id"`
-	VariantTitle     string      `json:"variant_title"`
-	Name             string      `json:"name"`
-	TaxLines         TaxLineDTOs `json:"tax_lines"`
-	TotalDiscount    string      `json:"total_discount"`
-	TotalDiscountSet PriceSetDTO `json:"total_discount_set"`
+	ID               int64       `json:"id,omitempty"`
+	Price            string      `json:"price,omitempty"`
+	PriceSet         PriceSetDTO `json:"price_set,omitempty"`
+	ProductID        int64       `json:"product_id,omitempty"`
+	Quantity         int         `json:"quantity,omitempty"`
+	SKU              string      `json:"sku,omitempty"`
+	Title            string      `json:"title,omitempty"`
+	VariantID        int64       `json:"variant_id,omitempty"`
+	VariantTitle     string      `json:"variant_title,omitempty"`
+	Name             string      `json:"name,omitempty"`
+	TaxLines         TaxLineDTOs `json:"tax_lines,omitempty"`
+	TotalDiscount    string      `json:"total_discount,omitempty"`
+	TotalDiscountSet PriceSetDTO `json:"total_discount_set,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -38,7 +38,8 @@ func (dto LineItemDTO) ToShopify() shopify.LineItem {
 	}
 }
 
-func buildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
+// BuildLineItemDTO builds the DTO from the Shopify equivalent
+func BuildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
 	return LineItemDTO{
 		ID:               lineItem.ID,
 		Price:            lineItem.Price,
@@ -70,11 +71,12 @@ func (dtos LineItemDTOs) ToShopify() shopify.LineItems {
 	return lineItems
 }
 
-func buildLineItemDTOs(lineItems shopify.LineItems) []LineItemDTO {
+// BuildLineItemDTOs builds the DTOs from the Shopify equivalent
+func BuildLineItemDTOs(lineItems shopify.LineItems) []LineItemDTO {
 	dtos := make([]LineItemDTO, 0, len(lineItems))
 
 	for _, lineItem := range lineItems {
-		dtos = append(dtos, buildLineItemDTO(lineItem))
+		dtos = append(dtos, BuildLineItemDTO(lineItem))
 	}
 
 	return dtos
