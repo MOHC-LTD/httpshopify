@@ -140,11 +140,12 @@ func (dtos ProductDTOs) ToShopify() shopify.Products {
 
 // ProductDTO represents a Shopify product in HTTP requests and responses
 type ProductDTO struct {
-	ID          int64            `json:"id,omitempty"`
-	CreatedAt   time.Time        `json:"created_at,omitempty"`
 	BodyHTML    string           `json:"body_html,omitempty"`
-	ProductType string           `json:"product_type,omitempty"`
+	CreatedAt   time.Time        `json:"created_at,omitempty"`
+	Handle      string           `json:"handle,omitempty"`
+	ID          int64            `json:"id,omitempty"`
 	Images      ProductImageDTOs `json:"images,omitempty"`
+	ProductType string           `json:"product_type,omitempty"`
 	PublishedAt time.Time        `json:"published_at,omitempty"`
 	Status      string           `json:"status,omitempty"`
 	Tags        string           `json:"tags,omitempty"`
@@ -157,9 +158,10 @@ type ProductDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ProductDTO) ToShopify() shopify.Product {
 	return shopify.Product{
+		BodyHTML:  dto.BodyHTML,
+		CreatedAt: dto.CreatedAt,
+		// Handle:      dto.Handle,
 		ID:          dto.ID,
-		CreatedAt:   dto.CreatedAt,
-		BodyHTML:    dto.BodyHTML,
 		ProductType: dto.ProductType,
 		PublishedAt: dto.PublishedAt,
 		Images:      dto.Images.ToShopify(),
