@@ -79,6 +79,7 @@ type CollectionDTO struct {
 	PublishedAt    time.Time `json:"published_at"`
 	PublishedScope string    `json:"published_scope"`
 	Rules          RuleDTOs  `json:"rules"`
+	Disjunctive    bool      `json:"disjunctive"`
 	SortOrder      string    `json:"sort_order"`
 	TemplateSuffix string    `json:"template_suffix"`
 	ProductCount   int       `json:"product_count"`
@@ -90,31 +91,34 @@ type CollectionDTO struct {
 func (dto CollectionDTO) ToShopify() shopify.Collection {
 	switch dto.CollectionType {
 	case "smart":
-		return NewSmartCollection(
+		return shopify.NewSmartCollection(
 			dto.BodyHTML,
 			dto.CollectionType,
 			dto.Handle,
-			dto.Image.ToShopify(),
 			dto.ID,
+			dto.Image.ToShopify(),
+			dto.ProductCount,
 			dto.PublishedAt,
 			dto.PublishedScope,
-			dto.Rules,
+			dto.Rules.ToShopify(),
+			dto.Disjunctive,
+			dto.SortOrder,
 			dto.TemplateSuffix,
-			dto.ProductCount,
 			dto.Title,
 			dto.UpdatedAt,
 		)
 	default:
-		return NewCustomCollection(
+		return shopify.NewCustomCollection(
 			dto.BodyHTML,
 			dto.CollectionType,
 			dto.Handle,
-			dto.Image.ToShopify(),
 			dto.ID,
+			dto.Image.ToShopify(),
+			dto.ProductCount,
 			dto.PublishedAt,
 			dto.PublishedScope,
+			dto.SortOrder,
 			dto.TemplateSuffix,
-			dto.ProductCount,
 			dto.Title,
 			dto.UpdatedAt,
 		)
