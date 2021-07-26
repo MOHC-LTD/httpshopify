@@ -26,7 +26,7 @@ func (repository collectionRepository) Get(id int64) (shopify.Collection, error)
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
-		return shopify.Collection{}, err
+		return nil, err
 	}
 
 	var resultDTO struct {
@@ -82,7 +82,7 @@ type CollectionDTO struct {
 	Disjunctive    bool      `json:"disjunctive,omitempty"`
 	SortOrder      string    `json:"sort_order,omitempty"`
 	TemplateSuffix string    `json:"template_suffix,omitempty"`
-	ProductCount   int       `json:"product_count,omitempty"`
+	ProductsCount  int       `json:"products_count,omitempty"`
 	Title          string    `json:"title,omitempty"`
 	UpdatedAt      time.Time `json:"updated_at,omitempty"`
 }
@@ -97,7 +97,7 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 			dto.Handle,
 			dto.ID,
 			dto.Image.ToShopify(),
-			dto.ProductCount,
+			dto.ProductsCount,
 			dto.PublishedAt,
 			dto.PublishedScope,
 			dto.Rules.ToShopify(),
@@ -114,7 +114,7 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 			dto.Handle,
 			dto.ID,
 			dto.Image.ToShopify(),
-			dto.ProductCount,
+			dto.ProductsCount,
 			dto.PublishedAt,
 			dto.PublishedScope,
 			dto.SortOrder,
