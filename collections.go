@@ -44,7 +44,7 @@ func (repository collectionRepository) Products(id int64) (shopify.Products, err
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
-		return shopify.Products{}, err
+		return nil, err
 	}
 
 	var resultDTO struct {
@@ -90,7 +90,7 @@ type CollectionDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CollectionDTO) ToShopify() shopify.Collection {
 	switch dto.CollectionType {
-	case "smart":
+	case shopify.CollectionTypeSmart:
 		return shopify.NewSmartCollection(
 			dto.BodyHTML,
 			dto.CollectionType,
