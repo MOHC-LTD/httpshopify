@@ -44,7 +44,7 @@ func (repository collectionRepository) Products(id int64) (shopify.Products, err
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
-		return nil, err
+		return shopify.Collection{}, err
 	}
 
 	var resultDTO struct {
