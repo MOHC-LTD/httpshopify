@@ -162,6 +162,23 @@ type OrderDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto OrderDTO) ToShopify() shopify.Order {
+
+	if dto.CreatedAt.IsZero() {
+		dto.CreatedAt = nil
+	}
+
+	if dto.ClosedAt.IsZero() {
+		dto.ClosedAt = nil
+	}
+
+	if dto.ProcessedAt.IsZero() {
+		dto.ProcessedAt = nil
+	}
+
+	if dto.UpdatedAt.IsZero() {
+		dto.UpdatedAt = nil
+	}
+
 	return shopify.Order{
 		BillingAddress:           dto.BillingAddress.ToShopify(),
 		ClosedAt:                 *dto.ClosedAt,
