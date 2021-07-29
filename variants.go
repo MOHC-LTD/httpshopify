@@ -41,7 +41,24 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 	dtos := make([]VariantDTO, 0, len(variants))
 
 	for _, variant := range variants {
-		dtos = append(dtos, VariantDTO(variant))
+		variantDTO := VariantDTO{
+			ID:              variant.ID,
+			SKU:             variant.SKU,
+			Title:           variant.Title,
+			InventoryItemID: variant.InventoryItemID,
+			Price:           variant.Price,
+			Barcode:         variant.Barcode,
+		}
+
+		if variant.CreatedAt.IsZero() {
+			variantDTO.CreatedAt = nil
+		}
+
+		if variant.UpdatedAt.IsZero() {
+			variantDTO.UpdatedAt = nil
+		}
+
+		dtos = append(dtos, variantDTO)
 	}
 
 	return dtos
@@ -49,18 +66,27 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 
 // VariantDTO represents a Shopify variant in HTTP requests and responses
 type VariantDTO struct {
-	ID              int64     `json:"id,omitempty"`
-	SKU             string    `json:"sku,omitempty"`
-	Title           string    `json:"title,omitempty"`
-	InventoryItemID int64     `json:"inventory_item_id,omitempty"`
-	Price           string    `json:"price,omitempty"`
-	Barcode         string    `json:"barcode,omitempty"`
-	CreatedAt       time.Time `json:"created_at,omitempty"`
-	UpdatedAt       time.Time `json:"updated_at,omitempty"`
+	ID              int64      `json:"id,omitempty"`
+	SKU             string     `json:"sku,omitempty"`
+	Title           string     `json:"title,omitempty"`
+	InventoryItemID int64      `json:"inventory_item_id,omitempty"`
+	Price           string     `json:"price,omitempty"`
+	Barcode         string     `json:"barcode,omitempty"`
+	CreatedAt       *time.Time `json:"created_at,omitempty"`
+	UpdatedAt       *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto VariantDTO) ToShopify() shopify.Variant {
+
+	if dto.CreatedAt.IsZero() {
+		dto.CreatedAt = nil
+	}
+
+	if dto.UpdatedAt.IsZero() {
+		dto.UpdatedAt = nil
+	}
+
 	return shopify.Variant{
 		ID:              dto.ID,
 		SKU:             dto.SKU,
@@ -68,8 +94,8 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 		InventoryItemID: dto.InventoryItemID,
 		Price:           dto.Price,
 		Barcode:         dto.Barcode,
-		CreatedAt:       dto.CreatedAt,
-		UpdatedAt:       dto.UpdatedAt,
+		CreatedAt:       *dto.CreatedAt,
+		UpdatedAt:       *dto.UpdatedAt,
 	}
 }
 

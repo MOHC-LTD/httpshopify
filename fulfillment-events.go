@@ -95,20 +95,29 @@ func (repository fulfillmentEventRepository) List(orderID int64, fulfillmentID i
 
 // FulfillmentEventDTO represents a Shopify fulfillment event in HTTP requests and responses
 type FulfillmentEventDTO struct {
-	ID            int64     `json:"id,omitempty"`
-	FulfillmentID int64     `json:"fulfillment_id,omitempty"`
-	Status        string    `json:"status,omitempty"`
-	CreatedAt     time.Time `json:"created_at,omitempty"`
-	UpdatedAt     time.Time `json:"updated_at,omitempty"`
+	ID            int64      `json:"id,omitempty"`
+	FulfillmentID int64      `json:"fulfillment_id,omitempty"`
+	Status        string     `json:"status,omitempty"`
+	CreatedAt     *time.Time `json:"created_at,omitempty"`
+	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto FulfillmentEventDTO) ToShopify() shopify.FulfillmentEvent {
+
+	if dto.CreatedAt.IsZero() {
+		dto.CreatedAt = nil
+	}
+
+	if dto.UpdatedAt.IsZero() {
+		dto.UpdatedAt = nil
+	}
+
 	return shopify.FulfillmentEvent{
 		ID:            dto.ID,
 		FulfillmentID: dto.FulfillmentID,
 		Status:        dto.Status,
-		CreatedAt:     dto.CreatedAt,
-		UpdatedAt:     dto.UpdatedAt,
+		CreatedAt:     *dto.CreatedAt,
+		UpdatedAt:     *dto.UpdatedAt,
 	}
 }

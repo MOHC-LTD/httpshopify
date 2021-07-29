@@ -54,18 +54,23 @@ func (repository inventoryLevelRepository) Set(inventoryItemID int64, locationID
 
 // InventoryLevelDTO represents a Shopify inventory level in HTTP requests and responses
 type InventoryLevelDTO struct {
-	InventoryItemID int64     `json:"inventory_item_id,omitempty"`
-	Available       int       `json:"available,omitempty"`
-	LocationID      int64     `json:"location_id,omitempty"`
-	UpdatedAt       time.Time `json:"updated_at,omitempty"`
+	InventoryItemID int64      `json:"inventory_item_id,omitempty"`
+	Available       int        `json:"available,omitempty"`
+	LocationID      int64      `json:"location_id,omitempty"`
+	UpdatedAt       *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto InventoryLevelDTO) ToShopify() shopify.InventoryLevel {
+
+	if dto.UpdatedAt.IsZero() {
+		dto.UpdatedAt = nil
+	}
+
 	return shopify.InventoryLevel{
 		InventoryItemID: dto.InventoryItemID,
 		Available:       dto.Available,
 		LocationID:      dto.LocationID,
-		UpdatedAt:       dto.UpdatedAt,
+		UpdatedAt:       *dto.UpdatedAt,
 	}
 }

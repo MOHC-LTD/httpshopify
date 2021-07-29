@@ -117,8 +117,8 @@ type FulfillmentDTO struct {
 	OrderID         int64        `json:"order_id,omitempty"`
 	TrackingNumbers []string     `json:"tracking_numbers,omitempty"`
 	Status          string       `json:"status,omitempty"`
-	CreatedAt       time.Time    `json:"created_at,omitempty"`
-	UpdatedAt       time.Time    `json:"updated_at,omitempty"`
+	CreatedAt       *time.Time   `json:"created_at,omitempty"`
+	UpdatedAt       *time.Time   `json:"updated_at,omitempty"`
 	NotifyCustomer  bool         `json:"notify_customer,omitempty"`
 	ShipmentStatus  string       `json:"shipment_status,omitempty"`
 	LocationID      int64        `json:"location_id,omitempty"`
@@ -127,13 +127,22 @@ type FulfillmentDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
+
+	if dto.CreatedAt.IsZero() {
+		dto.CreatedAt = nil
+	}
+
+	if dto.UpdatedAt.IsZero() {
+		dto.UpdatedAt = nil
+	}
+
 	return shopify.Fulfillment{
 		ID:              dto.ID,
 		OrderID:         dto.OrderID,
 		TrackingNumbers: dto.TrackingNumbers,
 		Status:          dto.Status,
-		CreatedAt:       dto.CreatedAt,
-		UpdatedAt:       dto.UpdatedAt,
+		CreatedAt:       *dto.CreatedAt,
+		UpdatedAt:       *dto.UpdatedAt,
 		NotifyCustomer:  dto.NotifyCustomer,
 		ShipmentStatus:  dto.ShipmentStatus,
 		LocationID:      dto.LocationID,
@@ -143,18 +152,26 @@ func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 
 // BuildFulfilmentDTO converts the fulfillment into its DTO equivalent
 func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
-	return FulfillmentDTO{
+	fulfillmentDTO := FulfillmentDTO{
 		ID:              fulfillment.ID,
 		OrderID:         fulfillment.OrderID,
 		TrackingNumbers: fulfillment.TrackingNumbers,
 		Status:          fulfillment.Status,
-		CreatedAt:       fulfillment.CreatedAt,
-		UpdatedAt:       fulfillment.UpdatedAt,
 		NotifyCustomer:  fulfillment.NotifyCustomer,
 		ShipmentStatus:  fulfillment.ShipmentStatus,
 		LocationID:      fulfillment.LocationID,
 		LineItems:       BuildLineItemDTOs(fulfillment.LineItems),
 	}
+
+	if fulfillmentDTO.CreatedAt.IsZero() {
+		fulfillmentDTO.CreatedAt = nil
+	}
+
+	if fulfillmentDTO.UpdatedAt.IsZero() {
+		fulfillmentDTO.UpdatedAt = nil
+	}
+
+	return fulfillmentDTO
 }
 
 // ToShopify converts the DTO to the Shopify equivalent

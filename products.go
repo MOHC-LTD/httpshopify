@@ -25,15 +25,15 @@ func newProductRepository(client http.Client, createURL func(endpoint string) st
 func (repository productRepository) Create(product shopify.Product) (shopify.Product, error) {
 	createDTO := ProductDTO{
 		ID:          product.ID,
-		CreatedAt:   product.CreatedAt,
+		CreatedAt:   &product.CreatedAt,
 		BodyHTML:    product.BodyHTML,
 		ProductType: product.ProductType,
 		Images:      BuildProductImageDTOs(product.Images),
-		PublishedAt: product.PublishedAt,
+		PublishedAt: &product.PublishedAt,
 		Status:      product.Status,
 		Tags:        product.Tags,
 		Title:       product.Title,
-		UpdatedAt:   product.UpdatedAt,
+		UpdatedAt:   &product.UpdatedAt,
 		Variants:    BuildVariantDTOs(product.Variants),
 		Vendor:      product.Vendor,
 	}
@@ -141,32 +141,45 @@ func (dtos ProductDTOs) ToShopify() shopify.Products {
 // ProductDTO represents a Shopify product in HTTP requests and responses
 type ProductDTO struct {
 	ID          int64            `json:"id,omitempty"`
-	CreatedAt   time.Time        `json:"created_at,omitempty"`
+	CreatedAt   *time.Time       `json:"created_at,omitempty"`
 	BodyHTML    string           `json:"body_html,omitempty"`
 	ProductType string           `json:"product_type,omitempty"`
 	Images      ProductImageDTOs `json:"images,omitempty"`
-	PublishedAt time.Time        `json:"published_at,omitempty"`
+	PublishedAt *time.Time       `json:"published_at,omitempty"`
 	Status      string           `json:"status,omitempty"`
 	Tags        string           `json:"tags,omitempty"`
 	Title       string           `json:"title,omitempty"`
-	UpdatedAt   time.Time        `json:"updated_at,omitempty"`
+	UpdatedAt   *time.Time       `json:"updated_at,omitempty"`
 	Variants    VariantDTOs      `json:"variants,omitempty"`
 	Vendor      string           `json:"vendor,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ProductDTO) ToShopify() shopify.Product {
+
+	if dto.CreatedAt.IsZero() {
+		dto.CreatedAt = nil
+	}
+
+	if dto.PublishedAt.IsZero() {
+		dto.PublishedAt = nil
+	}
+
+	if dto.UpdatedAt.IsZero() {
+		dto.UpdatedAt = nil
+	}
+
 	return shopify.Product{
 		ID:          dto.ID,
-		CreatedAt:   dto.CreatedAt,
+		CreatedAt:   *dto.CreatedAt,
 		BodyHTML:    dto.BodyHTML,
 		ProductType: dto.ProductType,
-		PublishedAt: dto.PublishedAt,
+		PublishedAt: *dto.PublishedAt,
 		Images:      dto.Images.ToShopify(),
 		Status:      dto.Status,
 		Tags:        dto.Tags,
 		Title:       dto.Title,
-		UpdatedAt:   dto.UpdatedAt,
+		UpdatedAt:   *dto.UpdatedAt,
 		Variants:    dto.Variants.ToShopify(),
 		Vendor:      dto.Vendor,
 	}
