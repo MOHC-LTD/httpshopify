@@ -127,13 +127,14 @@ type FulfillmentDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
-
-	if dto.CreatedAt.IsZero() {
-		dto.CreatedAt = nil
+	var createdAt time.Time
+	if !dto.CreatedAt.IsZero() {
+		createdAt = *dto.CreatedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.Fulfillment{
@@ -141,8 +142,8 @@ func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 		OrderID:         dto.OrderID,
 		TrackingNumbers: dto.TrackingNumbers,
 		Status:          dto.Status,
-		CreatedAt:       *dto.CreatedAt,
-		UpdatedAt:       *dto.UpdatedAt,
+		CreatedAt:       createdAt,
+		UpdatedAt:       updatedAt,
 		NotifyCustomer:  dto.NotifyCustomer,
 		ShipmentStatus:  dto.ShipmentStatus,
 		LocationID:      dto.LocationID,
@@ -152,6 +153,16 @@ func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 
 // BuildFulfilmentDTO converts the fulfillment into its DTO equivalent
 func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
+	var createdAt *time.Time
+	if !fulfillment.CreatedAt.IsZero() {
+		createdAt = &fulfillment.CreatedAt
+	}
+
+	var updatedAt *time.Time
+	if !fulfillment.UpdatedAt.IsZero() {
+		updatedAt = &fulfillment.UpdatedAt
+	}
+
 	fulfillmentDTO := FulfillmentDTO{
 		ID:              fulfillment.ID,
 		OrderID:         fulfillment.OrderID,
@@ -161,14 +172,8 @@ func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
 		ShipmentStatus:  fulfillment.ShipmentStatus,
 		LocationID:      fulfillment.LocationID,
 		LineItems:       BuildLineItemDTOs(fulfillment.LineItems),
-	}
-
-	if fulfillmentDTO.CreatedAt.IsZero() {
-		fulfillmentDTO.CreatedAt = nil
-	}
-
-	if fulfillmentDTO.UpdatedAt.IsZero() {
-		fulfillmentDTO.UpdatedAt = nil
+		CreatedAt:       createdAt,
+		UpdatedAt:       updatedAt,
 	}
 
 	return fulfillmentDTO

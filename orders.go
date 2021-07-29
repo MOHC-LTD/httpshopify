@@ -162,27 +162,30 @@ type OrderDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto OrderDTO) ToShopify() shopify.Order {
-
-	if dto.CreatedAt.IsZero() {
-		dto.CreatedAt = nil
+	var createdAt time.Time
+	if !dto.CreatedAt.IsZero() {
+		createdAt = *dto.CreatedAt
 	}
 
-	if dto.ClosedAt.IsZero() {
-		dto.ClosedAt = nil
+	var closedAt time.Time
+	if !dto.ClosedAt.IsZero() {
+		closedAt = *dto.ClosedAt
 	}
 
-	if dto.ProcessedAt.IsZero() {
-		dto.ProcessedAt = nil
+	var processedAt time.Time
+	if !dto.ProcessedAt.IsZero() {
+		processedAt = *dto.ProcessedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.Order{
 		BillingAddress:           dto.BillingAddress.ToShopify(),
-		ClosedAt:                 *dto.ClosedAt,
-		CreatedAt:                *dto.CreatedAt,
+		ClosedAt:                 closedAt,
+		CreatedAt:                createdAt,
 		Currency:                 dto.Currency,
 		CurrentTotalDiscounts:    dto.CurrentTotalDiscounts,
 		CurrentTotalDiscountsSet: dto.CurrentTotalDiscountsSet.ToShopify(),
@@ -202,7 +205,7 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		Name:                     dto.Name,
 		OrderNumber:              dto.OrderNumber,
 		PresentmentCurrency:      dto.PresentmentCurrency,
-		ProcessedAt:              *dto.ProcessedAt,
+		ProcessedAt:              processedAt,
 		ShippingAddress:          dto.ShippingAddress.ToShopify(),
 		ShippingLines:            dto.ShippingLines.ToShopify(),
 		SubtotalPrice:            dto.SubtotalPrice,
@@ -215,12 +218,31 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		TotalPriceSet:            dto.TotalPriceSet.ToShopify(),
 		TotalTax:                 dto.TotalTax,
 		TotalTaxSet:              dto.TotalTaxSet.ToShopify(),
-		UpdatedAt:                *dto.UpdatedAt,
+		UpdatedAt:                updatedAt,
 	}
 }
 
 // BuildOrderDTO converts a Shopify order to the DTO equivalent
 func BuildOrderDTO(order shopify.Order) OrderDTO {
+	var createdAt *time.Time
+	if !order.CreatedAt.IsZero() {
+		createdAt = &order.CreatedAt
+	}
+
+	var closedAt *time.Time
+	if !order.ClosedAt.IsZero() {
+		closedAt = &order.ClosedAt
+	}
+
+	var processedAt *time.Time
+	if !order.ProcessedAt.IsZero() {
+		processedAt = &order.ProcessedAt
+	}
+
+	var updatedAt *time.Time
+	if !order.UpdatedAt.IsZero() {
+		updatedAt = &order.UpdatedAt
+	}
 
 	orderDTO := OrderDTO{
 		BillingAddress:           BuildAddressDTO(order.BillingAddress),
@@ -255,22 +277,10 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		TotalPriceSet:            BuildPriceSetDTO(order.TotalPriceSet),
 		TotalTax:                 order.TotalTax,
 		TotalTaxSet:              BuildPriceSetDTO(order.TotalTaxSet),
-	}
-
-	if order.CreatedAt.IsZero() {
-		orderDTO.CreatedAt = nil
-	}
-
-	if order.ClosedAt.IsZero() {
-		orderDTO.ClosedAt = nil
-	}
-
-	if order.ProcessedAt.IsZero() {
-		orderDTO.ProcessedAt = nil
-	}
-
-	if order.UpdatedAt.IsZero() {
-		orderDTO.UpdatedAt = nil
+		CreatedAt:                createdAt,
+		ClosedAt:                 closedAt,
+		ProcessedAt:              processedAt,
+		UpdatedAt:                updatedAt,
 	}
 
 	return orderDTO

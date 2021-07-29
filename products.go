@@ -156,30 +156,32 @@ type ProductDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ProductDTO) ToShopify() shopify.Product {
-
-	if dto.CreatedAt.IsZero() {
-		dto.CreatedAt = nil
+	var createdAt time.Time
+	if !dto.CreatedAt.IsZero() {
+		createdAt = *dto.CreatedAt
 	}
 
-	if dto.PublishedAt.IsZero() {
-		dto.PublishedAt = nil
+	var publishedAt time.Time
+	if !dto.PublishedAt.IsZero() {
+		publishedAt = *dto.PublishedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.Product{
 		ID:          dto.ID,
-		CreatedAt:   *dto.CreatedAt,
+		CreatedAt:   createdAt,
 		BodyHTML:    dto.BodyHTML,
 		ProductType: dto.ProductType,
-		PublishedAt: *dto.PublishedAt,
+		PublishedAt: publishedAt,
 		Images:      dto.Images.ToShopify(),
 		Status:      dto.Status,
 		Tags:        dto.Tags,
 		Title:       dto.Title,
-		UpdatedAt:   *dto.UpdatedAt,
+		UpdatedAt:   updatedAt,
 		Variants:    dto.Variants.ToShopify(),
 		Vendor:      dto.Vendor,
 	}

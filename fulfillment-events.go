@@ -104,20 +104,21 @@ type FulfillmentEventDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto FulfillmentEventDTO) ToShopify() shopify.FulfillmentEvent {
-
-	if dto.CreatedAt.IsZero() {
-		dto.CreatedAt = nil
+	var createdAt time.Time
+	if !dto.CreatedAt.IsZero() {
+		createdAt = *dto.CreatedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.FulfillmentEvent{
 		ID:            dto.ID,
 		FulfillmentID: dto.FulfillmentID,
 		Status:        dto.Status,
-		CreatedAt:     *dto.CreatedAt,
-		UpdatedAt:     *dto.UpdatedAt,
+		CreatedAt:     createdAt,
+		UpdatedAt:     updatedAt,
 	}
 }

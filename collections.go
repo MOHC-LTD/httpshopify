@@ -85,13 +85,14 @@ type CollectionDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CollectionDTO) ToShopify() shopify.Collection {
-
-	if dto.PublishedAt.IsZero() {
-		dto.PublishedAt = nil
+	var publishedAt time.Time
+	if !dto.PublishedAt.IsZero() {
+		publishedAt = *dto.PublishedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.Collection{
@@ -99,11 +100,11 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 		Handle:         dto.Handle,
 		Image:          dto.Image.ToShopify(),
 		ID:             dto.ID,
-		PublishedAt:    *dto.PublishedAt,
+		PublishedAt:    publishedAt,
 		PublishedScope: dto.PublishedScope,
 		SortOrder:      dto.SortOrder,
 		TemplateSuffix: dto.TemplateSuffix,
 		Title:          dto.Title,
-		UpdatedAt:      *dto.UpdatedAt,
+		UpdatedAt:      updatedAt,
 	}
 }

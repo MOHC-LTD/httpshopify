@@ -41,6 +41,16 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 	dtos := make([]VariantDTO, 0, len(variants))
 
 	for _, variant := range variants {
+		var createdAt *time.Time
+		if !variant.CreatedAt.IsZero() {
+			createdAt = &variant.CreatedAt
+		}
+
+		var updatedAt *time.Time
+		if !variant.UpdatedAt.IsZero() {
+			updatedAt = &variant.UpdatedAt
+		}
+
 		variantDTO := VariantDTO{
 			ID:              variant.ID,
 			SKU:             variant.SKU,
@@ -48,14 +58,8 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 			InventoryItemID: variant.InventoryItemID,
 			Price:           variant.Price,
 			Barcode:         variant.Barcode,
-		}
-
-		if variant.CreatedAt.IsZero() {
-			variantDTO.CreatedAt = nil
-		}
-
-		if variant.UpdatedAt.IsZero() {
-			variantDTO.UpdatedAt = nil
+			CreatedAt:       createdAt,
+			UpdatedAt:       updatedAt,
 		}
 
 		dtos = append(dtos, variantDTO)
@@ -78,13 +82,14 @@ type VariantDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto VariantDTO) ToShopify() shopify.Variant {
-
-	if dto.CreatedAt.IsZero() {
-		dto.CreatedAt = nil
+	var createdAt time.Time
+	if !dto.CreatedAt.IsZero() {
+		createdAt = *dto.CreatedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.Variant{
@@ -94,8 +99,8 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 		InventoryItemID: dto.InventoryItemID,
 		Price:           dto.Price,
 		Barcode:         dto.Barcode,
-		CreatedAt:       *dto.CreatedAt,
-		UpdatedAt:       *dto.UpdatedAt,
+		CreatedAt:       createdAt,
+		UpdatedAt:       updatedAt,
 	}
 }
 

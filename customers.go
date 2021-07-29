@@ -18,13 +18,14 @@ type CustomerDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CustomerDTO) ToShopify() shopify.Customer {
-
-	if dto.CreatedAt.IsZero() {
-		dto.CreatedAt = nil
+	var createdAt time.Time
+	if !dto.CreatedAt.IsZero() {
+		createdAt = *dto.CreatedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.Customer{
@@ -32,28 +33,30 @@ func (dto CustomerDTO) ToShopify() shopify.Customer {
 		Email:     dto.Email,
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
-		CreatedAt: *dto.CreatedAt,
-		UpdatedAt: *dto.UpdatedAt,
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
 	}
 }
 
 // BuildCustomerDTO converts a Shopify customer to the DTO equivalent
 func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
+	var createdAt *time.Time
+	if !customer.CreatedAt.IsZero() {
+		createdAt = &customer.CreatedAt
+	}
+
+	var updatedAt *time.Time
+	if !customer.UpdatedAt.IsZero() {
+		updatedAt = &customer.UpdatedAt
+	}
+
 	customerDTO := CustomerDTO{
 		ID:        customer.ID,
 		Email:     customer.Email,
 		FirstName: customer.FirstName,
 		LastName:  customer.LastName,
-		CreatedAt: &customer.CreatedAt,
-		UpdatedAt: &customer.UpdatedAt,
-	}
-
-	if customer.CreatedAt.IsZero() {
-		customerDTO.CreatedAt = nil
-	}
-
-	if customer.UpdatedAt.IsZero() {
-		customerDTO.UpdatedAt = nil
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
 	}
 
 	return customerDTO

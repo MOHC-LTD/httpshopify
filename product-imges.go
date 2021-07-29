@@ -91,18 +91,19 @@ type ProductImageDTO struct {
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
-
-	if dto.CreatedAt.IsZero() {
-		dto.CreatedAt = nil
+	var createdAt time.Time
+	if !dto.CreatedAt.IsZero() {
+		createdAt = *dto.CreatedAt
 	}
 
-	if dto.UpdatedAt.IsZero() {
-		dto.UpdatedAt = nil
+	var updatedAt time.Time
+	if !dto.UpdatedAt.IsZero() {
+		updatedAt = *dto.UpdatedAt
 	}
 
 	return shopify.ProductImage{
 		Image: shopify.Image{
-			CreatedAt: *dto.CreatedAt,
+			CreatedAt: createdAt,
 			SRC:       dto.SRC,
 			Width:     dto.Width,
 			Height:    dto.Height,
@@ -112,22 +113,29 @@ func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
 		Position:   dto.Position,
 		ProductID:  dto.ProductID,
 		VariantIDs: dto.VariantIDs,
-		UpdatedAt:  *dto.UpdatedAt,
+		UpdatedAt:  updatedAt,
 	}
 }
 
 // BuildProductImageDTO builds the DTO from the Shopify equivalent
 func BuildProductImageDTO(productImage shopify.ProductImage) ProductImageDTO {
 
-	imageDTO := ImageDTO{
-		SRC:    productImage.SRC,
-		Width:  productImage.Width,
-		Height: productImage.Height,
-		Alt:    productImage.Alt,
+	var createdAt time.Time
+	if !productImage.CreatedAt.IsZero() {
+		createdAt = productImage.CreatedAt
 	}
 
-	if productImage.CreatedAt.IsZero() {
-		imageDTO.CreatedAt = nil
+	imageDTO := ImageDTO{
+		SRC:       productImage.SRC,
+		Width:     productImage.Width,
+		Height:    productImage.Height,
+		Alt:       productImage.Alt,
+		CreatedAt: &createdAt,
+	}
+
+	var updatedAt time.Time
+	if !productImage.UpdatedAt.IsZero() {
+		updatedAt = productImage.UpdatedAt
 	}
 
 	productImageDTO := ProductImageDTO{
@@ -136,6 +144,7 @@ func BuildProductImageDTO(productImage shopify.ProductImage) ProductImageDTO {
 		Position:   productImage.Position,
 		ProductID:  productImage.ProductID,
 		VariantIDs: productImage.VariantIDs,
+		UpdatedAt:  &updatedAt,
 	}
 
 	if productImageDTO.UpdatedAt.IsZero() {
