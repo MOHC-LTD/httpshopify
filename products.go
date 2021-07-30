@@ -157,17 +157,17 @@ type ProductDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ProductDTO) ToShopify() shopify.Product {
 	var createdAt time.Time
-	if !dto.CreatedAt.IsZero() {
+	if dto.CreatedAt != nil {
 		createdAt = *dto.CreatedAt
 	}
 
 	var publishedAt time.Time
-	if !dto.PublishedAt.IsZero() {
+	if dto.PublishedAt != nil {
 		publishedAt = *dto.PublishedAt
 	}
 
 	var updatedAt time.Time
-	if !dto.UpdatedAt.IsZero() {
+	if dto.UpdatedAt != nil {
 		updatedAt = *dto.UpdatedAt
 	}
 

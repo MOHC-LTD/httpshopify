@@ -63,7 +63,7 @@ type InventoryLevelDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto InventoryLevelDTO) ToShopify() shopify.InventoryLevel {
 	var updatedAt time.Time
-	if !dto.UpdatedAt.IsZero() {
+	if dto.UpdatedAt != nil {
 		updatedAt = *dto.UpdatedAt
 	}
 

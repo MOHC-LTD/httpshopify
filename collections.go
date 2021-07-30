@@ -86,12 +86,12 @@ type CollectionDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CollectionDTO) ToShopify() shopify.Collection {
 	var publishedAt time.Time
-	if !dto.PublishedAt.IsZero() {
+	if dto.PublishedAt != nil {
 		publishedAt = *dto.PublishedAt
 	}
 
 	var updatedAt time.Time
-	if !dto.UpdatedAt.IsZero() {
+	if dto.UpdatedAt != nil {
 		updatedAt = *dto.UpdatedAt
 	}
 

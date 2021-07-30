@@ -83,12 +83,12 @@ type VariantDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto VariantDTO) ToShopify() shopify.Variant {
 	var createdAt time.Time
-	if !dto.CreatedAt.IsZero() {
+	if dto.CreatedAt != nil {
 		createdAt = *dto.CreatedAt
 	}
 
 	var updatedAt time.Time
-	if !dto.UpdatedAt.IsZero() {
+	if dto.UpdatedAt != nil {
 		updatedAt = *dto.UpdatedAt
 	}
 

@@ -18,7 +18,7 @@ type ImageDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ImageDTO) ToShopify() shopify.Image {
 	var createdAt time.Time
-	if !dto.CreatedAt.IsZero() {
+	if dto.CreatedAt != nil {
 		createdAt = *dto.CreatedAt
 	}
 

@@ -163,22 +163,22 @@ type OrderDTO struct {
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto OrderDTO) ToShopify() shopify.Order {
 	var createdAt time.Time
-	if !dto.CreatedAt.IsZero() {
+	if dto.CreatedAt != nil {
 		createdAt = *dto.CreatedAt
 	}
 
 	var closedAt time.Time
-	if !dto.ClosedAt.IsZero() {
+	if dto.ClosedAt != nil {
 		closedAt = *dto.ClosedAt
 	}
 
 	var processedAt time.Time
-	if !dto.ProcessedAt.IsZero() {
+	if dto.ProcessedAt != nil {
 		processedAt = *dto.ProcessedAt
 	}
 
 	var updatedAt time.Time
-	if !dto.UpdatedAt.IsZero() {
+	if dto.UpdatedAt != nil {
 		updatedAt = *dto.UpdatedAt
 	}
 
