@@ -71,30 +71,40 @@ func (dtos CollectionDTOs) ToShopify() shopify.Collections {
 
 // CollectionDTO represents a Shopify collection in HTTP requests and responses
 type CollectionDTO struct {
-	BodyHTML       string    `json:"body_html,omitempty"`
-	Handle         string    `json:"handle,omitempty"`
-	Image          ImageDTO  `json:"image,omitempty"`
-	ID             int64     `json:"id,omitempty"`
-	PublishedAt    time.Time `json:"published_at,omitempty"`
-	PublishedScope string    `json:"published_scope,omitempty"`
-	SortOrder      string    `json:"sort_order,omitempty"`
-	TemplateSuffix string    `json:"template_suffix,omitempty"`
-	Title          string    `json:"title,omitempty"`
-	UpdatedAt      time.Time `json:"updated_at,omitempty"`
+	BodyHTML       string     `json:"body_html,omitempty"`
+	Handle         string     `json:"handle,omitempty"`
+	Image          ImageDTO   `json:"image,omitempty"`
+	ID             int64      `json:"id,omitempty"`
+	PublishedAt    *time.Time `json:"published_at,omitempty"`
+	PublishedScope string     `json:"published_scope,omitempty"`
+	SortOrder      string     `json:"sort_order,omitempty"`
+	TemplateSuffix string     `json:"template_suffix,omitempty"`
+	Title          string     `json:"title,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CollectionDTO) ToShopify() shopify.Collection {
+	var publishedAt time.Time
+	if dto.PublishedAt != nil {
+		publishedAt = *dto.PublishedAt
+	}
+
+	var updatedAt time.Time
+	if dto.UpdatedAt != nil {
+		updatedAt = *dto.UpdatedAt
+	}
+
 	return shopify.Collection{
 		BodyHTML:       dto.BodyHTML,
 		Handle:         dto.Handle,
 		Image:          dto.Image.ToShopify(),
 		ID:             dto.ID,
-		PublishedAt:    dto.PublishedAt,
+		PublishedAt:    publishedAt,
 		PublishedScope: dto.PublishedScope,
 		SortOrder:      dto.SortOrder,
 		TemplateSuffix: dto.TemplateSuffix,
 		Title:          dto.Title,
-		UpdatedAt:      dto.UpdatedAt,
+		UpdatedAt:      updatedAt,
 	}
 }
