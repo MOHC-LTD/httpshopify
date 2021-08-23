@@ -71,24 +71,34 @@ func (dtos CollectionDTOs) ToShopify() shopify.Collections {
 
 // CollectionDTO represents a Shopify collection in HTTP requests and responses
 type CollectionDTO struct {
-	BodyHTML       string    `json:"body_html,omitempty"`
-	CollectionType string    `json:"collection_type,omitempty"`
-	Handle         string    `json:"handle,omitempty"`
-	Image          ImageDTO  `json:"image,omitempty"`
-	ID             int64     `json:"id,omitempty"`
-	PublishedAt    time.Time `json:"published_at,omitempty"`
-	PublishedScope string    `json:"published_scope,omitempty"`
-	Rules          RuleDTOs  `json:"rules,omitempty"`
-	Disjunctive    bool      `json:"disjunctive,omitempty"`
-	SortOrder      string    `json:"sort_order,omitempty"`
-	TemplateSuffix string    `json:"template_suffix,omitempty"`
-	ProductsCount  int       `json:"products_count,omitempty"`
-	Title          string    `json:"title,omitempty"`
-	UpdatedAt      time.Time `json:"updated_at,omitempty"`
+	BodyHTML       string     `json:"body_html,omitempty"`
+	CollectionType string     `json:"collection_type,omitempty"`
+	Handle         string     `json:"handle,omitempty"`
+	Image          ImageDTO   `json:"image,omitempty"`
+	ID             int64      `json:"id,omitempty"`
+	PublishedAt    *time.Time `json:"published_at,omitempty"`
+	PublishedScope string     `json:"published_scope,omitempty"`
+	Rules          RuleDTOs   `json:"rules,omitempty"`
+	Disjunctive    bool       `json:"disjunctive,omitempty"`
+	SortOrder      string     `json:"sort_order,omitempty"`
+	TemplateSuffix string     `json:"template_suffix,omitempty"`
+	ProductsCount  int        `json:"products_count,omitempty"`
+	Title          string     `json:"title,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto CollectionDTO) ToShopify() shopify.Collection {
+	var publishedAt time.Time
+	if dto.PublishedAt != nil {
+		publishedAt = *dto.PublishedAt
+	}
+
+	var updatedAt time.Time
+	if dto.UpdatedAt != nil {
+		updatedAt = *dto.UpdatedAt
+	}
+
 	switch dto.CollectionType {
 	case shopify.CollectionTypeSmart:
 		return shopify.NewSmartCollection(
@@ -98,14 +108,14 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 			dto.ID,
 			dto.Image.ToShopify(),
 			dto.ProductsCount,
-			dto.PublishedAt,
+			publishedAt,
 			dto.PublishedScope,
 			dto.Rules.ToShopify(),
 			dto.Disjunctive,
 			dto.SortOrder,
 			dto.TemplateSuffix,
 			dto.Title,
-			dto.UpdatedAt,
+			updatedAt,
 		)
 	default:
 		return shopify.NewCustomCollection(
@@ -115,12 +125,12 @@ func (dto CollectionDTO) ToShopify() shopify.Collection {
 			dto.ID,
 			dto.Image.ToShopify(),
 			dto.ProductsCount,
-			dto.PublishedAt,
+			publishedAt,
 			dto.PublishedScope,
 			dto.SortOrder,
 			dto.TemplateSuffix,
 			dto.Title,
-			dto.UpdatedAt,
+			updatedAt,
 		)
 	}
 }
