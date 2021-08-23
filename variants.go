@@ -75,6 +75,7 @@ type VariantDTO struct {
 	Title           string     `json:"title,omitempty"`
 	InventoryItemID int64      `json:"inventory_item_id,omitempty"`
 	Price           string     `json:"price,omitempty"`
+	ProductID       int64      `json:"product_id,omitempty"`
 	Barcode         string     `json:"barcode,omitempty"`
 	CreatedAt       *time.Time `json:"created_at,omitempty"`
 	UpdatedAt       *time.Time `json:"updated_at,omitempty"`
@@ -98,6 +99,7 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 		Title:           dto.Title,
 		InventoryItemID: dto.InventoryItemID,
 		Price:           dto.Price,
+		ProductID:       dto.ProductID,
 		Barcode:         dto.Barcode,
 		CreatedAt:       createdAt,
 		UpdatedAt:       updatedAt,

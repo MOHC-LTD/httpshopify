@@ -19,11 +19,11 @@ func TestCollectionDTO_ToShopify(t *testing.T) {
 
 	collection := collectionDTO.ToShopify()
 
-	if !collection.UpdatedAt.Equal(updatedAt) {
+	if !collection.UpdatedAt().Equal(updatedAt) {
 		assertions.ValueAssertionFailure(t, updatedAt, collection.UpdatedAt)
 	}
 
-	if !collection.PublishedAt.Equal(publishedAt) {
+	if !collection.PublishedAt().Equal(publishedAt) {
 		assertions.ValueAssertionFailure(t, publishedAt, collection.PublishedAt)
 	}
 }
@@ -40,11 +40,11 @@ func TestCollectionDTO_ToShopifyEmptyTimes(t *testing.T) {
 
 	collection := collectionDTO.ToShopify()
 
-	if !collection.UpdatedAt.IsZero() {
+	if !collection.UpdatedAt().IsZero() {
 		assertions.ValueAssertionFailure(t, updatedAt, collection.UpdatedAt)
 	}
 
-	if !collection.PublishedAt.IsZero() {
+	if !collection.PublishedAt().IsZero() {
 		assertions.ValueAssertionFailure(t, publishedAt, collection.PublishedAt)
 	}
 }
