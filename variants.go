@@ -52,14 +52,15 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 		}
 
 		variantDTO := VariantDTO{
-			ID:              variant.ID,
-			SKU:             variant.SKU,
-			Title:           variant.Title,
-			InventoryItemID: variant.InventoryItemID,
-			Price:           variant.Price,
-			Barcode:         variant.Barcode,
-			CreatedAt:       createdAt,
-			UpdatedAt:       updatedAt,
+			ID:                variant.ID,
+			SKU:               variant.SKU,
+			Title:             variant.Title,
+			InventoryItemID:   variant.InventoryItemID,
+			InventoryQuantity: variant.InventoryQuantity,
+			Price:             variant.Price,
+			Barcode:           variant.Barcode,
+			CreatedAt:         createdAt,
+			UpdatedAt:         updatedAt,
 		}
 
 		dtos = append(dtos, variantDTO)
@@ -95,15 +96,16 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 	}
 
 	return shopify.Variant{
-		ID:              dto.ID,
-		SKU:             dto.SKU,
-		Title:           dto.Title,
-		InventoryItemID: dto.InventoryItemID,
-		Price:           dto.Price,
-		ProductID:       dto.ProductID,
-		Barcode:         dto.Barcode,
-		CreatedAt:       createdAt,
-		UpdatedAt:       updatedAt,
+		ID:                dto.ID,
+		SKU:               dto.SKU,
+		Title:             dto.Title,
+		InventoryItemID:   dto.InventoryItemID,
+		InventoryQuantity: dto.InventoryQuantity,
+		Price:             dto.Price,
+		ProductID:         dto.ProductID,
+		Barcode:           dto.Barcode,
+		CreatedAt:         createdAt,
+		UpdatedAt:         updatedAt,
 	}
 }
 
