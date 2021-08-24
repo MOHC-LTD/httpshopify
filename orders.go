@@ -3,7 +3,6 @@ package httpshopify
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/MOHC-LTD/httpshopify/internal/slices"
@@ -212,7 +211,7 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		ShippingLines:            dto.ShippingLines.ToShopify(),
 		SubtotalPrice:            dto.SubtotalPrice,
 		SubtotalPriceSet:         dto.SubtotalPriceSet.ToShopify(),
-		Tags:                     strings.Split(dto.Tags, ", "),
+		Tags:                     shopify.Tags(dto.Tags),
 		TotalDiscounts:           dto.TotalDiscounts,
 		TotalDiscountsSet:        dto.TotalDiscountsSet.ToShopify(),
 		TotalLineItemsPrice:      dto.TotalLineItemsPrice,
@@ -272,7 +271,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
 		SubtotalPrice:            order.SubtotalPrice,
 		SubtotalPriceSet:         BuildPriceSetDTO(order.SubtotalPriceSet),
-		Tags:                     strings.Join(order.Tags, ", "),
+		Tags:                     string(order.Tags),
 		TotalDiscounts:           order.TotalDiscounts,
 		TotalDiscountsSet:        BuildPriceSetDTO(order.TotalDiscountsSet),
 		TotalLineItemsPrice:      order.TotalLineItemsPrice,
