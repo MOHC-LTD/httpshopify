@@ -3,6 +3,7 @@ package httpshopify
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/MOHC-LTD/httpshopify/internal/slices"
@@ -149,6 +150,7 @@ type OrderDTO struct {
 	ShippingLines            ShippingLineDTOs `json:"shipping_lines,omitempty"`
 	SubtotalPrice            string           `json:"subtotal_price,omitempty"`
 	SubtotalPriceSet         PriceSetDTO      `json:"subtotal_price_set,omitempty"`
+	Tags                     string           `json:"tags,omitempty"`
 	TotalDiscounts           string           `json:"total_discounts,omitempty"`
 	TotalDiscountsSet        PriceSetDTO      `json:"total_discounts_set,omitempty"`
 	TotalLineItemsPrice      string           `json:"total_line_items_price,omitempty"`
@@ -210,6 +212,7 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		ShippingLines:            dto.ShippingLines.ToShopify(),
 		SubtotalPrice:            dto.SubtotalPrice,
 		SubtotalPriceSet:         dto.SubtotalPriceSet.ToShopify(),
+		Tags:                     strings.Split(dto.Tags, ", "),
 		TotalDiscounts:           dto.TotalDiscounts,
 		TotalDiscountsSet:        dto.TotalDiscountsSet.ToShopify(),
 		TotalLineItemsPrice:      dto.TotalLineItemsPrice,
@@ -269,6 +272,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
 		SubtotalPrice:            order.SubtotalPrice,
 		SubtotalPriceSet:         BuildPriceSetDTO(order.SubtotalPriceSet),
+		Tags:                     strings.Join(order.Tags, ", "),
 		TotalDiscounts:           order.TotalDiscounts,
 		TotalDiscountsSet:        BuildPriceSetDTO(order.TotalDiscountsSet),
 		TotalLineItemsPrice:      order.TotalLineItemsPrice,
