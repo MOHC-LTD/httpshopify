@@ -22,13 +22,13 @@ func newInventoryLevelRepository(client http.Client, createURL func(endpoint str
 }
 
 func (repository inventoryLevelRepository) Set(inventoryItemID int64, locationID int64, quantity int) (shopify.InventoryLevel, error) {
-	setDTO := InventoryLevelDTO{
+	setRequest := InventoryLevelSetRequest{
 		InventoryItemID: inventoryItemID,
 		Available:       quantity,
 		LocationID:      locationID,
 	}
 
-	body, err := json.Marshal(setDTO)
+	body, err := json.Marshal(setRequest)
 	if err != nil {
 		return shopify.InventoryLevel{}, err
 	}
@@ -52,12 +52,19 @@ func (repository inventoryLevelRepository) Set(inventoryItemID int64, locationID
 	return response.InventoryLevel.ToShopify(), nil
 }
 
-// InventoryLevelDTO represents a Shopify inventory level in HTTP requests and responses
+// InventoryLevelDTO represents a Shopify inventory level in HTTP requests and responses - READ ONLY
 type InventoryLevelDTO struct {
-	InventoryItemID int64      `json:"inventory_item_id,omitempty"`
+	InventoryItemID int64      `json:"inventory_item_id"`
 	Available       int        `json:"available"`
-	LocationID      int64      `json:"location_id,omitempty"`
-	UpdatedAt       *time.Time `json:"updated_at,omitempty"`
+	LocationID      int64      `json:"location_id"`
+	UpdatedAt       *time.Time `json:"updated_at"`
+}
+
+// InventoryLevelSetRequest represents a Shopify inventory level in HTTP requests and responses - WRITE ONLY
+type InventoryLevelSetRequest struct {
+	InventoryItemID int64 `json:"inventory_item_id,omitempty"`
+	Available       int   `json:"available"`
+	LocationID      int64 `json:"location_id,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
