@@ -179,7 +179,7 @@ func (dto ProductDTO) ToShopify() shopify.Product {
 		PublishedAt: publishedAt,
 		Images:      dto.Images.ToShopify(),
 		Status:      dto.Status,
-		Tags:        dto.Tags,
+		Tags:        shopify.Tags(dto.Tags),
 		Title:       dto.Title,
 		UpdatedAt:   updatedAt,
 		Variants:    dto.Variants.ToShopify(),
