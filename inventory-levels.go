@@ -62,9 +62,9 @@ type InventoryLevelDTO struct {
 
 // InventoryLevelSetRequest represents a Shopify inventory level in HTTP requests and responses - WRITE ONLY
 type InventoryLevelSetRequest struct {
-	InventoryItemID int64 `json:"inventory_item_id,omitempty"`
+	InventoryItemID int64 `json:"inventory_item_id"`
 	Available       int   `json:"available"`
-	LocationID      int64 `json:"location_id,omitempty"`
+	LocationID      int64 `json:"location_id"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
