@@ -55,7 +55,7 @@ func (repository inventoryLevelRepository) Set(inventoryItemID int64, locationID
 // InventoryLevelDTO represents a Shopify inventory level in HTTP requests and responses
 type InventoryLevelDTO struct {
 	InventoryItemID int64      `json:"inventory_item_id,omitempty"`
-	Available       int        `json:"available,omitempty"`
+	Available       int        `json:"available"`
 	LocationID      int64      `json:"location_id,omitempty"`
 	UpdatedAt       *time.Time `json:"updated_at,omitempty"`
 }
