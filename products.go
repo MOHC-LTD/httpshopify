@@ -26,6 +26,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 	createDTO := ProductDTO{
 		ID:          product.ID,
 		CreatedAt:   &product.CreatedAt,
+		Handle:      product.Handle,
 		BodyHTML:    product.BodyHTML,
 		ProductType: product.ProductType,
 		Images:      BuildProductImageDTOs(product.Images),
@@ -173,9 +174,9 @@ func (dto ProductDTO) ToShopify() shopify.Product {
 	}
 
 	return shopify.Product{
-		BodyHTML:  dto.BodyHTML,
-		CreatedAt: createdAt,
-		//Handle:      dto.Handle,
+		BodyHTML:    dto.BodyHTML,
+		CreatedAt:   createdAt,
+		Handle:      dto.Handle,
 		ID:          dto.ID,
 		Images:      dto.Images.ToShopify(),
 		ProductType: dto.ProductType,
