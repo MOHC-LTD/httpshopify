@@ -82,18 +82,28 @@ func (repository productImagesRepository) List(productID int64, query shopify.Pr
 // ProductImageDTO represents a Shopify product images in HTTP requests and responses
 type ProductImageDTO struct {
 	ImageDTO
-	ID         int64     `json:"id,omitempty"`
-	Position   int       `json:"position,omitempty"`
-	ProductID  int64     `json:"product_id,omitempty"`
-	VariantIDs []int64   `json:"variant_ids,omitempty"`
-	UpdatedAt  time.Time `json:"updated_at,omitempty"`
+	ID         int64      `json:"id,omitempty"`
+	Position   int        `json:"position,omitempty"`
+	ProductID  int64      `json:"product_id,omitempty"`
+	VariantIDs []int64    `json:"variant_ids,omitempty"`
+	UpdatedAt  *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
+	var createdAt time.Time
+	if dto.CreatedAt != nil {
+		createdAt = *dto.CreatedAt
+	}
+
+	var updatedAt time.Time
+	if dto.UpdatedAt != nil {
+		updatedAt = *dto.UpdatedAt
+	}
+
 	return shopify.ProductImage{
 		Image: shopify.Image{
-			CreatedAt: dto.CreatedAt,
+			CreatedAt: createdAt,
 			SRC:       dto.SRC,
 			Width:     dto.Width,
 			Height:    dto.Height,
@@ -103,20 +113,40 @@ func (dto ProductImageDTO) ToShopify() shopify.ProductImage {
 		Position:   dto.Position,
 		ProductID:  dto.ProductID,
 		VariantIDs: dto.VariantIDs,
-		UpdatedAt:  dto.UpdatedAt,
+		UpdatedAt:  updatedAt,
 	}
 }
 
 // BuildProductImageDTO builds the DTO from the Shopify equivalent
 func BuildProductImageDTO(productImage shopify.ProductImage) ProductImageDTO {
-	return ProductImageDTO{
-		ImageDTO:   ImageDTO(productImage.Image),
+	var createdAt *time.Time
+	if !productImage.CreatedAt.IsZero() {
+		createdAt = &productImage.CreatedAt
+	}
+
+	imageDTO := ImageDTO{
+		SRC:       productImage.SRC,
+		Width:     productImage.Width,
+		Height:    productImage.Height,
+		Alt:       productImage.Alt,
+		CreatedAt: createdAt,
+	}
+
+	var updatedAt *time.Time
+	if !productImage.UpdatedAt.IsZero() {
+		updatedAt = &productImage.UpdatedAt
+	}
+
+	productImageDTO := ProductImageDTO{
+		ImageDTO:   imageDTO,
 		ID:         productImage.ID,
 		Position:   productImage.Position,
 		ProductID:  productImage.ProductID,
 		VariantIDs: productImage.VariantIDs,
-		UpdatedAt:  productImage.UpdatedAt,
+		UpdatedAt:  updatedAt,
 	}
+
+	return productImageDTO
 }
 
 func parseProductImagesQuery(query shopify.ProductImageQuery) string {
