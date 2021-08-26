@@ -26,6 +26,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 	createDTO := ProductDTO{
 		ID:          product.ID,
 		CreatedAt:   &product.CreatedAt,
+		Handle:      product.Handle,
 		BodyHTML:    product.BodyHTML,
 		ProductType: product.ProductType,
 		Images:      BuildProductImageDTOs(product.Images),
@@ -140,11 +141,12 @@ func (dtos ProductDTOs) ToShopify() shopify.Products {
 
 // ProductDTO represents a Shopify product in HTTP requests and responses
 type ProductDTO struct {
-	ID          int64            `json:"id,omitempty"`
-	CreatedAt   *time.Time       `json:"created_at,omitempty"`
 	BodyHTML    string           `json:"body_html,omitempty"`
-	ProductType string           `json:"product_type,omitempty"`
+	CreatedAt   *time.Time       `json:"created_at,omitempty"`
+	Handle      string           `json:"handle,omitempty"`
+	ID          int64            `json:"id,omitempty"`
 	Images      ProductImageDTOs `json:"images,omitempty"`
+	ProductType string           `json:"product_type,omitempty"`
 	PublishedAt *time.Time       `json:"published_at,omitempty"`
 	Status      string           `json:"status,omitempty"`
 	Tags        string           `json:"tags,omitempty"`
@@ -172,12 +174,13 @@ func (dto ProductDTO) ToShopify() shopify.Product {
 	}
 
 	return shopify.Product{
-		ID:          dto.ID,
-		CreatedAt:   createdAt,
 		BodyHTML:    dto.BodyHTML,
+		CreatedAt:   createdAt,
+		Handle:      dto.Handle,
+		ID:          dto.ID,
+		Images:      dto.Images.ToShopify(),
 		ProductType: dto.ProductType,
 		PublishedAt: publishedAt,
-		Images:      dto.Images.ToShopify(),
 		Status:      dto.Status,
 		Tags:        shopify.Tags(dto.Tags),
 		Title:       dto.Title,
