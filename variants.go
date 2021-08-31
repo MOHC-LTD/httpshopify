@@ -52,15 +52,16 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 		}
 
 		variantDTO := VariantDTO{
-			ID:                variant.ID,
-			SKU:               variant.SKU,
-			Title:             variant.Title,
-			InventoryItemID:   variant.InventoryItemID,
-			InventoryQuantity: variant.InventoryQuantity,
-			Price:             variant.Price,
-			Barcode:           variant.Barcode,
-			CreatedAt:         createdAt,
-			UpdatedAt:         updatedAt,
+			ID:                  variant.ID,
+			SKU:                 variant.SKU,
+			Title:               variant.Title,
+			InventoryItemID:     variant.InventoryItemID,
+			InventoryManagement: variant.InventoryManagement,
+			InventoryQuantity:   variant.InventoryQuantity,
+			Price:               variant.Price,
+			Barcode:             variant.Barcode,
+			CreatedAt:           createdAt,
+			UpdatedAt:           updatedAt,
 		}
 
 		dtos = append(dtos, variantDTO)
@@ -71,16 +72,17 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 
 // VariantDTO represents a Shopify variant in HTTP requests and responses
 type VariantDTO struct {
-	ID                int64      `json:"id,omitempty"`
-	SKU               string     `json:"sku,omitempty"`
-	Title             string     `json:"title,omitempty"`
-	InventoryItemID   int64      `json:"inventory_item_id,omitempty"`
-	InventoryQuantity int        `json:"inventory_quantity,omitempty"`
-	Price             string     `json:"price,omitempty"`
-	ProductID         int64      `json:"product_id,omitempty"`
-	Barcode           string     `json:"barcode,omitempty"`
-	CreatedAt         *time.Time `json:"created_at,omitempty"`
-	UpdatedAt         *time.Time `json:"updated_at,omitempty"`
+	ID                  int64      `json:"id,omitempty"`
+	SKU                 string     `json:"sku,omitempty"`
+	Title               string     `json:"title,omitempty"`
+	InventoryItemID     int64      `json:"inventory_item_id,omitempty"`
+	InventoryManagement string     `json:"inventory_management,omitempty"`
+	InventoryQuantity   int        `json:"inventory_quantity,omitempty"`
+	Price               string     `json:"price,omitempty"`
+	ProductID           int64      `json:"product_id,omitempty"`
+	Barcode             string     `json:"barcode,omitempty"`
+	CreatedAt           *time.Time `json:"created_at,omitempty"`
+	UpdatedAt           *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -96,16 +98,17 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 	}
 
 	return shopify.Variant{
-		ID:                dto.ID,
-		SKU:               dto.SKU,
-		Title:             dto.Title,
-		InventoryItemID:   dto.InventoryItemID,
-		InventoryQuantity: dto.InventoryQuantity,
-		Price:             dto.Price,
-		ProductID:         dto.ProductID,
-		Barcode:           dto.Barcode,
-		CreatedAt:         createdAt,
-		UpdatedAt:         updatedAt,
+		ID:                  dto.ID,
+		SKU:                 dto.SKU,
+		Title:               dto.Title,
+		InventoryItemID:     dto.InventoryItemID,
+		InventoryManagement: dto.InventoryManagement,
+		InventoryQuantity:   dto.InventoryQuantity,
+		Price:               dto.Price,
+		ProductID:           dto.ProductID,
+		Barcode:             dto.Barcode,
+		CreatedAt:           createdAt,
+		UpdatedAt:           updatedAt,
 	}
 }
 
