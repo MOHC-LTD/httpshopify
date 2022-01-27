@@ -135,7 +135,7 @@ type OrderDTO struct {
 	CurrentTotalTax          string                  `json:"current_total_tax,omitempty"`
 	CurrentTotalTaxSet       PriceSetDTO             `json:"current_total_tax_set,omitempty"`
 	Customer                 CustomerDTO             `json:"customer,omitempty"`
-	DiscountApplications     DiscountApplicationDTOs `json:"discountApplications,omitempty"`
+	DiscountApplications     DiscountApplicationDTOs `json:"discount_applications,omitempty"`
 	Email                    string                  `json:"email,omitempty"`
 	FinancialStatus          string                  `json:"financial_status,omitempty"`
 	Fulfillments             FulfillmentDTOs         `json:"fulfillments,omitempty"`
