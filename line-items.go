@@ -4,56 +4,59 @@ import "github.com/MOHC-LTD/shopify"
 
 // LineItemDTO represents a Shopify line item in HTTP requests and responses
 type LineItemDTO struct {
-	ID               int64       `json:"id,omitempty"`
-	Price            string      `json:"price,omitempty"`
-	PriceSet         PriceSetDTO `json:"price_set,omitempty"`
-	ProductID        int64       `json:"product_id,omitempty"`
-	Quantity         int         `json:"quantity,omitempty"`
-	SKU              string      `json:"sku,omitempty"`
-	Title            string      `json:"title,omitempty"`
-	VariantID        int64       `json:"variant_id,omitempty"`
-	VariantTitle     string      `json:"variant_title,omitempty"`
-	Name             string      `json:"name,omitempty"`
-	TaxLines         TaxLineDTOs `json:"tax_lines,omitempty"`
-	TotalDiscount    string      `json:"total_discount,omitempty"`
-	TotalDiscountSet PriceSetDTO `json:"total_discount_set,omitempty"`
+	ID                  int64                  `json:"id,omitempty"`
+	Price               string                 `json:"price,omitempty"`
+	PriceSet            PriceSetDTO            `json:"price_set,omitempty"`
+	ProductID           int64                  `json:"product_id,omitempty"`
+	Quantity            int                    `json:"quantity,omitempty"`
+	SKU                 string                 `json:"sku,omitempty"`
+	Title               string                 `json:"title,omitempty"`
+	VariantID           int64                  `json:"variant_id,omitempty"`
+	VariantTitle        string                 `json:"variant_title,omitempty"`
+	Name                string                 `json:"name,omitempty"`
+	TaxLines            TaxLineDTOs            `json:"tax_lines,omitempty"`
+	TotalDiscount       string                 `json:"total_discount,omitempty"`
+	TotalDiscountSet    PriceSetDTO            `json:"total_discount_set,omitempty"`
+	DiscountAllocations DiscountAllocationDTOs `json:"discount_allocations,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto LineItemDTO) ToShopify() shopify.LineItem {
 	return shopify.LineItem{
-		ID:               dto.ID,
-		Price:            dto.Price,
-		PriceSet:         dto.PriceSet.ToShopify(),
-		ProductID:        dto.ProductID,
-		Quantity:         dto.Quantity,
-		SKU:              dto.SKU,
-		Title:            dto.Title,
-		VariantID:        dto.VariantID,
-		VariantTitle:     dto.VariantTitle,
-		Name:             dto.Name,
-		TaxLines:         dto.TaxLines.ToShopify(),
-		TotalDiscount:    dto.TotalDiscount,
-		TotalDiscountSet: dto.TotalDiscountSet.ToShopify(),
+		ID:                  dto.ID,
+		Price:               dto.Price,
+		PriceSet:            dto.PriceSet.ToShopify(),
+		ProductID:           dto.ProductID,
+		Quantity:            dto.Quantity,
+		SKU:                 dto.SKU,
+		Title:               dto.Title,
+		VariantID:           dto.VariantID,
+		VariantTitle:        dto.VariantTitle,
+		Name:                dto.Name,
+		TaxLines:            dto.TaxLines.ToShopify(),
+		TotalDiscount:       dto.TotalDiscount,
+		TotalDiscountSet:    dto.TotalDiscountSet.ToShopify(),
+		DiscountAllocations: dto.DiscountAllocations.ToShopify(),
 	}
 }
 
 // BuildLineItemDTO builds the DTO from the Shopify equivalent
 func BuildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
 	return LineItemDTO{
-		ID:               lineItem.ID,
-		Price:            lineItem.Price,
-		PriceSet:         BuildPriceSetDTO(lineItem.PriceSet),
-		ProductID:        lineItem.ProductID,
-		Quantity:         lineItem.Quantity,
-		SKU:              lineItem.SKU,
-		Title:            lineItem.Title,
-		VariantID:        lineItem.VariantID,
-		VariantTitle:     lineItem.VariantTitle,
-		Name:             lineItem.Name,
-		TaxLines:         BuildTaxLineDTOs(lineItem.TaxLines),
-		TotalDiscount:    lineItem.TotalDiscount,
-		TotalDiscountSet: BuildPriceSetDTO(lineItem.TotalDiscountSet),
+		ID:                  lineItem.ID,
+		Price:               lineItem.Price,
+		PriceSet:            BuildPriceSetDTO(lineItem.PriceSet),
+		ProductID:           lineItem.ProductID,
+		Quantity:            lineItem.Quantity,
+		SKU:                 lineItem.SKU,
+		Title:               lineItem.Title,
+		VariantID:           lineItem.VariantID,
+		VariantTitle:        lineItem.VariantTitle,
+		Name:                lineItem.Name,
+		TaxLines:            BuildTaxLineDTOs(lineItem.TaxLines),
+		TotalDiscount:       lineItem.TotalDiscount,
+		TotalDiscountSet:    BuildPriceSetDTO(lineItem.TotalDiscountSet),
+		DiscountAllocations: BuildDiscountAllocationDTOs(lineItem.DiscountAllocations),
 	}
 }
 
