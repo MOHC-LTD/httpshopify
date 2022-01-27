@@ -4,6 +4,7 @@ import (
 	"github.com/MOHC-LTD/shopify"
 )
 
+// DiscountApplicationDTO represents a Shopify discount application in HTTP requests and responses
 type DiscountApplicationDTO struct {
 	AllocationMethod string `json:"allocation_method,omitempty"`
 	Code             string `json:"code,omitempty"`
@@ -16,6 +17,7 @@ type DiscountApplicationDTO struct {
 	TargetSelection  string `json:"target_selection,omitempty"`
 }
 
+// ToShopify converts the DTO to the Shopify equivalent
 func (dto DiscountApplicationDTO) ToShopify() shopify.DiscountApplication {
 	return shopify.DiscountApplication{
 		AllocationMethod: dto.AllocationMethod,
@@ -30,6 +32,7 @@ func (dto DiscountApplicationDTO) ToShopify() shopify.DiscountApplication {
 	}
 }
 
+// BuildDiscountApplicationDTO builds the DTO from the Shopify equivalent
 func BuildDiscountApplicationDTO(application shopify.DiscountApplication) DiscountApplicationDTO {
 	return DiscountApplicationDTO{
 		AllocationMethod: application.AllocationMethod,
@@ -44,8 +47,10 @@ func BuildDiscountApplicationDTO(application shopify.DiscountApplication) Discou
 	}
 }
 
+// DiscountApplicationDTOs is a collection of DiscountApplication DTOs
 type DiscountApplicationDTOs []DiscountApplicationDTO
 
+// ToShopify converts the DTOs to the Shopify equivalent
 func (dtos DiscountApplicationDTOs) ToShopify() shopify.DiscountApplications {
 	applications := make(shopify.DiscountApplications, 0, len(dtos))
 
@@ -56,6 +61,7 @@ func (dtos DiscountApplicationDTOs) ToShopify() shopify.DiscountApplications {
 	return applications
 }
 
+// BuildDiscountApplicationDTOs builds the DTOs from the Shopify equivalent
 func BuildDiscountApplicationDTOs(applications shopify.DiscountApplications) DiscountApplicationDTOs {
 	dtos := make(DiscountApplicationDTOs, 0, len(applications))
 
@@ -66,12 +72,14 @@ func BuildDiscountApplicationDTOs(applications shopify.DiscountApplications) Dis
 	return dtos
 }
 
+// DiscountAllocationDTO represents a Shopify discount allocation in HTTP requests and responses
 type DiscountAllocationDTO struct {
 	Amount                   string      `json:"amount,omitempty"`
 	AmountSet                PriceSetDTO `json:"amount_set,omitempty"`
 	DiscountApplicationIndex int         `json:"discount_application_index,omitempty"`
 }
 
+// ToShopify converts the DTO to the Shopify equivalent
 func (dto DiscountAllocationDTO) ToShopify() shopify.DiscountAllocation {
 	return shopify.DiscountAllocation{
 		Amount:                   dto.Amount,
@@ -80,6 +88,7 @@ func (dto DiscountAllocationDTO) ToShopify() shopify.DiscountAllocation {
 	}
 }
 
+// BuildDiscountAllocationDTO builds the DTO from the Shopify equivalent
 func BuildDiscountAllocationDTO(allocation shopify.DiscountAllocation) DiscountAllocationDTO {
 	return DiscountAllocationDTO{
 		Amount:                   allocation.Amount,
@@ -88,8 +97,10 @@ func BuildDiscountAllocationDTO(allocation shopify.DiscountAllocation) DiscountA
 	}
 }
 
+// DiscountAllocationDTOs is a collection of DiscountAllocation DTOs
 type DiscountAllocationDTOs []DiscountAllocationDTO
 
+// ToShopify converts the DTOs to the Shopify equivalent
 func (dtos DiscountAllocationDTOs) ToShopify() shopify.DiscountAllocations {
 	allocations := make(shopify.DiscountAllocations, 0, len(dtos))
 
@@ -100,6 +111,7 @@ func (dtos DiscountAllocationDTOs) ToShopify() shopify.DiscountAllocations {
 	return allocations
 }
 
+// BuildDiscountAllocationDTOs builds the DTOs from the Shopify equivalent
 func BuildDiscountAllocationDTOs(allocations shopify.DiscountAllocations) DiscountAllocationDTOs {
 	dtos := make(DiscountAllocationDTOs, 0, len(allocations))
 
