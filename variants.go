@@ -80,7 +80,7 @@ type VariantDTO struct {
 	InventoryManagement string     `json:"inventory_management,omitempty"`
 	InventoryQuantity   int        `json:"inventory_quantity,omitempty"`
 	Price               string     `json:"price,omitempty"`
-	CompareAtPrice      string     `json:"compareAtPrice,omitempty"`
+	CompareAtPrice      string     `json:"compare_at_price,omitempty"`
 	ProductID           int64      `json:"product_id,omitempty"`
 	Barcode             string     `json:"barcode,omitempty"`
 	CreatedAt           *time.Time `json:"created_at,omitempty"`
