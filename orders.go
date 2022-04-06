@@ -295,7 +295,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	return orderDTO
 }
 
-// NoteAttributeDTOs represents a collection of Shopify order attributes in HTTP requests and responses
+// NoteAttributeDTOs represents a collection of Shopify note attributes in HTTP requests and responses
 type NoteAttributeDTOs []NoteAttributeDTO
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -318,7 +318,7 @@ func BuildNoteAttributeDTOs(attributes shopify.NoteAttributes) NoteAttributeDTOs
 	return dtos
 }
 
-// NoteAttributeDTO represents a Shopify order attribute in HTTP requests and responses
+// NoteAttributeDTO represents a Shopify note attribute in HTTP requests and responses
 type NoteAttributeDTO struct {
 	Name  string `json:"name,omitempty"`
 	Value string `json:"value,omitempty"`
