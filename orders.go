@@ -143,6 +143,7 @@ type OrderDTO struct {
 	ID                       int64                   `json:"id,omitempty"`
 	LineItems                LineItemDTOs            `json:"line_items,omitempty"`
 	Name                     string                  `json:"name,omitempty"`
+	NoteAttributes           NoteAttributeDTOs       `json:"note_attributes,omitempty"`
 	OrderNumber              int                     `json:"order_number,omitempty"`
 	PresentmentCurrency      string                  `json:"presentment_currency,omitempty"`
 	ProcessedAt              *time.Time              `json:"processed_at,omitempty"`
@@ -206,6 +207,7 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		ID:                       dto.ID,
 		LineItems:                dto.LineItems.ToShopify(),
 		Name:                     dto.Name,
+		NoteAttributes:           dto.NoteAttributes.ToShopify(),
 		OrderNumber:              dto.OrderNumber,
 		PresentmentCurrency:      dto.PresentmentCurrency,
 		ProcessedAt:              processedAt,
@@ -268,6 +270,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		ID:                       order.ID,
 		LineItems:                BuildLineItemDTOs(order.LineItems),
 		Name:                     order.Name,
+		NoteAttributes:           BuildNoteAttributeDTOs(order.NoteAttributes),
 		OrderNumber:              order.OrderNumber,
 		PresentmentCurrency:      order.PresentmentCurrency,
 		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
@@ -290,6 +293,51 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	}
 
 	return orderDTO
+}
+
+// NoteAttributeDTOs represents a collection of Shopify order attributes in HTTP requests and responses
+type NoteAttributeDTOs []NoteAttributeDTO
+
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos NoteAttributeDTOs) ToShopify() shopify.NoteAttributes {
+	domains := make(shopify.NoteAttributes, 0, len(dtos))
+	for _, dto := range dtos {
+		domains = append(domains, dto.ToShopify())
+	}
+
+	return domains
+}
+
+// BuildNoteAttributeDTOs builds the DTOs from the Shopify equivalents
+func BuildNoteAttributeDTOs(attributes shopify.NoteAttributes) NoteAttributeDTOs {
+	dtos := make(NoteAttributeDTOs, 0, len(attributes))
+	for _, attribute := range attributes {
+		dtos = append(dtos, BuildNoteAttributeDTO(attribute))
+	}
+
+	return dtos
+}
+
+// NoteAttributeDTO represents a Shopify order attribute in HTTP requests and responses
+type NoteAttributeDTO struct {
+	Name  string `json:"name,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto NoteAttributeDTO) ToShopify() shopify.NoteAttribute {
+	return shopify.NoteAttribute{
+		Name:  dto.Name,
+		Value: dto.Value,
+	}
+}
+
+// BuildNoteAttributeDTO builds the DTO from the Shopify equivalent
+func BuildNoteAttributeDTO(attribute shopify.NoteAttribute) NoteAttributeDTO {
+	return NoteAttributeDTO{
+		Name:  attribute.Name,
+		Value: attribute.Value,
+	}
 }
 
 func parseOrderQuery(query shopify.OrderQuery) string {
