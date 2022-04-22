@@ -63,7 +63,9 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 func (repository fulfillmentRepository) Update(orderID int64, fulfillmentID int64, update shopify.Fulfillment) (shopify.Fulfillment, error) {
 	updateDTO := FulfillmentDTO{
 		ID:              fulfillmentID,
+		TrackingCompany: update.TrackingCompany,
 		TrackingNumbers: update.TrackingNumbers,
+		TrackingURLs:    update.TrackingURLs,
 		NotifyCustomer:  update.NotifyCustomer,
 	}
 
@@ -115,7 +117,9 @@ type FulfillmentDTOs []FulfillmentDTO
 type FulfillmentDTO struct {
 	ID              int64        `json:"id,omitempty"`
 	OrderID         int64        `json:"order_id,omitempty"`
+	TrackingCompany string       `json:"tracking_company,omitempty"`
 	TrackingNumbers []string     `json:"tracking_numbers,omitempty"`
+	TrackingURLs    []string     `json:"tracking_urls,omitempty"`
 	Status          string       `json:"status,omitempty"`
 	CreatedAt       *time.Time   `json:"created_at,omitempty"`
 	UpdatedAt       *time.Time   `json:"updated_at,omitempty"`
@@ -140,7 +144,9 @@ func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 	return shopify.Fulfillment{
 		ID:              dto.ID,
 		OrderID:         dto.OrderID,
+		TrackingCompany: dto.TrackingCompany,
 		TrackingNumbers: dto.TrackingNumbers,
+		TrackingURLs:    dto.TrackingURLs,
 		Status:          dto.Status,
 		CreatedAt:       createdAt,
 		UpdatedAt:       updatedAt,
@@ -166,7 +172,9 @@ func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
 	fulfillmentDTO := FulfillmentDTO{
 		ID:              fulfillment.ID,
 		OrderID:         fulfillment.OrderID,
+		TrackingCompany: fulfillment.TrackingCompany,
 		TrackingNumbers: fulfillment.TrackingNumbers,
+		TrackingURLs:    fulfillment.TrackingURLs,
 		Status:          fulfillment.Status,
 		NotifyCustomer:  fulfillment.NotifyCustomer,
 		ShipmentStatus:  fulfillment.ShipmentStatus,
