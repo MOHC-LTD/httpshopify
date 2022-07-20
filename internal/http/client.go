@@ -62,6 +62,7 @@ func (client Client) Do(method string, url string, headers RequestHeaders, body 
 	if err != nil {
 		return nil, ResponseHeaders{}, err
 	}
+	defer resp.Body.Close()
 
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
