@@ -1,7 +1,11 @@
 package httpshopify
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
+
+	"github.com/MOHC-LTD/httpshopify/internal/http"
 
 	"github.com/MOHC-LTD/shopify"
 )
@@ -10,6 +14,7 @@ import (
 type CustomerDTO struct {
 	ID        int64      `json:"id,omitempty"`
 	Email     string     `json:"email,omitempty"`
+	Phone     string     `json:"phone,omitempty"`
 	FirstName string     `json:"first_name,omitempty"`
 	LastName  string     `json:"last_name,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -53,6 +58,7 @@ func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
 	customerDTO := CustomerDTO{
 		ID:        customer.ID,
 		Email:     customer.Email,
+		Phone:     customer.Phone,
 		FirstName: customer.FirstName,
 		LastName:  customer.LastName,
 		CreatedAt: createdAt,
@@ -60,4 +66,50 @@ func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
 	}
 
 	return customerDTO
+}
+
+type customerRepository struct {
+	client    http.Client
+	createURL func(endpoint string) string
+}
+
+func newCustomerRepository(client http.Client, createURL func(endpoint string) string) customerRepository {
+	return customerRepository{
+		client,
+		createURL,
+	}
+}
+
+func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer, error) {
+	// Map to DTO
+	customerDTO := BuildCustomerDTO(customer)
+
+	request := struct {
+		CustomerDTO `json:"customer"`
+	}{
+		customerDTO,
+	}
+
+	body, err := json.Marshal(request)
+	if err != nil {
+		return shopify.Customer{}, err
+	}
+
+	url := c.createURL(fmt.Sprintf("customers/%d.json", customer.ID))
+
+	respBody, _, err := c.client.Put(url, body, nil)
+	if err != nil {
+		return shopify.Customer{}, err
+	}
+
+	var response struct {
+		Customer CustomerDTO `json:"product"`
+	}
+
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return shopify.Customer{}, err
+	}
+
+	return response.Customer.ToShopify(), nil
 }
