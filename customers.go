@@ -99,11 +99,22 @@ func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer,
 
 	respBody, _, err := c.client.Put(url, body, nil)
 	if err != nil {
-		return shopify.Customer{}, err
+		switch err.(type) {
+		case http.ErrHTTP:
+			var responseError ResponseError
+			e := json.Unmarshal([]byte(err.(http.ErrHTTP).Body), &responseError)
+			if e != nil {
+				return shopify.Customer{}, err
+			}
+
+			return shopify.Customer{}, responseError.getType(err)
+		default:
+			return shopify.Customer{}, err
+		}
 	}
 
 	var response struct {
-		Customer CustomerDTO `json:"product"`
+		Customer CustomerDTO `json:"customer"`
 	}
 
 	err = json.Unmarshal(respBody, &response)
@@ -112,4 +123,65 @@ func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer,
 	}
 
 	return response.Customer.ToShopify(), nil
+}
+
+// ResponseError is used to store the error response for a customer
+type ResponseError struct {
+	Errors Fields `json:"errors"`
+}
+
+// Fields holds all the possible fields for an error
+type Fields struct {
+	Email []interface{} `json:"email"`
+	Phone []interface{} `json:"phone"`
+}
+
+func (e ResponseError) getType(err error) error {
+	if len(e.Errors.Email) > 0 {
+		return ErrCustomerEmail{
+			Msg: err.Error(),
+			Err: err,
+		}
+	}
+
+	if len(e.Errors.Phone) > 0 {
+		return ErrCustomerPhone{
+			Msg: err.Error(),
+			Err: err,
+		}
+	}
+
+	return nil
+}
+
+// ErrCustomerEmail is thrown when there has been an error with a customers email
+type ErrCustomerEmail struct {
+	Msg string
+	Err error
+}
+
+// Error returns the error
+func (e ErrCustomerEmail) Error() string {
+	return e.Msg
+}
+
+// Unwrap unwraps the error
+func (e ErrCustomerEmail) Unwrap() error {
+	return e.Err
+}
+
+// ErrCustomerPhone is thrown when there has been an error with a customers phone number
+type ErrCustomerPhone struct {
+	Msg string
+	Err error
+}
+
+// Error returns the error
+func (e ErrCustomerPhone) Error() string {
+	return e.Msg
+}
+
+// Unwrap unwraps the error
+func (e ErrCustomerPhone) Unwrap() error {
+	return e.Err
 }
