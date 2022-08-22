@@ -36,6 +36,24 @@ func (dtos VariantDTOs) ToShopify() shopify.Variants {
 	return variants
 }
 
+// BuildOptionsDTOs builds the DTOs from the Shopify equivalent
+func BuildOptionsDTOs(options shopify.ProductOptions) ProductOptionsDTO {
+	dtos := make(ProductOptionsDTO, 0, len(options))
+
+	for _, variant := range options {
+		optionDTO := ProductOptionDTO{
+			ID:       variant.ID,
+			Name:     variant.Name,
+			Position: variant.Position,
+			Values:   variant.Values,
+		}
+
+		dtos = append(dtos, optionDTO)
+	}
+
+	return dtos
+}
+
 // BuildVariantDTOs builds the DTOs from the Shopify equivalent
 func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 	dtos := make([]VariantDTO, 0, len(variants))
@@ -55,6 +73,10 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 			ID:                  variant.ID,
 			SKU:                 variant.SKU,
 			Title:               variant.Title,
+			Option1:             variant.Option1,
+			Option2:             variant.Option2,
+			Option3:             variant.Option3,
+			Position:            variant.Position,
 			InventoryItemID:     variant.InventoryItemID,
 			InventoryManagement: variant.InventoryManagement,
 			InventoryQuantity:   variant.InventoryQuantity,
@@ -76,6 +98,10 @@ type VariantDTO struct {
 	ID                  int64      `json:"id,omitempty"`
 	SKU                 string     `json:"sku,omitempty"`
 	Title               string     `json:"title,omitempty"`
+	Option1             string     `json:"option1,omitempty"`
+	Option2             string     `json:"option2,omitempty"`
+	Option3             string     `json:"option3,omitempty"`
+	Position            int        `json:"position,omitempty"`
 	InventoryItemID     int64      `json:"inventory_item_id,omitempty"`
 	InventoryManagement string     `json:"inventory_management,omitempty"`
 	InventoryQuantity   int        `json:"inventory_quantity,omitempty"`
@@ -103,6 +129,10 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 		ID:                  dto.ID,
 		SKU:                 dto.SKU,
 		Title:               dto.Title,
+		Option1:             dto.Option1,
+		Option2:             dto.Option2,
+		Option3:             dto.Option3,
+		Position:            dto.Position,
 		InventoryItemID:     dto.InventoryItemID,
 		InventoryManagement: dto.InventoryManagement,
 		InventoryQuantity:   dto.InventoryQuantity,
