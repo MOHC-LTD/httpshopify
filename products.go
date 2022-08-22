@@ -23,55 +23,6 @@ func newProductRepository(client http.Client, createURL func(endpoint string) st
 }
 
 func (repository productRepository) Create(product shopify.Product) (shopify.Product, error) {
-	updateDTO := ProductDTO{
-		ID:          product.ID,
-		CreatedAt:   &product.CreatedAt,
-		Handle:      product.Handle,
-		BodyHTML:    product.BodyHTML,
-		ProductType: product.ProductType,
-		Images:      BuildProductImageDTOs(product.Images),
-		PublishedAt: &product.PublishedAt,
-		Status:      product.Status,
-		Tags:        string(product.Tags),
-		Title:       product.Title,
-		UpdatedAt:   &product.UpdatedAt,
-		Variants:    BuildVariantDTOs(product.Variants),
-		Vendor:      product.Vendor,
-		Options:     BuildOptionsDTOs(product.Options),
-	}
-
-	request := struct {
-		Product ProductDTO `json:"product"`
-	}{
-		Product: updateDTO,
-	}
-
-	body, err := json.Marshal(request)
-
-	if err != nil {
-		return shopify.Product{}, err
-	}
-
-	url := repository.createURL("products.json")
-
-	respBody, _, err := repository.client.Post(url, body, nil)
-	if err != nil {
-		return shopify.Product{}, err
-	}
-
-	var response struct {
-		Product ProductDTO `json:"product"`
-	}
-
-	err = json.Unmarshal(respBody, &response)
-	if err != nil {
-		return shopify.Product{}, err
-	}
-
-	return response.Product.ToShopify(), nil
-}
-
-func (repository productRepository) Update(product shopify.Product) (shopify.Product, error) {
 	createDTO := ProductDTO{
 		ID:          product.ID,
 		CreatedAt:   &product.CreatedAt,
@@ -101,7 +52,56 @@ func (repository productRepository) Update(product shopify.Product) (shopify.Pro
 		return shopify.Product{}, err
 	}
 
-	url := repository.createURL(fmt.Sprintf("products/%d.json", createDTO.ID))
+	url := repository.createURL("products.json")
+
+	respBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	var response struct {
+		Product ProductDTO `json:"product"`
+	}
+
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	return response.Product.ToShopify(), nil
+}
+
+func (repository productRepository) Update(product shopify.Product) (shopify.Product, error) {
+	updateDTO := ProductDTO{
+		ID:          product.ID,
+		CreatedAt:   &product.CreatedAt,
+		Handle:      product.Handle,
+		BodyHTML:    product.BodyHTML,
+		ProductType: product.ProductType,
+		Images:      BuildProductImageDTOs(product.Images),
+		PublishedAt: &product.PublishedAt,
+		Status:      product.Status,
+		Tags:        string(product.Tags),
+		Title:       product.Title,
+		UpdatedAt:   &product.UpdatedAt,
+		Variants:    BuildVariantDTOs(product.Variants),
+		Vendor:      product.Vendor,
+		Options:     BuildOptionsDTOs(product.Options),
+	}
+
+	request := struct {
+		Product ProductDTO `json:"product"`
+	}{
+		Product: updateDTO,
+	}
+
+	body, err := json.Marshal(request)
+
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	url := repository.createURL(fmt.Sprintf("products/%d.json", updateDTO.ID))
 
 	respBody, _, err := repository.client.Put(url, body, nil)
 	if err != nil {
