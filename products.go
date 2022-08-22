@@ -23,7 +23,7 @@ func newProductRepository(client http.Client, createURL func(endpoint string) st
 }
 
 func (repository productRepository) Create(product shopify.Product) (shopify.Product, error) {
-	createDTO := ProductDTO{
+	updateDTO := ProductDTO{
 		ID:          product.ID,
 		CreatedAt:   &product.CreatedAt,
 		Handle:      product.Handle,
@@ -43,7 +43,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 	request := struct {
 		Product ProductDTO `json:"product"`
 	}{
-		Product: createDTO,
+		Product: updateDTO,
 	}
 
 	body, err := json.Marshal(request)
