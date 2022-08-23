@@ -137,6 +137,6 @@ func (shop Shop) ProductImages() shopify.ProductImageRepository {
 }
 
 // Metafields returns an HTTP implementation of a Shopify metafield repository
-func (shop Shop) Metafields() shopify.MetaFieldRepository {
+func (shop Shop) Metafields() shopify.MetafieldRepository {
 	return shop.metafields
 }
