@@ -72,7 +72,7 @@ type metafieldDTO struct {
 	Key         string `json:"key"`
 	Namespace   string `json:"namespace"`
 	OwnerID     int64  `json:"owner_id"`
-	// TODO This is better in a later version. Consider versioning this package.
+	// TODO This is better in a later version as it is always a string. Consider versioning this package with a new Shopify version.
 	Value         interface{} `json:"value"`
 	Type          string      `json:"type"`
 	OwnerResource string      `json:"owner_resource"`
@@ -98,10 +98,10 @@ func (dto metafieldDTO) toShopify() shopify.Metafield {
 		Namespace:   dto.Namespace,
 		Resource: shopify.MetafieldResource{
 			OwnerID:       dto.OwnerID,
-			OwnerResource: shopify.OwnerResource(dto.OwnerResource),
+			OwnerResource: dto.OwnerResource,
 		},
 		Value:     fmt.Sprintf("%v", dto.Value),
-		Type:      shopify.MetafieldType(dto.Type),
+		Type:      dto.Type,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}
