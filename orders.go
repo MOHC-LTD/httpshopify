@@ -79,6 +79,25 @@ func (repository orderRepository) Get(id int64) (shopify.Order, error) {
 	return response.Order.ToShopify(), nil
 }
 
+func (repository orderRepository) Open(id int64) (shopify.Order, error) {
+	url := repository.createURL(fmt.Sprintf("orders/%v/open.json", id))
+
+	body, _, err := repository.client.Post(url, nil, nil)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	var response struct {
+		Order OrderDTO `json:"order"`
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	return response.Order.ToShopify(), nil
+}
+
 func (repository orderRepository) Close(id int64) error {
 	url := repository.createURL(fmt.Sprintf("orders/%v/close.json", id))
 
