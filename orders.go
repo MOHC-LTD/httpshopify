@@ -139,6 +139,41 @@ func (repository orderRepository) Create(order shopify.Order) (shopify.Order, er
 	return response.Order.ToShopify(), nil
 }
 
+func (repository orderRepository) Update(order shopify.Order) (shopify.Order, error) {
+
+	updateOrderDTO := BuildOrderDTO(order)
+
+	request := struct {
+		Order OrderDTO `json:"order"`
+	}{
+		Order: updateOrderDTO,
+	}
+
+	body, err := json.Marshal(request)
+
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	url := repository.createURL(fmt.Sprintf("orders/%d.json", updateOrderDTO.ID))
+
+	respBody, _, err := repository.client.Put(url, body, nil)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	var response struct {
+		Order OrderDTO `json:"order"`
+	}
+
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	return response.Order.ToShopify(), nil
+}
+
 // OrderDTO represents a Shopify order in HTTP requests and responses
 type OrderDTO struct {
 	BillingAddress           AddressDTO              `json:"billing_address,omitempty"`
