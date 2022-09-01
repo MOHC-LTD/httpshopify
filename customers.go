@@ -3,6 +3,8 @@ package httpshopify
 import (
 	"encoding/json"
 	"fmt"
+	httpCode "net/http"
+	"strings"
 	"time"
 
 	"github.com/MOHC-LTD/httpshopify/internal/http"
@@ -100,14 +102,20 @@ func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer,
 	respBody, _, err := c.client.Put(url, body, nil)
 	if err != nil {
 		switch err.(type) {
+		// TODO This ErrHTTP feels like bloat now. Can probably simplify the http work
 		case http.ErrHTTP:
-			var responseError ResponseError
-			e := json.Unmarshal([]byte(err.(http.ErrHTTP).Body), &responseError)
-			if e != nil {
-				return shopify.Customer{}, err
+			shopifyError := err.(http.ErrHTTP)
+			switch shopifyError.Code {
+			case httpCode.StatusUnprocessableEntity:
+				var unprocessableEntityDTO errCustomerUnprocessableEntityDTO
+				e := json.Unmarshal([]byte(shopifyError.Body), &unprocessableEntityDTO)
+				if e != nil {
+					return shopify.Customer{}, err
+				}
+
+				return shopify.Customer{}, unprocessableEntityDTO.toError()
 			}
 
-			return shopify.Customer{}, responseError.getType(err)
 		default:
 			return shopify.Customer{}, err
 		}
@@ -125,63 +133,38 @@ func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer,
 	return response.Customer.ToShopify(), nil
 }
 
-// ResponseError is used to store the error response for a customer
-type ResponseError struct {
-	Errors Fields `json:"errors"`
+type errCustomerUnprocessableEntityDTO struct {
+	Errors struct {
+		Email []string `json:"email"`
+		Phone []string `json:"phone"`
+	} `json:"errors"`
 }
 
-// Fields holds all the possible fields for an error
-type Fields struct {
-	Email []interface{} `json:"email"`
-	Phone []interface{} `json:"phone"`
+func (dto errCustomerUnprocessableEntityDTO) toError() error {
+	return ErrCustomerUnprocessableEntity{
+		Email: dto.Errors.Email,
+		Phone: dto.Errors.Phone,
+	}
 }
 
-func (e ResponseError) getType(err error) error {
-	if len(e.Errors.Email) > 0 {
-		return ErrCustomerEmail{
-			Msg: err.Error(),
-			Err: err,
-		}
+// ErrCustomerUnprocessableEntity is used to store unprocessable entity error responses for a customer
+type ErrCustomerUnprocessableEntity struct {
+	Email []string
+	Phone []string
+}
+
+func (e ErrCustomerUnprocessableEntity) Error() string {
+	var errorMessages []string
+
+	// Get the phone errors
+	for _, errorMessage := range e.Phone {
+		errorMessages = append(errorMessages, fmt.Sprintf("Phone number: %s", errorMessage))
 	}
 
-	if len(e.Errors.Phone) > 0 {
-		return ErrCustomerPhone{
-			Msg: err.Error(),
-			Err: err,
-		}
+	// Get the email errors
+	for _, errorMessage := range e.Email {
+		errorMessages = append(errorMessages, fmt.Sprintf("Email address: %s", errorMessage))
 	}
 
-	return nil
-}
-
-// ErrCustomerEmail is thrown when there has been an error with a customers email
-type ErrCustomerEmail struct {
-	Msg string
-	Err error
-}
-
-// Error returns the error
-func (e ErrCustomerEmail) Error() string {
-	return e.Msg
-}
-
-// Unwrap unwraps the error
-func (e ErrCustomerEmail) Unwrap() error {
-	return e.Err
-}
-
-// ErrCustomerPhone is thrown when there has been an error with a customers phone number
-type ErrCustomerPhone struct {
-	Msg string
-	Err error
-}
-
-// Error returns the error
-func (e ErrCustomerPhone) Error() string {
-	return e.Msg
-}
-
-// Unwrap unwraps the error
-func (e ErrCustomerPhone) Unwrap() error {
-	return e.Err
+	return strings.Join(errorMessages, ", ")
 }
