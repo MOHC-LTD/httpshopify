@@ -38,6 +38,7 @@ func (dto CustomerDTO) ToShopify() shopify.Customer {
 	return shopify.Customer{
 		ID:        dto.ID,
 		Email:     dto.Email,
+		Phone:     dto.Phone,
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
 		CreatedAt: createdAt,
@@ -80,6 +81,30 @@ func newCustomerRepository(client http.Client, createURL func(endpoint string) s
 		client,
 		createURL,
 	}
+}
+
+func (c customerRepository) Get(id int64) (shopify.Customer, error) {
+	url := c.createURL(fmt.Sprintf("customers/%v.json", id))
+
+	body, _, err := c.client.Get(url, nil)
+	if err != nil {
+		return shopify.Customer{}, err
+	}
+
+	var responseDTO struct {
+		Customer CustomerDTO `json:"customer"`
+	}
+
+	err = json.Unmarshal(body, &responseDTO)
+	if err != nil {
+		return shopify.Customer{}, err
+	}
+
+	if responseDTO.Customer.ID == 0 {
+		return shopify.Customer{}, shopify.NewErrCustomerNotFound(id)
+	}
+
+	return responseDTO.Customer.ToShopify(), nil
 }
 
 func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer, error) {
