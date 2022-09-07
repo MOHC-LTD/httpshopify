@@ -19,6 +19,7 @@ type CustomerDTO struct {
 	Phone     string     `json:"phone,omitempty"`
 	FirstName string     `json:"first_name,omitempty"`
 	LastName  string     `json:"last_name,omitempty"`
+	Tags      string     `json:"tags,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
@@ -41,6 +42,7 @@ func (dto CustomerDTO) ToShopify() shopify.Customer {
 		Phone:     dto.Phone,
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
+		Tags:      dto.Tags,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}
