@@ -90,6 +90,15 @@ func (c customerRepository) Get(id int64) (shopify.Customer, error) {
 
 	body, _, err := c.client.Get(url, nil)
 	if err != nil {
+		switch err.(type) {
+		// TODO This ErrHTTP feels like bloat now. Can probably simplify the http work
+		case http.ErrHTTP:
+			shopifyError := err.(http.ErrHTTP)
+			switch shopifyError.Code {
+			case httpCode.StatusNotFound:
+				return shopify.Customer{}, shopify.NewErrCustomerNotFound(id)
+			}
+		}
 		return shopify.Customer{}, err
 	}
 
