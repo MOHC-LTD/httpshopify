@@ -37,6 +37,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 		UpdatedAt:   &product.UpdatedAt,
 		Variants:    BuildVariantDTOs(product.Variants),
 		Vendor:      product.Vendor,
+		Options:     BuildOptionsDTOs(product.Options),
 	}
 
 	request := struct {
@@ -54,6 +55,55 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 	url := repository.createURL("products.json")
 
 	respBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	var response struct {
+		Product ProductDTO `json:"product"`
+	}
+
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	return response.Product.ToShopify(), nil
+}
+
+func (repository productRepository) Update(product shopify.Product) (shopify.Product, error) {
+	updateDTO := ProductDTO{
+		ID:          product.ID,
+		CreatedAt:   &product.CreatedAt,
+		Handle:      product.Handle,
+		BodyHTML:    product.BodyHTML,
+		ProductType: product.ProductType,
+		Images:      BuildProductImageDTOs(product.Images),
+		PublishedAt: &product.PublishedAt,
+		Status:      product.Status,
+		Tags:        string(product.Tags),
+		Title:       product.Title,
+		UpdatedAt:   &product.UpdatedAt,
+		Variants:    BuildVariantDTOs(product.Variants),
+		Vendor:      product.Vendor,
+		Options:     BuildOptionsDTOs(product.Options),
+	}
+
+	request := struct {
+		Product ProductDTO `json:"product"`
+	}{
+		Product: updateDTO,
+	}
+
+	body, err := json.Marshal(request)
+
+	if err != nil {
+		return shopify.Product{}, err
+	}
+
+	url := repository.createURL(fmt.Sprintf("products/%d.json", updateDTO.ID))
+
+	respBody, _, err := repository.client.Put(url, body, nil)
 	if err != nil {
 		return shopify.Product{}, err
 	}
@@ -141,19 +191,20 @@ func (dtos ProductDTOs) ToShopify() shopify.Products {
 
 // ProductDTO represents a Shopify product in HTTP requests and responses
 type ProductDTO struct {
-	BodyHTML    string           `json:"body_html,omitempty"`
-	CreatedAt   *time.Time       `json:"created_at,omitempty"`
-	Handle      string           `json:"handle,omitempty"`
-	ID          int64            `json:"id,omitempty"`
-	Images      ProductImageDTOs `json:"images,omitempty"`
-	ProductType string           `json:"product_type,omitempty"`
-	PublishedAt *time.Time       `json:"published_at,omitempty"`
-	Status      string           `json:"status,omitempty"`
-	Tags        string           `json:"tags,omitempty"`
-	Title       string           `json:"title,omitempty"`
-	UpdatedAt   *time.Time       `json:"updated_at,omitempty"`
-	Variants    VariantDTOs      `json:"variants,omitempty"`
-	Vendor      string           `json:"vendor,omitempty"`
+	BodyHTML    string            `json:"body_html,omitempty"`
+	CreatedAt   *time.Time        `json:"created_at,omitempty"`
+	Handle      string            `json:"handle,omitempty"`
+	ID          int64             `json:"id,omitempty"`
+	Images      ProductImageDTOs  `json:"images,omitempty"`
+	ProductType string            `json:"product_type,omitempty"`
+	PublishedAt *time.Time        `json:"published_at,omitempty"`
+	Status      string            `json:"status,omitempty"`
+	Tags        string            `json:"tags,omitempty"`
+	Title       string            `json:"title,omitempty"`
+	UpdatedAt   *time.Time        `json:"updated_at,omitempty"`
+	Variants    VariantDTOs       `json:"variants,omitempty"`
+	Vendor      string            `json:"vendor,omitempty"`
+	Options     ProductOptionsDTO `json:"options,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -187,6 +238,39 @@ func (dto ProductDTO) ToShopify() shopify.Product {
 		UpdatedAt:   updatedAt,
 		Variants:    dto.Variants.ToShopify(),
 		Vendor:      dto.Vendor,
+		Options:     dto.Options.ToShopify(),
+	}
+}
+
+// ProductOptionsDTO represents Shopify product options in HTTP requests and responses
+type ProductOptionsDTO []ProductOptionDTO
+
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos ProductOptionsDTO) ToShopify() shopify.ProductOptions {
+	options := make(shopify.ProductOptions, 0, len(dtos))
+
+	for _, dto := range dtos {
+		options = append(options, dto.ToShopify())
+	}
+
+	return options
+}
+
+// ProductOptionDTO represents a Shopify product option in HTTP requests and responses
+type ProductOptionDTO struct {
+	ID       int64    `json:"id,omitempty"`
+	Name     string   `json:"name,omitempty"`
+	Position int      `json:"position,omitempty"`
+	Values   []string `json:"values,omitempty"`
+}
+
+// ToShopify converts the DTO to the Shopify equivalent
+func (dto ProductOptionDTO) ToShopify() shopify.ProductOption {
+	return shopify.ProductOption{
+		ID:       dto.ID,
+		Name:     dto.Name,
+		Position: dto.Position,
+		Values:   dto.Values,
 	}
 }
 
