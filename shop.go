@@ -18,6 +18,7 @@ type Shop struct {
 	inventoryLevels   inventoryLevelRepository
 	collections       collectionRepository
 	productImages     productImagesRepository
+	metafields        metafieldRepository
 	customers         customerRepository
 }
 
@@ -92,6 +93,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		inventoryLevels:   newInventoryLevelRepository(client, createURL),
 		collections:       newCollectionRepository(client, createURL),
 		productImages:     newProductImagesRepository(client, createURL),
+		metafields:        newMetafieldRepository(client, createURL),
 		customers:         newCustomerRepository(client, createURL),
 	}
 }
@@ -134,6 +136,11 @@ func (shop Shop) Collections() shopify.CollectionRepository {
 // ProductImages returns an HTTP implementation of a Shopify product images repository
 func (shop Shop) ProductImages() shopify.ProductImageRepository {
 	return shop.productImages
+}
+
+// Metafields returns an HTTP implementation of a Shopify metafield repository
+func (shop Shop) Metafields() shopify.MetafieldRepository {
+	return shop.metafields
 }
 
 // Customers returns an HTTP implementation of a Shopify customers repository
