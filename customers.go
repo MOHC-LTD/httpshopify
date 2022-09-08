@@ -42,7 +42,7 @@ func (dto CustomerDTO) ToShopify() shopify.Customer {
 		Phone:     dto.Phone,
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
-		Tags:      dto.Tags,
+		Tags:      shopify.Tags(dto.Tags),
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}
