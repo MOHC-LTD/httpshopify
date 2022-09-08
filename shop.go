@@ -19,6 +19,7 @@ type Shop struct {
 	collections       collectionRepository
 	productImages     productImagesRepository
 	metafields        metafieldRepository
+	customers         customerRepository
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
@@ -93,6 +94,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		collections:       newCollectionRepository(client, createURL),
 		productImages:     newProductImagesRepository(client, createURL),
 		metafields:        newMetafieldRepository(client, createURL),
+		customers:         newCustomerRepository(client, createURL),
 	}
 }
 
@@ -139,4 +141,9 @@ func (shop Shop) ProductImages() shopify.ProductImageRepository {
 // Metafields returns an HTTP implementation of a Shopify metafield repository
 func (shop Shop) Metafields() shopify.MetafieldRepository {
 	return shop.metafields
+}
+
+// Customers returns an HTTP implementation of a Shopify customers repository
+func (shop Shop) Customers() shopify.CustomerRepository {
+	return shop.customers
 }
