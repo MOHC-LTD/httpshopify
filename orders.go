@@ -90,6 +90,82 @@ func (repository orderRepository) Close(id int64) error {
 	return nil
 }
 
+func (repository orderRepository) UpdateMetafield(orderID int64, metafield shopify.Metafield) (shopify.Metafield, error) {
+
+	bodyData := struct {
+		Metafield metafieldDTO `json:"metafield"`
+	}{
+		Metafield: metafieldDTO{
+			ID:            metafield.ID,
+			Description:   metafield.Description,
+			Key:           metafield.Key,
+			Namespace:     metafield.Namespace,
+			OwnerID:       metafield.Resource.OwnerID,
+			Value:         metafield.Value,
+			Type:          metafield.Type,
+			OwnerResource: metafield.Resource.OwnerResource,
+		},
+	}
+
+	body, err := json.Marshal(&bodyData)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	url := repository.createURL(fmt.Sprintf("orders/%d/metafields/%d.json", orderID, metafield.ID))
+
+	responseBody, _, err := repository.client.Put(url, body, nil)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	var response struct {
+		Metafield metafieldDTO `json:"metafield"`
+	}
+	err = json.Unmarshal(responseBody, &response)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	return response.Metafield.toShopify(), nil
+}
+
+func (repository orderRepository) CreateMetafield(orderID int64, metafield shopify.Metafield) (shopify.Metafield, error) {
+
+	bodyData := struct {
+		Metafield metafieldDTO `json:"metafield"`
+	}{
+		Metafield: metafieldDTO{
+			Key:       metafield.Key,
+			Namespace: metafield.Namespace,
+			Value:     metafield.Value,
+			Type:      metafield.Type,
+		},
+	}
+
+	body, err := json.Marshal(&bodyData)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	url := repository.createURL(fmt.Sprintf("orders/%d/metafields.json", orderID))
+
+	responseBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	var response struct {
+		Metafield metafieldDTO `json:"metafield"`
+	}
+	err = json.Unmarshal(responseBody, &response)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	return response.Metafield.toShopify(), nil
+}
+
 func (repository orderRepository) Create(order shopify.Order) (shopify.Order, error) {
 	url := repository.createURL("orders.json")
 
