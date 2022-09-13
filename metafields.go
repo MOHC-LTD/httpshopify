@@ -20,53 +20,6 @@ func newMetafieldRepository(client http.Client, createURL func(endpoint string) 
 	return metafieldRepository{client, createURL}
 }
 
-func (repository metafieldRepository) Update(metafield shopify.Metafield) (shopify.Metafield, error) {
-	updateDTO := metafieldDTO{
-		ID:            metafield.ID,
-		Description:   metafield.Description,
-		Key:           metafield.Key,
-		Namespace:     metafield.Namespace,
-		OwnerID:       metafield.Resource.OwnerID,
-		Value:         metafield.Value,
-		Type:          metafield.Type,
-		OwnerResource: metafield.Resource.OwnerResource,
-		CreatedAt:     nil,
-		UpdatedAt:     nil,
-	}
-
-	request := struct {
-		Metafield metafieldDTO `json:"metafield"`
-	}{
-		Metafield: updateDTO,
-	}
-
-	body, err := json.Marshal(request)
-
-	if err != nil {
-		return shopify.Metafield{}, err
-	}
-
-	url := repository.createURL(
-		fmt.Sprintf("%s/%d/metafields/%d.json", updateDTO.OwnerResource, updateDTO.OwnerID, updateDTO.ID),
-	)
-
-	respBody, _, err := repository.client.Put(url, body, nil)
-	if err != nil {
-		return shopify.Metafield{}, err
-	}
-
-	var response struct {
-		Metafield metafieldDTO `json:"metafield"`
-	}
-
-	err = json.Unmarshal(respBody, &response)
-	if err != nil {
-		return shopify.Metafield{}, err
-	}
-
-	return response.Metafield.toShopify(), nil
-}
-
 func (repository metafieldRepository) List(query shopify.MetafieldQuery) (shopify.Metafields, error) {
 
 	url := repository.createURL(fmt.Sprintf("metafields.json?%s", parseMetafieldQuery(query)))
