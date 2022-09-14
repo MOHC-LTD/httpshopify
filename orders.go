@@ -138,7 +138,7 @@ func (repository orderRepository) Update(order shopify.Order) (shopify.Order, er
 
 	url := repository.createURL(fmt.Sprintf("orders/%d.json", updateOrderDTO.ID))
 
-	respBody, _, err := repository.client.Put(url, body, nil)
+	responseBody, _, err := repository.client.Put(url, body, nil)
 	if err != nil {
 		return shopify.Order{}, err
 	}
@@ -147,7 +147,7 @@ func (repository orderRepository) Update(order shopify.Order) (shopify.Order, er
 		Order OrderDTO `json:"order"`
 	}
 
-	err = json.Unmarshal(respBody, &response)
+	err = json.Unmarshal(responseBody, &response)
 	if err != nil {
 		return shopify.Order{}, err
 	}
