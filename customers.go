@@ -188,16 +188,13 @@ func (c customerRepository) GetByQuery(fields []string, query string) (shopify.C
 
 	body, _, err := c.client.Get(url, nil)
 	if err != nil {
-		switch err.(type) {
 		// TODO This ErrHTTP feels like bloat now. Can probably simplify the http work
-		case http.ErrHTTP:
-			shopifyError := err.(http.ErrHTTP)
-			switch shopifyError.Code {
-			case httpCode.StatusNotFound:
-				return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query)
-			}
+		switch err.(http.ErrHTTP).Code {
+		case httpCode.StatusNotFound:
+			return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query)
+		default:
+			return shopify.Customers{}, err
 		}
-		return shopify.Customers{}, err
 	}
 
 	var responseDTO struct {
