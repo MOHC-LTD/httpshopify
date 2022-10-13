@@ -183,14 +183,14 @@ func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer,
 	return response.Customer.ToShopify(), nil
 }
 
-func (c customerRepository) GetByQuery(fields []string, query string) (shopify.Customers, error) {
-	url := c.createURL(fmt.Sprintf("customers/search.json?fields=%v&query=%v", strings.Join(fields, ","), query))
+func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSearchQuery) (shopify.Customers, error) {
+	url := c.createURL(fmt.Sprintf("customers/search.json?fields=%v&query=%s", strings.Join(fields, ","), query.String()))
 
 	body, _, err := c.client.Get(url, nil)
 	if err != nil {
 		switch err.(http.ErrHTTP).Code {
 		case httpCode.StatusNotFound:
-			return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query)
+			return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query.String())
 		default:
 			return shopify.Customers{}, err
 		}
@@ -206,7 +206,7 @@ func (c customerRepository) GetByQuery(fields []string, query string) (shopify.C
 	}
 
 	if responseDTO.Customers[0].ID == 0 {
-		return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query)
+		return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query.String())
 	}
 
 	return responseDTO.Customers.ToShopify(), nil
