@@ -190,7 +190,7 @@ func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSe
 	if err != nil {
 		switch err.(http.ErrHTTP).Code {
 		case httpCode.StatusNotFound:
-			return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query.String())
+			return shopify.Customers{}, err
 		default:
 			return shopify.Customers{}, err
 		}
@@ -203,10 +203,6 @@ func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSe
 	err = json.Unmarshal(body, &responseDTO)
 	if err != nil {
 		return shopify.Customers{}, err
-	}
-
-	if responseDTO.Customers[0].ID == 0 {
-		return shopify.Customers{}, shopify.NewErrCustomerSearchNotFound(query.String())
 	}
 
 	return responseDTO.Customers.ToShopify(), nil
