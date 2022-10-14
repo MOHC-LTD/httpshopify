@@ -73,6 +73,20 @@ func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
 	return customerDTO
 }
 
+// CustomerDTOs is a collection of Customer DTOs
+type CustomerDTOs []CustomerDTO
+
+// ToShopify converts the DTOs to the Shopify equivalent
+func (dtos CustomerDTOs) ToShopify() shopify.Customers {
+	customers := make(shopify.Customers, 0, len(dtos))
+
+	for _, dto := range dtos {
+		customers = append(customers, dto.ToShopify())
+	}
+
+	return customers
+}
+
 type customerRepository struct {
 	client    http.Client
 	createURL func(endpoint string) string
@@ -167,6 +181,31 @@ func (c customerRepository) Update(customer shopify.Customer) (shopify.Customer,
 	}
 
 	return response.Customer.ToShopify(), nil
+}
+
+func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSearchQuery) (shopify.Customers, error) {
+	url := c.createURL(fmt.Sprintf("customers/search.json?fields=%v&query=%s", strings.Join(fields, ","), query.String()))
+
+	body, _, err := c.client.Get(url, nil)
+	if err != nil {
+		switch err.(http.ErrHTTP).Code {
+		case httpCode.StatusNotFound:
+			return shopify.Customers{}, err
+		default:
+			return shopify.Customers{}, err
+		}
+	}
+
+	var responseDTO struct {
+		Customers CustomerDTOs `json:"customers"`
+	}
+
+	err = json.Unmarshal(body, &responseDTO)
+	if err != nil {
+		return shopify.Customers{}, err
+	}
+
+	return responseDTO.Customers.ToShopify(), nil
 }
 
 type errCustomerUnprocessableEntityDTO struct {
