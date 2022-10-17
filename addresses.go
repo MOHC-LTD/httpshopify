@@ -58,6 +58,7 @@ type CustomerAddressDTO struct {
 	CustomerID   uint64 `json:"customer_id,omitempty"`
 	Default      bool   `json:"default,omitempty"`
 	FirstName    string `json:"first_name,omitempty"`
+	ID           uint64 `json:"id,omitempty"`
 	LastName     string `json:"last_name,omitempty"`
 	Name         string `json:"name,omitempty"`
 	Phone        string `json:"phone,omitempty"`
@@ -79,6 +80,7 @@ func (dto CustomerAddressDTO) ToShopify() shopify.CustomerAddress {
 		CustomerID:   dto.CustomerID,
 		Default:      dto.Default,
 		FirstName:    dto.FirstName,
+		ID:           dto.ID,
 		LastName:     dto.LastName,
 		Name:         dto.Name,
 		Phone:        dto.Phone,
