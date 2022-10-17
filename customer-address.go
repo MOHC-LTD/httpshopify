@@ -20,51 +20,36 @@ func newCustomerAddressRepository(client http.Client, createURL func(endpoint st
 	}
 }
 
-func (r customerAddressRepository) Create(id int64, address shopify.Address) (shopify.Address, error) {
+func (r customerAddressRepository) Create(id int64, address shopify.CustomerAddress) (shopify.CustomerAddress, error) {
 	url := r.createURL(fmt.Sprintf("customers/%v/addresses.json", id))
 
-	addressDTO := AddressDTO{
-		Address1:     address.Address1,
-		Address2:     address.Address2,
-		City:         address.City,
-		Company:      address.Company,
-		Country:      address.Country,
-		CountryCode:  address.CountryCode,
-		FirstName:    address.FirstName,
-		ID:           address.ID,
-		LastName:     address.LastName,
-		Name:         address.Name,
-		Phone:        address.Phone,
-		Province:     address.Province,
-		ProvinceCode: address.ProvinceCode,
-		Zip:          address.Zip,
-	}
+	addressDTO := BuildCustomerAddressDTO(address)
 
 	// Wrapping Address object inside `address` property
 	request := struct {
-		Address AddressDTO `json:"address"`
+		Address CustomerAddressDTO `json:"address"`
 	}{
 		Address: addressDTO,
 	}
 
 	body, err := json.Marshal(request)
 	if err != nil {
-		return shopify.Address{}, err
+		return shopify.CustomerAddress{}, err
 	}
 
 	resBody, _, err := r.client.Post(url, body, nil)
 	if err != nil {
-		return shopify.Address{}, err
+		return shopify.CustomerAddress{}, err
 	}
 
 	// Wrapping Address object inside `address` property
 	responseDTO := struct {
-		CustomerAddress AddressDTO `json:"customer_address"`
+		CustomerAddress CustomerAddressDTO `json:"customer_address"`
 	}{}
 
 	err = json.Unmarshal(resBody, &responseDTO)
 	if err != nil {
-		return shopify.Address{}, err
+		return shopify.CustomerAddress{}, err
 	}
 
 	return responseDTO.CustomerAddress.ToShopify(), nil
