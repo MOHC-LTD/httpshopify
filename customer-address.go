@@ -27,9 +27,9 @@ func (r customerAddressRepository) Create(id int64, address shopify.CustomerAddr
 
 	// Wrapping Address object inside `address` property
 	request := struct {
-		Address CustomerAddressDTO `json:"address"`
+		CustomerAddressDTO `json:"address"`
 	}{
-		Address: addressDTO,
+		addressDTO,
 	}
 
 	body, err := json.Marshal(request)
@@ -44,7 +44,7 @@ func (r customerAddressRepository) Create(id int64, address shopify.CustomerAddr
 
 	// Wrapping Address object inside `address` property
 	responseDTO := struct {
-		CustomerAddress CustomerAddressDTO `json:"customer_address"`
+		CustomerAddressDTO `json:"customer_address"`
 	}{}
 
 	err = json.Unmarshal(resBody, &responseDTO)
@@ -52,7 +52,7 @@ func (r customerAddressRepository) Create(id int64, address shopify.CustomerAddr
 		return shopify.CustomerAddress{}, err
 	}
 
-	return responseDTO.CustomerAddress.ToShopify(), nil
+	return responseDTO.ToShopify(), nil
 }
 
 func (r customerAddressRepository) Delete(id int64, addressID int64) error {
