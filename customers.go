@@ -66,6 +66,7 @@ func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
 		Phone:     customer.Phone,
 		FirstName: customer.FirstName,
 		LastName:  customer.LastName,
+		Tags:      string(customer.Tags),
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}
