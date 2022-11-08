@@ -56,7 +56,6 @@ func (r customerAddressRepository) Create(id int64, address shopify.CustomerAddr
 }
 
 func (r customerAddressRepository) Update(id int64, address shopify.CustomerAddress) (shopify.CustomerAddress, error) {
-	// Map to DTO
 	addressDTO := BuildCustomerAddressDTO(address)
 
 	request := struct {
