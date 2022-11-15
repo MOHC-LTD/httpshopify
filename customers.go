@@ -14,14 +14,15 @@ import (
 
 // CustomerDTO represents a Shopify customer in HTTP requests and responses
 type CustomerDTO struct {
-	ID        int64      `json:"id,omitempty"`
-	Email     string     `json:"email,omitempty"`
-	Phone     string     `json:"phone,omitempty"`
-	FirstName string     `json:"first_name,omitempty"`
-	LastName  string     `json:"last_name,omitempty"`
-	Tags      string     `json:"tags,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	Addresses CustomerAddressDTOs `json:"addresses,omitempty"`
+	ID        int64               `json:"id,omitempty"`
+	Email     string              `json:"email,omitempty"`
+	Phone     string              `json:"phone,omitempty"`
+	FirstName string              `json:"first_name,omitempty"`
+	LastName  string              `json:"last_name,omitempty"`
+	Tags      string              `json:"tags,omitempty"`
+	CreatedAt *time.Time          `json:"created_at,omitempty"`
+	UpdatedAt *time.Time          `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -35,8 +36,8 @@ func (dto CustomerDTO) ToShopify() shopify.Customer {
 	if dto.UpdatedAt != nil {
 		updatedAt = *dto.UpdatedAt
 	}
-
 	return shopify.Customer{
+		Addresses: dto.Addresses.ToShopify(),
 		ID:        dto.ID,
 		Email:     dto.Email,
 		Phone:     dto.Phone,

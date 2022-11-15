@@ -102,6 +102,19 @@ func (dto CustomerAddressDTO) ToShopify() shopify.CustomerAddress {
 	}
 }
 
+type CustomerAddressDTOs []CustomerAddressDTO
+
+// ToShopify converts the DTO to the Shopify equivalent
+func (dtos CustomerAddressDTOs) ToShopify() shopify.CustomerAddresses {
+	addresses := make(shopify.CustomerAddresses, 0, len(dtos))
+
+	for _, dto := range dtos {
+		addresses = append(addresses, dto.ToShopify())
+	}
+
+	return addresses
+}
+
 // BuildCustomerAddressDTO converts a Shopify customer address to its DTO equivalent
 func BuildCustomerAddressDTO(address shopify.CustomerAddress) CustomerAddressDTO {
 	var address2 *string
