@@ -126,7 +126,7 @@ type FulfillmentDTO struct {
 	NotifyCustomer  bool         `json:"notify_customer,omitempty"`
 	ShipmentStatus  string       `json:"shipment_status,omitempty"`
 	LocationID      int64        `json:"location_id,omitempty"`
-	LineItems       LineItemDTOs `json:"lineItems,omitempty"`
+	LineItems       LineItemDTOs `json:"line_items,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
