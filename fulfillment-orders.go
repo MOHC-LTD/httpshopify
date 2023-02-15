@@ -23,7 +23,7 @@ func newFulfillmentOrderRepository(client http.Client, createURL func(endpoint s
 }
 
 func (repository fulfillmentOrderRepository) Get(id int64) (shopify.FulfillmentOrder, error) {
-	url := repository.createURL(fmt.Sprintf("fulfillment_orders/%v.json", id))
+	url := repository.createURL(fmt.Sprintf("fulfillment_orders/%d.json", id))
 
 	respBody, _, err := repository.client.Get(url, nil)
 	if err != nil {
@@ -43,7 +43,7 @@ func (repository fulfillmentOrderRepository) Get(id int64) (shopify.FulfillmentO
 }
 
 func (repository fulfillmentOrderRepository) List(orderID int64) (shopify.FulfillmentOrders, error) {
-	url := repository.createURL(fmt.Sprintf("orders/%v/fulfillment_orders.json", orderID))
+	url := repository.createURL(fmt.Sprintf("orders/%d/fulfillment_orders.json", orderID))
 
 	respBody, _, err := repository.client.Get(url, nil)
 	if err != nil {

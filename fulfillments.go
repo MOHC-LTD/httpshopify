@@ -76,7 +76,7 @@ func (repository fulfillmentRepository) UpdateTracking(update shopify.Fulfillmen
 		return shopify.Fulfillment{}, err
 	}
 
-	url := repository.createURL(fmt.Sprintf("fulfillments/%v/update_tracking.json", update.ID))
+	url := repository.createURL(fmt.Sprintf("fulfillments/%d/update_tracking.json", update.ID))
 
 	respBody, _, err := repository.client.Post(url, body, nil)
 	if err != nil {
@@ -96,7 +96,7 @@ func (repository fulfillmentRepository) UpdateTracking(update shopify.Fulfillmen
 }
 
 func (repository fulfillmentRepository) Cancel(id int64) error {
-	url := repository.createURL(fmt.Sprintf("fulfillments/%v/cancel.json", id))
+	url := repository.createURL(fmt.Sprintf("fulfillments/%d/cancel.json", id))
 
 	_, _, err := repository.client.Post(url, nil, nil)
 	if err != nil {
