@@ -215,3 +215,14 @@ func (repository variantRepository) Create(productID int64, variant shopify.Vari
 
 	return response.Variant.ToShopify(), nil
 }
+
+func (repository variantRepository) Delete(productID int64, variantID int64) error {
+	url := repository.createURL(fmt.Sprintf("products/%d/variants/%d.json", productID, variantID))
+
+	_, _, err := repository.client.Delete(url, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
