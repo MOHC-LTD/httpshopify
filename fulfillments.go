@@ -114,7 +114,9 @@ type FulfillmentDTO struct {
 	ID                          int64                            `json:"id,omitempty"`
 	OrderID                     int64                            `json:"order_id,omitempty"`
 	TrackingCompany             string                           `json:"tracking_company,omitempty"`
+	TrackingNumber              string                           `json:"tracking_number,omitempty"`
 	TrackingNumbers             []string                         `json:"tracking_numbers,omitempty"`
+	TrackingURL                 string                           `json:"tracking_url,omitempty"`
 	TrackingURLs                []string                         `json:"tracking_urls,omitempty"`
 	Status                      string                           `json:"status,omitempty"`
 	CreatedAt                   *time.Time                       `json:"created_at,omitempty"`
@@ -143,7 +145,9 @@ func (dto FulfillmentDTO) ToShopify() shopify.Fulfillment {
 		ID:              dto.ID,
 		OrderID:         dto.OrderID,
 		TrackingCompany: dto.TrackingCompany,
+		TrackingNumber:  dto.TrackingNumber,
 		TrackingNumbers: dto.TrackingNumbers,
+		TrackingURL:     dto.TrackingURL,
 		TrackingURLs:    dto.TrackingURLs,
 		Status:          dto.Status,
 		CreatedAt:       createdAt,
@@ -171,7 +175,9 @@ func BuildFulfilmentDTO(fulfillment shopify.Fulfillment) FulfillmentDTO {
 		ID:              fulfillment.ID,
 		OrderID:         fulfillment.OrderID,
 		TrackingCompany: fulfillment.TrackingCompany,
+		TrackingNumber:  fulfillment.TrackingNumber,
 		TrackingNumbers: fulfillment.TrackingNumbers,
+		TrackingURL:     fulfillment.TrackingURL,
 		TrackingURLs:    fulfillment.TrackingURLs,
 		Status:          fulfillment.Status,
 		NotifyCustomer:  fulfillment.NotifyCustomer,
@@ -216,24 +222,14 @@ type TrackingInfoDTO struct {
 
 // BuildTrackingInfoDTO converts fulfillment tracking info into a DTO equivalent
 func BuildTrackingInfoDTO(fulfillment shopify.Fulfillment) *TrackingInfoDTO {
-	trackingNumber := ""
-	if len(fulfillment.TrackingNumbers) > 0 {
-		trackingNumber = fulfillment.TrackingNumbers[0]
-	}
-
-	trackingURL := ""
-	if len(fulfillment.TrackingURLs) > 0 {
-		trackingURL = fulfillment.TrackingURLs[0]
-	}
-
-	if trackingNumber == "" && trackingURL == "" && fulfillment.TrackingCompany == "" {
+	if fulfillment.TrackingNumber == "" && fulfillment.TrackingURL == "" && fulfillment.TrackingCompany == "" {
 		return nil
 	}
 
 	return &TrackingInfoDTO{
 		Company: fulfillment.TrackingCompany,
-		Number:  trackingNumber,
-		URL:     trackingURL,
+		Number:  fulfillment.TrackingNumber,
+		URL:     fulfillment.TrackingURL,
 	}
 }
 
