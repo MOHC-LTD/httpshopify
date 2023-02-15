@@ -20,15 +20,15 @@ func RateLimitDefault() http.Option {
 // RateLimitPlus builds the rate limit for the rest API of a Shopify plus store.
 /*
 	This limit is as follows:
-	LeakRate: 4/second
-	BucketSize: 80 requests/app/store
+	LeakRate: 20/second
+	BucketSize: 400 requests/app/store
 
 	Source: https://shopify.dev/api/usage/rate-limits.
 */
 func RateLimitPlus() http.Option {
 	return http.WithRateLimit(
-		4,
-		80,
+		20,
+		400,
 	)
 }
 
