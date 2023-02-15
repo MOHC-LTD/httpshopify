@@ -13,6 +13,7 @@ type Shop struct {
 	orders            orderRepository
 	fulfillments      fulfillmentRepository
 	fulfillmentEvents fulfillmentEventRepository
+	fulfillmentOrders fulfillmentOrderRepository
 	variants          variantRepository
 	products          productRepository
 	inventoryLevels   inventoryLevelRepository
@@ -34,7 +35,7 @@ type Shop struct {
 */
 func NewShop(shop string, accessToken string) Shop {
 	return NewCustomShop(
-		fmt.Sprintf("https://%v.myshopify.com/admin/api/2021-04", shop),
+		fmt.Sprintf("https://%v.myshopify.com/admin/api/2022-07", shop),
 		accessToken,
 		IsDefault,
 	)
@@ -52,7 +53,7 @@ func NewShop(shop string, accessToken string) Shop {
 */
 func NewPlusShop(shop string, accessToken string) Shop {
 	return NewCustomShop(
-		fmt.Sprintf("https://%v.myshopify.com/admin/api/2021-04", shop),
+		fmt.Sprintf("https://%v.myshopify.com/admin/api/2022-07", shop),
 		accessToken,
 		IsPlus,
 	)
@@ -89,6 +90,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		orders:            newOrderRepository(client, createURL),
 		fulfillments:      newFulfillmentRepository(client, createURL),
 		fulfillmentEvents: newFulfillmentEventRepository(client, createURL),
+		fulfillmentOrders: newFulfillmentOrderRepository(client, createURL),
 		variants:          newVariantRepository(client, createURL),
 		products:          newProductRepository(client, createURL),
 		inventoryLevels:   newInventoryLevelRepository(client, createURL),
@@ -113,6 +115,11 @@ func (shop Shop) Fulfillments() shopify.FulfillmentRepository {
 // FulfillmentEvents returns an HTTP implementation of a Shopify fulfillment event repository
 func (shop Shop) FulfillmentEvents() shopify.FulfillmentEventRepository {
 	return shop.fulfillmentEvents
+}
+
+// FulfillmentOrders returns an HTTP implementation of a Shopify fulfillment order repository
+func (shop Shop) FulfillmentOrders() shopify.FulfillmentOrderRepository {
+	return shop.fulfillmentOrders
 }
 
 // Variants returns an HTTP implementation of a Shopify variant repository

@@ -22,12 +22,11 @@ func newFulfillmentRepository(client http.Client, createURL func(endpoint string
 	}
 }
 
-func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopify.Fulfillment) (shopify.Fulfillment, error) {
+func (repository fulfillmentRepository) Create(fulfillment shopify.Fulfillment) (shopify.Fulfillment, error) {
 	createDTO := FulfillmentDTO{
-		LocationID:      fulfillment.LocationID,
-		TrackingNumbers: fulfillment.TrackingNumbers,
-		NotifyCustomer:  fulfillment.NotifyCustomer,
-		LineItems:       BuildLineItemDTOs(fulfillment.LineItems),
+		NotifyCustomer:              fulfillment.NotifyCustomer,
+		TrackingInfo:                BuildTrackingInfoDTO(fulfillment),
+		LineItemsByFulfillmentOrder: BuildLineItemsByFulfillmentOrderDTOs(fulfillment.LineItemsByFulfillmentOrder),
 	}
 
 	request := struct {
@@ -41,16 +40,16 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 		return shopify.Fulfillment{}, err
 	}
 
-	url := repository.createURL(fmt.Sprintf("orders/%v/fulfillments.json", orderID))
+	url := repository.createURL("fulfillments.json")
 
 	respBody, _, err := repository.client.Post(url, body, nil)
 	if err != nil {
 		return shopify.Fulfillment{}, err
 	}
 
-	var response struct {
+	response := struct {
 		Fulfillment FulfillmentDTO `json:"fulfillment"`
-	}
+	}{}
 
 	err = json.Unmarshal(respBody, &response)
 	if err != nil {
@@ -60,19 +59,16 @@ func (repository fulfillmentRepository) Create(orderID int64, fulfillment shopif
 	return response.Fulfillment.ToShopify(), nil
 }
 
-func (repository fulfillmentRepository) Update(orderID int64, fulfillmentID int64, update shopify.Fulfillment) (shopify.Fulfillment, error) {
-	updateDTO := FulfillmentDTO{
-		ID:              fulfillmentID,
-		TrackingCompany: update.TrackingCompany,
-		TrackingNumbers: update.TrackingNumbers,
-		TrackingURLs:    update.TrackingURLs,
-		NotifyCustomer:  update.NotifyCustomer,
+func (repository fulfillmentRepository) UpdateTracking(update shopify.Fulfillment) (shopify.Fulfillment, error) {
+	updateTrackingDTO := FulfillmentDTO{
+		TrackingInfo:   BuildTrackingInfoDTO(update),
+		NotifyCustomer: update.NotifyCustomer,
 	}
 
 	request := struct {
 		Fulfillment FulfillmentDTO `json:"fulfillment"`
 	}{
-		Fulfillment: updateDTO,
+		Fulfillment: updateTrackingDTO,
 	}
 
 	body, err := json.Marshal(request)
@@ -80,16 +76,16 @@ func (repository fulfillmentRepository) Update(orderID int64, fulfillmentID int6
 		return shopify.Fulfillment{}, err
 	}
 
-	url := repository.createURL(fmt.Sprintf("orders/%v/fulfillments/%v.json", orderID, fulfillmentID))
+	url := repository.createURL(fmt.Sprintf("fulfillments/%v/update_tracking.json", update.ID))
 
-	respBody, _, err := repository.client.Put(url, body, nil)
+	respBody, _, err := repository.client.Post(url, body, nil)
 	if err != nil {
 		return shopify.Fulfillment{}, err
 	}
 
-	var response struct {
+	response := struct {
 		Fulfillment FulfillmentDTO `json:"fulfillment"`
-	}
+	}{}
 
 	err = json.Unmarshal(respBody, &response)
 	if err != nil {
@@ -99,8 +95,8 @@ func (repository fulfillmentRepository) Update(orderID int64, fulfillmentID int6
 	return response.Fulfillment.ToShopify(), nil
 }
 
-func (repository fulfillmentRepository) Cancel(orderID int64, fulfillmentID int64) error {
-	url := repository.createURL(fmt.Sprintf("orders/%v/fulfillments/%v/cancel.json", orderID, fulfillmentID))
+func (repository fulfillmentRepository) Cancel(id int64) error {
+	url := repository.createURL(fmt.Sprintf("fulfillments/%v/cancel.json", id))
 
 	_, _, err := repository.client.Post(url, nil, nil)
 	if err != nil {
@@ -115,18 +111,20 @@ type FulfillmentDTOs []FulfillmentDTO
 
 // FulfillmentDTO represents and Shopify fulfillment in HTTP requests and responses
 type FulfillmentDTO struct {
-	ID              int64        `json:"id,omitempty"`
-	OrderID         int64        `json:"order_id,omitempty"`
-	TrackingCompany string       `json:"tracking_company,omitempty"`
-	TrackingNumbers []string     `json:"tracking_numbers,omitempty"`
-	TrackingURLs    []string     `json:"tracking_urls,omitempty"`
-	Status          string       `json:"status,omitempty"`
-	CreatedAt       *time.Time   `json:"created_at,omitempty"`
-	UpdatedAt       *time.Time   `json:"updated_at,omitempty"`
-	NotifyCustomer  bool         `json:"notify_customer,omitempty"`
-	ShipmentStatus  string       `json:"shipment_status,omitempty"`
-	LocationID      int64        `json:"location_id,omitempty"`
-	LineItems       LineItemDTOs `json:"line_items,omitempty"`
+	ID                          int64                            `json:"id,omitempty"`
+	OrderID                     int64                            `json:"order_id,omitempty"`
+	TrackingCompany             string                           `json:"tracking_company,omitempty"`
+	TrackingNumbers             []string                         `json:"tracking_numbers,omitempty"`
+	TrackingURLs                []string                         `json:"tracking_urls,omitempty"`
+	Status                      string                           `json:"status,omitempty"`
+	CreatedAt                   *time.Time                       `json:"created_at,omitempty"`
+	UpdatedAt                   *time.Time                       `json:"updated_at,omitempty"`
+	NotifyCustomer              bool                             `json:"notify_customer,omitempty"`
+	ShipmentStatus              string                           `json:"shipment_status,omitempty"`
+	LocationID                  int64                            `json:"location_id,omitempty"`
+	LineItems                   LineItemDTOs                     `json:"line_items,omitempty"`
+	TrackingInfo                *TrackingInfoDTO                 `json:"tracking_info,omitempty"`
+	LineItemsByFulfillmentOrder []LineItemsByFulfillmentOrderDTO `json:"line_items_by_fulfillment_order,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -206,5 +204,58 @@ func BuildFulfillmentDTOs(fulfillments []shopify.Fulfillment) FulfillmentDTOs {
 		dtos = append(dtos, BuildFulfilmentDTO(fulfillment))
 	}
 
+	return dtos
+}
+
+// TrackingInfoDTO represents Shopify fulfillment tracking info in HTTP requests and responses
+type TrackingInfoDTO struct {
+	Company string `json:"company,omitempty"`
+	Number  string `json:"number,omitempty"`
+	URL     string `json:"url,omitempty"`
+}
+
+// BuildTrackingInfoDTO converts fulfillment tracking info into a DTO equivalent
+func BuildTrackingInfoDTO(fulfillment shopify.Fulfillment) *TrackingInfoDTO {
+	trackingNumber := ""
+	if len(fulfillment.TrackingNumbers) > 0 {
+		trackingNumber = fulfillment.TrackingNumbers[0]
+	}
+
+	trackingURL := ""
+	if len(fulfillment.TrackingURLs) > 0 {
+		trackingURL = fulfillment.TrackingURLs[0]
+	}
+
+	if trackingNumber == "" && trackingURL == "" && fulfillment.TrackingCompany == "" {
+		return nil
+	}
+
+	return &TrackingInfoDTO{
+		Company: fulfillment.TrackingCompany,
+		Number:  trackingNumber,
+		URL:     trackingURL,
+	}
+}
+
+// LineItemsByFulfillmentOrderDTO represents Shopify fulfillment order line items input in HTTP requests and responses
+type LineItemsByFulfillmentOrderDTO struct {
+	FulfillmentOrderID        int64                         `json:"fulfillment_order_id,omitempty"`
+	FulfillmentOrderLineItems []FulfillmentOrderLineItemDTO `json:"fulfillment_order_line_items,omitempty"`
+}
+
+// BuildLineItemsByFulfillmentOrderDTO converts a fulfillment order into a DTO equivalent
+func BuildLineItemsByFulfillmentOrderDTO(fulfillmentOrder shopify.FulfillmentOrder) LineItemsByFulfillmentOrderDTO {
+	return LineItemsByFulfillmentOrderDTO{
+		FulfillmentOrderID:        fulfillmentOrder.ID,
+		FulfillmentOrderLineItems: BuildFulfillmentOrderLineItemDTOs(fulfillmentOrder.LineItems),
+	}
+}
+
+// BuildLineItemsByFulfillmentOrderDTOs converts many fulfillment orders into a DTO equivalent
+func BuildLineItemsByFulfillmentOrderDTOs(fulfillmentOrders []shopify.FulfillmentOrder) []LineItemsByFulfillmentOrderDTO {
+	dtos := make([]LineItemsByFulfillmentOrderDTO, 0, len(fulfillmentOrders))
+	for _, fulfillmentOrder := range fulfillmentOrders {
+		dtos = append(dtos, BuildLineItemsByFulfillmentOrderDTO(fulfillmentOrder))
+	}
 	return dtos
 }
