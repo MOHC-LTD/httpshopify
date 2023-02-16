@@ -167,3 +167,51 @@ func (repository variantRepository) Get(id int64) (shopify.Variant, error) {
 
 	return response.Variant.ToShopify(), nil
 }
+
+func (repository variantRepository) Create(productID int64, variant shopify.Variant) (shopify.Variant, error) {
+	createDTO := VariantDTO{
+		SKU:                 variant.SKU,
+		Title:               variant.Title,
+		Option1:             variant.Option1,
+		Option2:             variant.Option2,
+		Option3:             variant.Option3,
+		Position:            variant.Position,
+		InventoryItemID:     variant.InventoryItemID,
+		InventoryManagement: variant.InventoryManagement,
+		InventoryQuantity:   variant.InventoryQuantity,
+		Price:               variant.Price,
+		CompareAtPrice:      variant.CompareAtPrice,
+		ProductID:           variant.ProductID,
+		Barcode:             variant.Barcode,
+	}
+
+	request := struct {
+		Variant VariantDTO `json:"variant"`
+	}{
+		Variant: createDTO,
+	}
+
+	body, err := json.Marshal(request)
+
+	if err != nil {
+		return shopify.Variant{}, err
+	}
+
+	url := repository.createURL(fmt.Sprintf("products/%d/variants.json", productID))
+
+	respBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Variant{}, err
+	}
+
+	var response struct {
+		Variant VariantDTO `json:"variant"`
+	}
+
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return shopify.Variant{}, err
+	}
+
+	return response.Variant.ToShopify(), nil
+}
