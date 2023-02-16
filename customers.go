@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/MOHC-LTD/httpshopify/internal/http"
+	"github.com/MOHC-LTD/httpshopify/v2/internal/http"
 
-	"github.com/MOHC-LTD/shopify"
+	"github.com/MOHC-LTD/shopify/v2"
 )
 
 // CustomerDTO represents a Shopify customer in HTTP requests and responses

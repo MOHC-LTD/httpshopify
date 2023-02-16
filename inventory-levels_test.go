@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MOHC-LTD/httpshopify/internal/assertions"
+	"github.com/MOHC-LTD/httpshopify/v2/internal/assertions"
 )
 
 // Tests inventory level can be built when date fields are not nil

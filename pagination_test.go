@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/MOHC-LTD/httpshopify"
-	"github.com/MOHC-LTD/httpshopify/internal/assertions"
+	"github.com/MOHC-LTD/httpshopify/v2"
+	"github.com/MOHC-LTD/httpshopify/v2/internal/assertions"
 )
 
 func TestParseLinkHeader(t *testing.T) {

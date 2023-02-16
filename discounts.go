@@ -1,7 +1,7 @@
 package httpshopify
 
 import (
-	"github.com/MOHC-LTD/shopify"
+	"github.com/MOHC-LTD/shopify/v2"
 )
 
 // DiscountApplicationDTO represents a Shopify discount application in HTTP requests and responses

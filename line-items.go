@@ -1,6 +1,6 @@
 package httpshopify
 
-import "github.com/MOHC-LTD/shopify"
+import "github.com/MOHC-LTD/shopify/v2"
 
 // LineItemDTO represents a Shopify line item in HTTP requests and responses
 type LineItemDTO struct {

@@ -1,6 +1,6 @@
 package httpshopify
 
-import "github.com/MOHC-LTD/httpshopify/internal/http"
+import "github.com/MOHC-LTD/httpshopify/v2/internal/http"
 
 // RateLimitDefault builds the default rate limit for the rest API.
 /*

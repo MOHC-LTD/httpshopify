@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/MOHC-LTD/httpshopify/internal/assertions"
+	"github.com/MOHC-LTD/httpshopify/v2/internal/assertions"
 
-	"github.com/MOHC-LTD/httpshopify/internal/slices"
+	"github.com/MOHC-LTD/httpshopify/v2/internal/slices"
 )
 
 func TestJoinInt64(t *testing.T) {

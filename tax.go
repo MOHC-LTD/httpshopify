@@ -1,6 +1,6 @@
 package httpshopify
 
-import "github.com/MOHC-LTD/shopify"
+import "github.com/MOHC-LTD/shopify/v2"
 
 // TaxLineDTOs is a collection of tax line DTOs
 type TaxLineDTOs []TaxLineDTO

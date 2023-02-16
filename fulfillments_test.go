@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/MOHC-LTD/httpshopify/internal/assertions"
-	"github.com/MOHC-LTD/shopify"
+	"github.com/MOHC-LTD/httpshopify/v2/internal/assertions"
+	"github.com/MOHC-LTD/shopify/v2"
 )
 
 // Tests that fulfillment can be built correctly when date fields are not nil
