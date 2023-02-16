@@ -1,6 +1,6 @@
 package httpshopify
 
-import "github.com/MOHC-LTD/shopify"
+import "github.com/MOHC-LTD/shopify/v2"
 
 // PriceSetDTO represents a price set in Shopify HTTP requests and responses
 type PriceSetDTO struct {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/MOHC-LTD/httpshopify/internal/http"
-	"github.com/MOHC-LTD/shopify"
+	"github.com/MOHC-LTD/httpshopify/v2/internal/http"
+	"github.com/MOHC-LTD/shopify/v2"
 )
 
 type collectionRepository struct {

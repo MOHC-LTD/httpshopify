@@ -1,6 +1,6 @@
 package httpshopify
 
-import "github.com/MOHC-LTD/shopify"
+import "github.com/MOHC-LTD/shopify/v2"
 
 // AddressDTO represents a Shopify Address in HTTP requests and responses
 type AddressDTO struct {

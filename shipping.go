@@ -1,6 +1,6 @@
 package httpshopify
 
-import "github.com/MOHC-LTD/shopify"
+import "github.com/MOHC-LTD/shopify/v2"
 
 // ShippingLineDTOs is a collection of ShippingLine DTOs
 type ShippingLineDTOs []ShippingLineDTO

@@ -3,7 +3,7 @@ package httpshopify
 import (
 	"time"
 
-	"github.com/MOHC-LTD/shopify"
+	"github.com/MOHC-LTD/shopify/v2"
 )
 
 // ImageDTO represents a Shopify Image in HTTP requests and responses
