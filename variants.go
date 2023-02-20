@@ -79,6 +79,7 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 			Position:            variant.Position,
 			InventoryItemID:     variant.InventoryItemID,
 			InventoryManagement: variant.InventoryManagement,
+			InventoryPolicy:     variant.InventoryPolicy,
 			InventoryQuantity:   variant.InventoryQuantity,
 			Price:               variant.Price,
 			CompareAtPrice:      variant.CompareAtPrice,
@@ -104,6 +105,7 @@ type VariantDTO struct {
 	Position            int        `json:"position,omitempty"`
 	InventoryItemID     int64      `json:"inventory_item_id,omitempty"`
 	InventoryManagement string     `json:"inventory_management,omitempty"`
+	InventoryPolicy     string     `json:"inventory_policy,omitempty"`
 	InventoryQuantity   int        `json:"inventory_quantity,omitempty"`
 	Price               string     `json:"price,omitempty"`
 	CompareAtPrice      string     `json:"compare_at_price,omitempty"`
