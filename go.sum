@@ -1,5 +1,10 @@
 github.com/MOHC-LTD/shopify/v2 v2.0.0 h1:MKNXnMWGbhEDmwZwLhkd2x1erAq5/ycY2BYQi6NaUa0=
 github.com/MOHC-LTD/shopify/v2 v2.0.0/go.mod h1:NH8yvZX6NgRexC38va3jNswUcRkvpea+E7ploSSoty0=
+github.com/MOHC-LTD/shopify/v2 v2.2.0 h1:Gy8xtUMhPx2TLtz19oAs4Dk+p21vgSt0X35pjbBbXhk=
+github.com/MOHC-LTD/shopify/v2 v2.2.0/go.mod h1:MhQ3mgyn2tGMGsQw1qDFIFRX669wFXXuwmKfqtz4DbI=
+github.com/MOHC-LTD/shopify/v2 v2.2.1 h1:CSO6L3ah/wyMnR5I0ruPru4TruBTwIU0RJLejczrR6o=
+github.com/MOHC-LTD/shopify/v2 v2.2.1/go.mod h1:MhQ3mgyn2tGMGsQw1qDFIFRX669wFXXuwmKfqtz4DbI=
+github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/jaswdr/faker v1.15.0 h1:wcEVaPKFE53NvdT4fl+w3b0IXdefp1Yk0BdBs0APCoA=
 github.com/jaswdr/faker v1.15.0/go.mod h1:x7ZlyB1AZqwqKZgyQlnqEG8FDptmHlncA5u2zY/yi6w=
 golang.org/x/time v0.0.0-20210611083556-38a9dc6acbc6 h1:Vv0JUPWTyeqUq42B2WJ1FeIDjjvGKoA2Ss+Ts0lAVbs=
