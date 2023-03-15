@@ -88,7 +88,7 @@ func (r customerAddressRepository) Update(id int64, address shopify.CustomerAddr
 	return responseDTO.ToShopify(), nil
 }
 
-func (r customerAddressRepository) SetDefault(id string, addressID string) (shopify.CustomerAddress, error) {
+func (r customerAddressRepository) SetDefault(id int64, addressID int64) (shopify.CustomerAddress, error) {
 	url := r.createURL(fmt.Sprintf("customers/%v/addresses/%v/default.json", id, addressID))
 
 	resBody, _, err := r.client.Put(url, nil, nil)
