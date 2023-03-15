@@ -88,23 +88,10 @@ func (r customerAddressRepository) Update(id int64, address shopify.CustomerAddr
 	return responseDTO.ToShopify(), nil
 }
 
-func (r customerAddressRepository) SetDefault(id int64, address shopify.CustomerAddress) (shopify.CustomerAddress, error) {
-	addressDTO := BuildCustomerAddressDTO(address)
+func (r customerAddressRepository) SetDefault(id string, addressID string) (shopify.CustomerAddress, error) {
+	url := r.createURL(fmt.Sprintf("customers/%v/addresses/%v/default.json", id, addressID))
 
-	request := struct {
-		CustomerAddressDTO `json:"address"`
-	}{
-		addressDTO,
-	}
-
-	body, err := json.Marshal(request)
-	if err != nil {
-		return shopify.CustomerAddress{}, err
-	}
-
-	url := r.createURL(fmt.Sprintf("customers/%v/addresses/%v/default.json", id, address.ID))
-
-	resBody, _, err := r.client.Put(url, body, nil)
+	resBody, _, err := r.client.Put(url, nil, nil)
 	if err != nil {
 		return shopify.CustomerAddress{}, err
 	}
