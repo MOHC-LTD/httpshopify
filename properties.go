@@ -17,10 +17,8 @@ func (dtos PropertyDTOs) ToShopify() []shopify.Property {
 
 // PropertyDTO holds custom information for an entity.
 type PropertyDTO struct {
-	// Name is the name of the property.
-	Name string `json:"name"`
-	// Value is the value of the property
-	Value interface{} `json:"value"`
+	Name  string      `json:"name,omitempty"`
+	Value interface{} `json:"value,omitempty"`
 }
 
 // ToShopify converts this DTO to the Shopify equivalent.
