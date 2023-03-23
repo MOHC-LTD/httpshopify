@@ -18,6 +18,7 @@ type LineItemDTO struct {
 	TotalDiscount       string                 `json:"total_discount,omitempty"`
 	TotalDiscountSet    PriceSetDTO            `json:"total_discount_set,omitempty"`
 	DiscountAllocations DiscountAllocationDTOs `json:"discount_allocations,omitempty"`
+	Properties          PropertyDTOs           `json:"properties,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -37,6 +38,7 @@ func (dto LineItemDTO) ToShopify() shopify.LineItem {
 		TotalDiscount:       dto.TotalDiscount,
 		TotalDiscountSet:    dto.TotalDiscountSet.ToShopify(),
 		DiscountAllocations: dto.DiscountAllocations.ToShopify(),
+		Properties:          dto.Properties.ToShopify(),
 	}
 }
 
@@ -57,6 +59,7 @@ func BuildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
 		TotalDiscount:       lineItem.TotalDiscount,
 		TotalDiscountSet:    BuildPriceSetDTO(lineItem.TotalDiscountSet),
 		DiscountAllocations: BuildDiscountAllocationDTOs(lineItem.DiscountAllocations),
+		Properties:          BuildPropertyDTOs(lineItem.Properties),
 	}
 }
 
