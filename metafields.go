@@ -67,17 +67,17 @@ func (dto metafieldsDTO) toShopify() shopify.Metafields {
 }
 
 type metafieldDTO struct {
-	ID          int64  `json:"id"`
-	Description string `json:"description"`
+	ID          int64  `json:"id,omitempty"`
+	Description string `json:"description,omitempty"`
 	Key         string `json:"key"`
 	Namespace   string `json:"namespace"`
-	OwnerID     int64  `json:"owner_id"`
+	OwnerID     int64  `json:"owner_id,omitempty"`
 	// TODO This is better in a later version as it is always a string. Consider versioning this package with a new Shopify version.
 	Value         interface{} `json:"value"`
 	Type          string      `json:"type"`
-	OwnerResource string      `json:"owner_resource"`
-	CreatedAt     *time.Time  `json:"created_at"`
-	UpdatedAt     *time.Time  `json:"updated_at"`
+	OwnerResource string      `json:"owner_resource,omitempty"`
+	CreatedAt     *time.Time  `json:"created_at,omitempty"`
+	UpdatedAt     *time.Time  `json:"updated_at,omitempty"`
 }
 
 func (dto metafieldDTO) toShopify() shopify.Metafield {

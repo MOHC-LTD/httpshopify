@@ -14,15 +14,16 @@ import (
 
 // CustomerDTO represents a Shopify customer in HTTP requests and responses
 type CustomerDTO struct {
-	Addresses CustomerAddressDTOs `json:"addresses,omitempty"`
-	ID        int64               `json:"id,omitempty"`
-	Email     string              `json:"email,omitempty"`
-	Phone     string              `json:"phone,omitempty"`
-	FirstName string              `json:"first_name,omitempty"`
-	LastName  string              `json:"last_name,omitempty"`
-	Tags      string              `json:"tags,omitempty"`
-	CreatedAt *time.Time          `json:"created_at,omitempty"`
-	UpdatedAt *time.Time          `json:"updated_at,omitempty"`
+	Addresses  CustomerAddressDTOs `json:"addresses,omitempty"`
+	ID         int64               `json:"id,omitempty"`
+	Email      string              `json:"email,omitempty"`
+	Phone      string              `json:"phone,omitempty"`
+	FirstName  string              `json:"first_name,omitempty"`
+	LastName   string              `json:"last_name,omitempty"`
+	Tags       string              `json:"tags,omitempty"`
+	MetaFields []metafieldDTO      `json:"metafields,omitempty"`
+	CreatedAt  *time.Time          `json:"created_at,omitempty"`
+	UpdatedAt  *time.Time          `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -61,15 +62,26 @@ func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
 		updatedAt = &customer.UpdatedAt
 	}
 
+	metafields := make(metafieldsDTO, len(customer.Metafields))
+	for _, metafield := range customer.Metafields {
+		metafields = append(metafields, metafieldDTO{
+			Key:       metafield.Key,
+			Namespace: metafield.Namespace,
+			Value:     metafield.Value,
+			Type:      metafield.Type,
+		})
+	}
+
 	customerDTO := CustomerDTO{
-		ID:        customer.ID,
-		Email:     customer.Email,
-		Phone:     customer.Phone,
-		FirstName: customer.FirstName,
-		LastName:  customer.LastName,
-		Tags:      string(customer.Tags),
-		CreatedAt: createdAt,
-		UpdatedAt: updatedAt,
+		ID:         customer.ID,
+		Email:      customer.Email,
+		Phone:      customer.Phone,
+		FirstName:  customer.FirstName,
+		LastName:   customer.LastName,
+		Tags:       string(customer.Tags),
+		MetaFields: metafields,
+		CreatedAt:  createdAt,
+		UpdatedAt:  updatedAt,
 	}
 
 	return customerDTO
