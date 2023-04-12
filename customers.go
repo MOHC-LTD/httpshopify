@@ -62,8 +62,8 @@ func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
 		updatedAt = &customer.UpdatedAt
 	}
 
-	metafields := make(metafieldsDTO, len(customer.MetaFields))
-	for _, metafield := range customer.MetaFields {
+	metafields := make(metafieldsDTO, len(customer.Metafields))
+	for _, metafield := range customer.Metafields {
 		metafields = append(metafields, metafieldDTO{
 			Key:       metafield.Key,
 			Namespace: metafield.Namespace,
