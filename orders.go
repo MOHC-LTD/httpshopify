@@ -174,7 +174,7 @@ func (repository orderRepository) UpdateMetafield(orderID int64, metafield shopi
 		return shopify.Metafield{}, err
 	}
 
-	return response.Metafield.toShopify(), nil
+	return response.Metafield.toShopify()
 }
 
 func (repository orderRepository) CreateMetafield(orderID int64, metafield shopify.Metafield) (shopify.Metafield, error) {
@@ -209,7 +209,7 @@ func (repository orderRepository) CreateMetafield(orderID int64, metafield shopi
 		return shopify.Metafield{}, err
 	}
 
-	return response.Metafield.toShopify(), nil
+	return response.Metafield.toShopify()
 }
 
 func (repository orderRepository) Create(order shopify.Order) (shopify.Order, error) {
