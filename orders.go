@@ -473,6 +473,14 @@ func BuildNoteAttributeDTO(attribute shopify.NoteAttribute) NoteAttributeDTO {
 func parseOrderQuery(query shopify.OrderQuery) string {
 	queryStrings := make([]string, 0)
 
+	if query.Limit != 0 && query.Limit <= 250 {
+		queryStrings = append(queryStrings, fmt.Sprintf("limit=%v", query.Limit))
+	}
+
+	if !query.CreatedAtMin.IsZero() {
+		queryStrings = append(queryStrings, fmt.Sprintf("created_at_min=%v", query.CreatedAtMin))
+	}
+
 	if query.Status != "" {
 		queryStrings = append(queryStrings, fmt.Sprintf("status=%v", query.Status))
 	}
