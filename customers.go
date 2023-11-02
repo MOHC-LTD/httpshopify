@@ -223,6 +223,28 @@ func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSe
 	return responseDTO.Customers.ToShopify(), nil
 }
 
+func (c customerRepository) Orders(id int64, query shopify.OrderQuery) (shopify.Orders, error) {
+
+	url := c.createURL(fmt.Sprintf("customers/%v/orders.json%v", id, parseOrderQuery(query)))
+
+	body, _, err := c.client.Get(url, nil)
+	if err != nil {
+		return shopify.Orders{}, err
+	}
+
+	var response struct {
+		Orders OrderDTOs `json:"orders"`
+	}
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return shopify.Orders{}, err
+	}
+
+	return response.Orders.ToShopify(), nil
+
+}
+
 type errCustomerUnprocessableEntityDTO struct {
 	Errors struct {
 		Email []string `json:"email"`
