@@ -20,6 +20,25 @@ func newCustomerAddressRepository(client http.Client, createURL func(endpoint st
 	}
 }
 
+func (r customerAddressRepository) List(id int64) (shopify.CustomerAddresses, error) {
+	url := r.createURL(fmt.Sprintf("customers/%v/addresses.json", id))
+
+	body, _, err := r.client.Get(url, nil)
+	if err != nil {
+		return shopify.CustomerAddresses{}, err
+	}
+
+	var response struct {
+		Addresses CustomerAddressDTOs `json:"addresses"`
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return shopify.CustomerAddresses{}, err
+	}
+
+	return response.Addresses.ToShopify(), nil
+}
+
 func (r customerAddressRepository) Create(id int64, address shopify.CustomerAddress) (shopify.CustomerAddress, error) {
 	url := r.createURL(fmt.Sprintf("customers/%v/addresses.json", id))
 
