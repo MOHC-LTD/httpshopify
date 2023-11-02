@@ -358,6 +358,20 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 	}
 }
 
+// OrderDTOs is a collection of Order DTOs
+type OrderDTOs []OrderDTO
+
+// ToShopify converts the DTOs to the Shopify equivalent
+func (dtos OrderDTOs) ToShopify() shopify.Orders {
+	orders := make(shopify.Orders, 0, len(dtos))
+
+	for _, dto := range dtos {
+		orders = append(orders, dto.ToShopify())
+	}
+
+	return orders
+}
+
 // BuildOrderDTO converts a Shopify order to the DTO equivalent
 func BuildOrderDTO(order shopify.Order) OrderDTO {
 	var createdAt *time.Time
