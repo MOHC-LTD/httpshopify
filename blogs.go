@@ -71,14 +71,13 @@ func (dtos BlogDTOs) ToShopify() shopify.Blogs {
 
 // BlogDTO represents a Shopify blog in HTTP requests and responses
 type BlogDTO struct {
-	Commentable    string     `json:"commentable,omitempty"`
-	CreatedAt      *time.Time `json:"created_at,omitempty"`
-	Handle         string     `json:"handle,omitempty"`
-	ID             int64      `json:"id,omitempty"`
-	Tags           string     `json:"tags,omitempty"`
-	TemplateSuffix string     `json:"template_suffix,omitempty"`
-	Title          string     `json:"title,omitempty"`
-	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
+	Commentable string     `json:"commentable,omitempty"`
+	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	Handle      string     `json:"handle,omitempty"`
+	ID          int64      `json:"id,omitempty"`
+	Tags        string     `json:"tags,omitempty"`
+	Title       string     `json:"title,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -94,13 +93,12 @@ func (dto BlogDTO) ToShopify() shopify.Blog {
 	}
 
 	return shopify.Blog{
-		Commentable:    dto.Commentable,
-		CreatedAt:      createdAt,
-		Handle:         dto.Handle,
-		ID:             dto.ID,
-		Tags:           dto.Tags,
-		TemplateSuffix: dto.TemplateSuffix,
-		Title:          dto.Title,
-		UpdatedAt:      updatedAt,
+		Commentable: dto.Commentable,
+		CreatedAt:   createdAt,
+		Handle:      dto.Handle,
+		ID:          dto.ID,
+		Tags:        dto.Tags,
+		Title:       dto.Title,
+		UpdatedAt:   updatedAt,
 	}
 }
