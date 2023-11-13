@@ -157,9 +157,9 @@ func (shop Shop) Metafields() shopify.MetafieldRepository {
 }
 
 // Customers returns an HTTP implementation of a Shopify customers repository
-// func (shop Shop) Customers() shopify.CustomerRepository {
-// return shop.customers
-// }
+func (shop Shop) Customers() shopify.CustomerRepository {
+	return shop.customers
+}
 
 // CustomerAddresses returns an HTTP implementation of a Shopify customer addresses repository
 func (shop Shop) CustomerAddresses() shopify.CustomerAddressRepository {

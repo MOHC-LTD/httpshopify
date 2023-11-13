@@ -14,15 +14,16 @@ import (
 
 // CustomerDTO represents a Shopify customer in HTTP requests and responses
 type CustomerDTO struct {
-	Addresses CustomerAddressDTOs `json:"addresses,omitempty"`
-	ID        int64               `json:"id,omitempty"`
-	Email     string              `json:"email,omitempty"`
-	Phone     string              `json:"phone,omitempty"`
-	FirstName string              `json:"first_name,omitempty"`
-	LastName  string              `json:"last_name,omitempty"`
-	Tags      string              `json:"tags,omitempty"`
-	CreatedAt *time.Time          `json:"created_at,omitempty"`
-	UpdatedAt *time.Time          `json:"updated_at,omitempty"`
+	Addresses  CustomerAddressDTOs `json:"addresses,omitempty"`
+	ID         int64               `json:"id,omitempty"`
+	Email      string              `json:"email,omitempty"`
+	Phone      string              `json:"phone,omitempty"`
+	FirstName  string              `json:"first_name,omitempty"`
+	LastName   string              `json:"last_name,omitempty"`
+	Tags       string              `json:"tags,omitempty"`
+	MetaFields []metafieldDTO      `json:"metafields,omitempty"`
+	CreatedAt  *time.Time          `json:"created_at,omitempty"`
+	UpdatedAt  *time.Time          `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -61,15 +62,27 @@ func BuildCustomerDTO(customer shopify.Customer) CustomerDTO {
 		updatedAt = &customer.UpdatedAt
 	}
 
+	metafields := make(metafieldsDTO, len(customer.Metafields))
+	for _, metafield := range customer.Metafields {
+		metafields = append(metafields, metafieldDTO{
+			ID:        metafield.ID,
+			Key:       metafield.Key,
+			Namespace: metafield.Namespace,
+			Value:     metafield.Value,
+			Type:      metafield.Type,
+		})
+	}
+
 	customerDTO := CustomerDTO{
-		ID:        customer.ID,
-		Email:     customer.Email,
-		Phone:     customer.Phone,
-		FirstName: customer.FirstName,
-		LastName:  customer.LastName,
-		Tags:      string(customer.Tags),
-		CreatedAt: createdAt,
-		UpdatedAt: updatedAt,
+		ID:         customer.ID,
+		Email:      customer.Email,
+		Phone:      customer.Phone,
+		FirstName:  customer.FirstName,
+		LastName:   customer.LastName,
+		Tags:       string(customer.Tags),
+		MetaFields: metafields,
+		CreatedAt:  createdAt,
+		UpdatedAt:  updatedAt,
 	}
 
 	return customerDTO
@@ -208,6 +221,28 @@ func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSe
 	}
 
 	return responseDTO.Customers.ToShopify(), nil
+}
+
+func (c customerRepository) Orders(id int64, query shopify.OrderQuery) (shopify.Orders, error) {
+
+	url := c.createURL(fmt.Sprintf("customers/%v/orders.json%v", id, parseOrderQuery(query)))
+
+	body, _, err := c.client.Get(url, nil)
+	if err != nil {
+		return shopify.Orders{}, err
+	}
+
+	var response struct {
+		Orders OrderDTOs `json:"orders"`
+	}
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return shopify.Orders{}, err
+	}
+
+	return response.Orders.ToShopify(), nil
+
 }
 
 type errCustomerUnprocessableEntityDTO struct {
