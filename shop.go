@@ -166,12 +166,12 @@ func (shop Shop) CustomerAddresses() shopify.CustomerAddressRepository {
 	return shop.customerAddresses
 }
 
-// Blogs returns an HTTP implementation of a Shopify customer blog repository
+// Blogs returns an HTTP implementation of a Shopify blog repository
 func (shop Shop) Blogs() shopify.BlogRepository {
 	return shop.blogs
 }
 
-// Articles returns an HTTP implementation of a Shopify customer article repository
+// Articles returns an HTTP implementation of a Shopify article repository
 func (shop Shop) Articles() shopify.ArticleRepository {
 	return shop.articles
 }

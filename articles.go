@@ -30,7 +30,7 @@ func (repository articleRepository) Get(blogID, id int64) (shopify.Article, erro
 	}
 
 	var resultDTO struct {
-		Article ArticleDTO `json:"Article"`
+		Article ArticleDTO `json:"article"`
 	}
 
 	json.Unmarshal(body, &resultDTO)
@@ -47,7 +47,7 @@ func (repository articleRepository) GetAll(blogID int64) (shopify.Articles, erro
 	}
 
 	var resultDTO struct {
-		Articles ArticleDTOs `json:"Articles"`
+		Articles ArticleDTOs `json:"articles"`
 	}
 
 	json.Unmarshal(body, &resultDTO)
