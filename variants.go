@@ -181,6 +181,7 @@ func (repository variantRepository) Create(productID int64, variant shopify.Vari
 		InventoryItemID:     variant.InventoryItemID,
 		InventoryManagement: variant.InventoryManagement,
 		InventoryQuantity:   variant.InventoryQuantity,
+		InventoryPolicy:     variant.InventoryPolicy,
 		Price:               variant.Price,
 		CompareAtPrice:      variant.CompareAtPrice,
 		ProductID:           variant.ProductID,
