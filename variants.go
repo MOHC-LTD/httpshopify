@@ -138,6 +138,7 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 		InventoryItemID:     dto.InventoryItemID,
 		InventoryManagement: dto.InventoryManagement,
 		InventoryQuantity:   dto.InventoryQuantity,
+		InventoryPolicy:     dto.InventoryPolicy,
 		Price:               dto.Price,
 		CompareAtPrice:      dto.CompareAtPrice,
 		ProductID:           dto.ProductID,
