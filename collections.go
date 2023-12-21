@@ -55,6 +55,14 @@ func (repository collectionRepository) Products(id int64) (shopify.Products, err
 	return resultDTO.Products.ToShopify(), nil
 }
 
+func (repository collectionRepository) GetCustomCollectionsList() (shopify.Collections, error) {
+	panic("GetCustomCollectionsList has not been implement yet")
+}
+
+func (repository collectionRepository) GetSmartCollectionsList() (shopify.Collections, error) {
+	panic("GetSmartCollectionsList has not been implement yet")
+}
+
 // CollectionDTOs represents a list of shopify collections in HTTP requests and responses
 type CollectionDTOs []CollectionDTO
 

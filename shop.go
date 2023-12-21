@@ -10,6 +10,8 @@ import (
 
 // Shop is an http shopify shop
 type Shop struct {
+	articles          articleRepository
+	blogs             blogRepository
 	orders            orderRepository
 	fulfillments      fulfillmentRepository
 	fulfillmentEvents fulfillmentEventRepository
@@ -88,6 +90,8 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 	}
 
 	return Shop{
+		articles:          newArticleRepository(client, createURL),
+		blogs:             newBlogRepository(client, createURL),
 		orders:            newOrderRepository(client, createURL),
 		fulfillments:      newFulfillmentRepository(client, createURL),
 		fulfillmentEvents: newFulfillmentEventRepository(client, createURL),
@@ -102,6 +106,16 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		customers:         newCustomerRepository(client, createURL),
 		customerAddresses: newCustomerAddressRepository(client, createURL),
 	}
+}
+
+// Articles returns an HTTP implementation of a Shopify article repository
+func (shop Shop) Articles() shopify.ArticleRepository {
+	return shop.articles
+}
+
+// Blogs returns an HTTP implementation of a Shopify blog repository
+func (shop Shop) Blogs() shopify.BlogRepository {
+	return shop.blogs
 }
 
 // Orders returns an HTTP implementation of a Shopify order repository

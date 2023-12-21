@@ -210,6 +210,10 @@ func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSe
 	return responseDTO.Customers.ToShopify(), nil
 }
 
+func (c customerRepository) Orders(id int64, query shopify.OrderQuery) (shopify.Orders, error) {
+	panic("Orders has not been implement yet")
+}
+
 type errCustomerUnprocessableEntityDTO struct {
 	Errors struct {
 		Email []string `json:"email"`
