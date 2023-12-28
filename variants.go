@@ -104,7 +104,7 @@ type VariantDTO struct {
 	Option3             string     `json:"option3,omitempty"`
 	Position            int        `json:"position,omitempty"`
 	InventoryItemID     int64      `json:"inventory_item_id,omitempty"`
-	InventoryManagement string     `json:"inventory_management,omitempty"`
+	InventoryManagement string     `json:"inventory_management"`
 	InventoryPolicy     string     `json:"inventory_policy,omitempty"`
 	InventoryQuantity   int        `json:"inventory_quantity,omitempty"`
 	Price               string     `json:"price,omitempty"`
