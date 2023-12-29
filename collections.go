@@ -38,6 +38,40 @@ func (repository collectionRepository) Get(id int64) (shopify.Collection, error)
 	return resultDTO.Collection.ToShopify(), nil
 }
 
+func (repository collectionRepository) GetSmartCollectionsList() (shopify.Collections, error) {
+	url := repository.createURL("smart_collections.json")
+
+	body, _, err := repository.client.Get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var resultDTO struct {
+		Collections CollectionDTOs `json:"smart_collections"`
+	}
+
+	json.Unmarshal(body, &resultDTO)
+
+	return resultDTO.Collections.ToShopify(), nil
+}
+
+func (repository collectionRepository) GetCustomCollectionsList() (shopify.Collections, error) {
+	url := repository.createURL("custom_collections.json")
+
+	body, _, err := repository.client.Get(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var resultDTO struct {
+		Collections CollectionDTOs `json:"custom_collections"`
+	}
+
+	json.Unmarshal(body, &resultDTO)
+
+	return resultDTO.Collections.ToShopify(), nil
+}
+
 func (repository collectionRepository) Products(id int64) (shopify.Products, error) {
 
 	url := repository.createURL(fmt.Sprintf("collections/%v/products.json", id))
@@ -53,14 +87,6 @@ func (repository collectionRepository) Products(id int64) (shopify.Products, err
 	json.Unmarshal(body, &resultDTO)
 
 	return resultDTO.Products.ToShopify(), nil
-}
-
-func (repository collectionRepository) GetCustomCollectionsList() (shopify.Collections, error) {
-	panic("GetCustomCollectionsList has not been implement yet")
-}
-
-func (repository collectionRepository) GetSmartCollectionsList() (shopify.Collections, error) {
-	panic("GetSmartCollectionsList has not been implement yet")
 }
 
 // CollectionDTOs represents a list of shopify collections in HTTP requests and responses
