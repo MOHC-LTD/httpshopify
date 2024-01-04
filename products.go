@@ -175,6 +175,17 @@ func (repository productRepository) List(query shopify.ProductQuery) (shopify.Pr
 	return products, nil
 }
 
+func (repository productRepository) Delete(productID int64) error {
+	url := repository.createURL(fmt.Sprintf("products/%v.json", productID))
+
+	_, _, err := repository.client.Delete(url, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ProductDTOs is a collection of Product DTOs
 type ProductDTOs []ProductDTO
 
