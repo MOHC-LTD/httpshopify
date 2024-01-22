@@ -38,6 +38,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 		Variants:    BuildVariantDTOs(product.Variants),
 		Vendor:      product.Vendor,
 		Options:     BuildOptionsDTOs(product.Options),
+		Meta:        BuildMetafieldDTOs(product.Meta),
 	}
 
 	request := struct {
@@ -68,6 +69,9 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 		return shopify.Product{}, err
 	}
 
+	println(fmt.Sprintf("createDTO: %v", createDTO))
+	println(fmt.Sprintf("response createDTO: %v", response))
+
 	return response.Product.ToShopify(), nil
 }
 
@@ -87,6 +91,7 @@ func (repository productRepository) Update(product shopify.Product) (shopify.Pro
 		Variants:    BuildVariantDTOs(product.Variants),
 		Vendor:      product.Vendor,
 		Options:     BuildOptionsDTOs(product.Options),
+		// Meta to include only seo.hidden = 1
 	}
 
 	request := struct {
@@ -216,6 +221,7 @@ type ProductDTO struct {
 	Variants    VariantDTOs       `json:"variants,omitempty"`
 	Vendor      string            `json:"vendor,omitempty"`
 	Options     ProductOptionsDTO `json:"options,omitempty"`
+	Meta        MetafieldsDTO     `json:"metafields,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -250,6 +256,7 @@ func (dto ProductDTO) ToShopify() shopify.Product {
 		Variants:    dto.Variants.ToShopify(),
 		Vendor:      dto.Vendor,
 		Options:     dto.Options.ToShopify(),
+		// Meta:        dto.Meta.toShopify(),
 	}
 }
 
