@@ -54,7 +54,7 @@ func parseMetafieldQuery(query shopify.MetafieldQuery) string {
 	return params.Encode()
 }
 
-// ProductOptionDTO represents a Shopify product option in HTTP requests and responses
+// MetafieldDTO represents a Shopify product metafield in HTTP requests and responses
 type MetafieldDTO struct {
 	Key       string      `json:"key,omitempty"`
 	Namespace string      `json:"namespace,omitempty"`
@@ -62,10 +62,10 @@ type MetafieldDTO struct {
 	Type      string      `json:"type,omitempty"`
 }
 
-// ProductOptionsDTO represents Shopify product options in HTTP requests and responses
+// MetafieldsDTO represents Shopify product metafields in HTTP requests and responses
 type MetafieldsDTO []MetafieldDTO
 
-// BuildOptionsDTOs builds the DTOs from the Shopify equivalent
+// BuildMetafieldDTOs builds the DTOs from the Shopify equivalent
 func BuildMetafieldDTOs(metafields shopify.Metafields) MetafieldsDTO {
 	dtos := make(MetafieldsDTO, 0, len(metafields))
 
