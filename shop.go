@@ -25,6 +25,7 @@ type Shop struct {
 	customerAddresses customerAddressRepository
 	blogs             blogRepository
 	articles          articleRepository
+	webhooks          webhookRepository
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
@@ -105,6 +106,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		customerAddresses: newCustomerAddressRepository(client, createURL),
 		blogs:             newBlogRepository(client, createURL),
 		articles:          newArticleRepository(client, createURL),
+		webhooks:          newWebhookRepository(client, createURL),
 	}
 }
 
@@ -181,4 +183,9 @@ func (shop Shop) Blogs() shopify.BlogRepository {
 // Articles returns an HTTP implementation of a Shopify article repository
 func (shop Shop) Articles() shopify.ArticleRepository {
 	return shop.articles
+}
+
+// Webhooks returns an HTTP implementation of a Shopify webhook repository
+func (shop Shop) Webhooks() shopify.WebhookRepository {
+	return shop.webhooks
 }
