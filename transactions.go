@@ -74,17 +74,8 @@ func (dtos TransactionDTOs) ToShopify() shopify.Transactions {
 
 // PaymentDetailsDTO represents the Payment Details of a Shopify Transaction in HTTP requests and responses
 type PaymentDetailsDTO struct {
-	// CreditCardBin             string      `json:"credit_card_bin,omitempty"`
-	// AvsResultCode             string      `json:"avs_result_code,omitempty"`
-	// CvvResultCode             string      `json:"cvv_result_code,omitempty"`
 	CreditCardNumber  string `json:"credit_card_number,omitempty"`
 	CreditCardCompany string `json:"credit_card_company,omitempty"`
-	// BuyerActionInfo           interface{} `json:"buyer_action_info,omitempty"`
-	// CreditCardName            string      `json:"credit_card_name,omitempty"`
-	// CreditCardWallet          string      `json:"credit_card_wallet,omitempty"`
-	// CreditCardExpirationMonth int64       `json:"credit_card_expiration_month,omitempty"`
-	// CreditCardExpirationYear  int64       `json:"credit_card_expiration_year,omitempty"`
-	// PaymentMethodName         string      `json:"payment_method_name,omitempty"`
 }
 
 // TransactionDTO represents a Shopify Transaction in HTTP requests and responses
