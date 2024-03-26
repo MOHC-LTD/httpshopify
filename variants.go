@@ -104,7 +104,7 @@ type VariantDTO struct {
 	Option3             string     `json:"option3,omitempty"`
 	Position            int        `json:"position,omitempty"`
 	InventoryItemID     int64      `json:"inventory_item_id,omitempty"`
-	InventoryManagement string     `json:"inventory_management,omitempty"`
+	InventoryManagement string     `json:"inventory_management"`
 	InventoryPolicy     string     `json:"inventory_policy,omitempty"`
 	InventoryQuantity   int        `json:"inventory_quantity,omitempty"`
 	Price               string     `json:"price,omitempty"`
@@ -137,8 +137,8 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 		Position:            dto.Position,
 		InventoryItemID:     dto.InventoryItemID,
 		InventoryManagement: dto.InventoryManagement,
-		InventoryQuantity:   dto.InventoryQuantity,
 		InventoryPolicy:     dto.InventoryPolicy,
+		InventoryQuantity:   dto.InventoryQuantity,
 		Price:               dto.Price,
 		CompareAtPrice:      dto.CompareAtPrice,
 		ProductID:           dto.ProductID,
@@ -181,8 +181,8 @@ func (repository variantRepository) Create(productID int64, variant shopify.Vari
 		Position:            variant.Position,
 		InventoryItemID:     variant.InventoryItemID,
 		InventoryManagement: variant.InventoryManagement,
-		InventoryQuantity:   variant.InventoryQuantity,
 		InventoryPolicy:     variant.InventoryPolicy,
+		InventoryQuantity:   variant.InventoryQuantity,
 		Price:               variant.Price,
 		CompareAtPrice:      variant.CompareAtPrice,
 		ProductID:           variant.ProductID,

@@ -17,6 +17,7 @@ type Shop struct {
 	variants          variantRepository
 	products          productRepository
 	inventoryLevels   inventoryLevelRepository
+	inventoryItems    inventoryItemRepository
 	collections       collectionRepository
 	productImages     productImagesRepository
 	metafields        metafieldRepository
@@ -24,6 +25,7 @@ type Shop struct {
 	customerAddresses customerAddressRepository
 	blogs             blogRepository
 	articles          articleRepository
+	webhooks          webhookRepository
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
@@ -96,6 +98,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		variants:          newVariantRepository(client, createURL),
 		products:          newProductRepository(client, createURL),
 		inventoryLevels:   newInventoryLevelRepository(client, createURL),
+		inventoryItems:    newInventoryItemRepository(client, createURL),
 		collections:       newCollectionRepository(client, createURL),
 		productImages:     newProductImagesRepository(client, createURL),
 		metafields:        newMetafieldRepository(client, createURL),
@@ -103,6 +106,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		customerAddresses: newCustomerAddressRepository(client, createURL),
 		blogs:             newBlogRepository(client, createURL),
 		articles:          newArticleRepository(client, createURL),
+		webhooks:          newWebhookRepository(client, createURL),
 	}
 }
 
@@ -141,6 +145,11 @@ func (shop Shop) InventoryLevels() shopify.InventoryLevelRepository {
 	return shop.inventoryLevels
 }
 
+// InventoryLevels returns an HTTP implementation of a Shopify inventory level repository
+func (shop Shop) InventoryItems() shopify.InventoryItemRepository {
+	return shop.inventoryItems
+}
+
 // Collections returns an HTTP implementation of a Shopify collection repository
 func (shop Shop) Collections() shopify.CollectionRepository {
 	return shop.collections
@@ -174,4 +183,9 @@ func (shop Shop) Blogs() shopify.BlogRepository {
 // Articles returns an HTTP implementation of a Shopify article repository
 func (shop Shop) Articles() shopify.ArticleRepository {
 	return shop.articles
+}
+
+// Webhooks returns an HTTP implementation of a Shopify webhook repository
+func (shop Shop) Webhooks() shopify.WebhookRepository {
+	return shop.webhooks
 }
