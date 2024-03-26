@@ -38,6 +38,7 @@ func (repository productRepository) Create(product shopify.Product) (shopify.Pro
 		Variants:    BuildVariantDTOs(product.Variants),
 		Vendor:      product.Vendor,
 		Options:     BuildOptionsDTOs(product.Options),
+		Meta:        BuildMetafieldDTOs(product.Meta),
 	}
 
 	request := struct {
@@ -216,6 +217,7 @@ type ProductDTO struct {
 	Variants    VariantDTOs       `json:"variants,omitempty"`
 	Vendor      string            `json:"vendor,omitempty"`
 	Options     ProductOptionsDTO `json:"options,omitempty"`
+	Meta        MetafieldsDTO     `json:"metafields,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
