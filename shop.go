@@ -10,6 +10,7 @@ import (
 
 // Shop is an http shopify shop
 type Shop struct {
+	draftOrders       draftOrderRepository
 	orders            orderRepository
 	fulfillments      fulfillmentRepository
 	fulfillmentEvents fulfillmentEventRepository
@@ -92,6 +93,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 	}
 
 	return Shop{
+		draftOrders:       newDraftOrderRepository(client, createURL),
 		orders:            newOrderRepository(client, createURL),
 		fulfillments:      newFulfillmentRepository(client, createURL),
 		fulfillmentEvents: newFulfillmentEventRepository(client, createURL),
@@ -115,6 +117,11 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 // Orders returns an HTTP implementation of a Shopify order repository
 func (shop Shop) Orders() shopify.OrderRepository {
 	return shop.orders
+}
+
+// Orders returns an HTTP implementation of a Shopify order repository
+func (shop Shop) DraftOrders() shopify.DraftOrderRepository {
+	return shop.draftOrders
 }
 
 // Fulfillments returns an HTTP implementation of a Shopify fulfillment repository
