@@ -38,9 +38,9 @@ type Shop struct {
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewShop(shop string, accessToken string) Shop {
+func NewShop(shop string, accessToken string, version string) Shop {
 	return NewCustomShop(
-		fmt.Sprintf("https://%v.myshopify.com/admin/api/2022-07", shop),
+		fmt.Sprintf("https://%v.myshopify.com/admin/api/%v", shop, version),
 		accessToken,
 		IsDefault,
 	)
@@ -56,9 +56,9 @@ func NewShop(shop string, accessToken string) Shop {
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewPlusShop(shop string, accessToken string) Shop {
+func NewPlusShop(shop string, accessToken string, version string) Shop {
 	return NewCustomShop(
-		fmt.Sprintf("https://%v.myshopify.com/admin/api/2022-07", shop),
+		fmt.Sprintf("https://%v.myshopify.com/admin/api/%v", shop, version),
 		accessToken,
 		IsPlus,
 	)
