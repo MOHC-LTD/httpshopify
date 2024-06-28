@@ -39,6 +39,36 @@ func (repository inventoryItemRepository) Get(id int64) (shopify.InventoryItem, 
 	return resultDTO.InventoryItem.ToShopify(), nil
 }
 
+func (repository inventoryItemRepository) Update(inventoryItem shopify.InventoryItem) (shopify.InventoryItem, error) {
+	url := repository.createURL(fmt.Sprintf("inventory_items/%v.json", inventoryItem.ID))
+
+	inventoryItemDTO := BuildInventoryItemDTO(inventoryItem)
+
+	request := struct {
+		InventoryItem InventoryItemDTO `json:"inventory_item"`
+	}{
+		InventoryItem: inventoryItemDTO,
+	}
+
+	body, err := json.Marshal(request)
+	if err != nil {
+		return shopify.InventoryItem{}, err
+	}
+
+	respBody, _, err := repository.client.Put(url, body, nil)
+	if err != nil {
+		return shopify.InventoryItem{}, err
+	}
+
+	var resultDTO struct {
+		InventoryItem InventoryItemDTO `json:"inventory_item"`
+	}
+
+	json.Unmarshal(respBody, &resultDTO)
+
+	return resultDTO.InventoryItem.ToShopify(), nil
+}
+
 // CountryHarmonizedSystemCodeDTO represents a Shopify country system code in HTTP requests and responses
 type CountryHarmonizedSystemCodeDTO struct {
 	HarmonizedSystemCode string `json:"harmonized_system_code,omitempty"`
@@ -78,8 +108,46 @@ type InventoryItemDTO struct {
 	SKU                          string                          `json:"sku,omitempty"`
 	Tracked                      bool                            `json:"tracked,omitempty"`
 	UpdatedAt                    *time.Time                      `json:"updated_at,omitempty"`
-	RequiresShipping             bool                            `json:"requires_shipping,omitempty"`
+	RequiresShipping             bool                            `json:"requires_shipping"`
 	AdminGraphqlApiId            string                          `json:"admin_graphql_api_id,omitempty"`
+}
+
+// BuildInventoryItemDTO converts a Shopify inventory item to the DTO equivalent
+func BuildInventoryItemDTO(inventoryItem shopify.InventoryItem) InventoryItemDTO {
+	var createdAt *time.Time
+	if !inventoryItem.CreatedAt.IsZero() {
+		createdAt = &inventoryItem.CreatedAt
+	}
+
+	var updatedAt *time.Time
+	if !inventoryItem.UpdatedAt.IsZero() {
+		updatedAt = &inventoryItem.UpdatedAt
+	}
+
+	countryHarmonizedSystemCodes := make(CountryHarmonizedSystemCodeDTOs, len(inventoryItem.CountryHarmonizedSystemCodes))
+	for _, countryHarmonizedSystemCode := range inventoryItem.CountryHarmonizedSystemCodes {
+		countryHarmonizedSystemCodes = append(countryHarmonizedSystemCodes, CountryHarmonizedSystemCodeDTO{
+			HarmonizedSystemCode: countryHarmonizedSystemCode.HarmonizedSystemCode,
+			CountryCode:          countryHarmonizedSystemCode.CountryCode,
+		})
+	}
+
+	inventoryItemDTO := InventoryItemDTO{
+		Cost:                         inventoryItem.Cost,
+		CountryCodeOfOrigin:          inventoryItem.CountryCodeOfOrigin,
+		CountryHarmonizedSystemCodes: countryHarmonizedSystemCodes,
+		CreatedAt:                    createdAt,
+		HarmonizedSystemCode:         inventoryItem.HarmonizedSystemCode,
+		ID:                           inventoryItem.ID,
+		ProvinceCodeOfOrigin:         inventoryItem.ProvinceCodeOfOrigin,
+		SKU:                          inventoryItem.SKU,
+		Tracked:                      inventoryItem.Tracked,
+		UpdatedAt:                    updatedAt,
+		RequiresShipping:             inventoryItem.RequiresShipping,
+		AdminGraphqlApiId:            inventoryItem.AdminGraphqlApiId,
+	}
+
+	return inventoryItemDTO
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
