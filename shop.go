@@ -26,6 +26,7 @@ type Shop struct {
 	blogs             blogRepository
 	articles          articleRepository
 	webhooks          webhookRepository
+	transactions      transactionRepository
 }
 
 // NewShop builds a shopify shop based on the shopify admin REST API
@@ -37,9 +38,9 @@ type Shop struct {
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewShop(shop string, accessToken string) Shop {
+func NewShop(shop string, accessToken string, version string) Shop {
 	return NewCustomShop(
-		fmt.Sprintf("https://%v.myshopify.com/admin/api/2022-07", shop),
+		fmt.Sprintf("https://%v.myshopify.com/admin/api/%v", shop, version),
 		accessToken,
 		IsDefault,
 	)
@@ -55,9 +56,9 @@ func NewShop(shop string, accessToken string) Shop {
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewPlusShop(shop string, accessToken string) Shop {
+func NewPlusShop(shop string, accessToken string, version string) Shop {
 	return NewCustomShop(
-		fmt.Sprintf("https://%v.myshopify.com/admin/api/2022-07", shop),
+		fmt.Sprintf("https://%v.myshopify.com/admin/api/%v", shop, version),
 		accessToken,
 		IsPlus,
 	)
@@ -107,6 +108,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 		blogs:             newBlogRepository(client, createURL),
 		articles:          newArticleRepository(client, createURL),
 		webhooks:          newWebhookRepository(client, createURL),
+		transactions:      newTransactionRepository(client, createURL),
 	}
 }
 
@@ -188,4 +190,9 @@ func (shop Shop) Articles() shopify.ArticleRepository {
 // Webhooks returns an HTTP implementation of a Shopify webhook repository
 func (shop Shop) Webhooks() shopify.WebhookRepository {
 	return shop.webhooks
+}
+
+// Transactions returns an HTTP implementation of a Shopify transaction repository
+func (shop Shop) Transactions() shopify.TransactionRepository {
+	return shop.transactions
 }
