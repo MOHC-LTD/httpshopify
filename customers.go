@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/MOHC-LTD/httpshopify/v2/internal/slices"
+
 	"github.com/MOHC-LTD/httpshopify/v2/internal/http"
 
 	"github.com/MOHC-LTD/shopify/v2"
@@ -223,6 +225,38 @@ func (c customerRepository) GetByQuery(fields []string, query shopify.CustomerSe
 	return responseDTO.Customers.ToShopify(), nil
 }
 
+func (c customerRepository) List(query shopify.CustomerSearchQuery) (shopify.Customers, error) {
+	customers := make(shopify.Customers, 0)
+
+	url := c.createURL(fmt.Sprintf("customers.json%v", parseCustomerQuery(query)))
+
+	for {
+		body, headers, err := c.client.Get(url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		var resultDTO struct {
+			Customers CustomerDTOs `json:"customers"`
+		}
+		json.Unmarshal(body, &resultDTO)
+
+		for _, dto := range resultDTO.Customers {
+			customers = append(customers, dto.ToShopify())
+		}
+
+		links := ParseLinkHeader(headers.Get("Link"))
+
+		if !links.HasNext() {
+			break
+		}
+
+		url = links.Next
+	}
+
+	return customers, nil
+}
+
 func (c customerRepository) Orders(id int64, query shopify.OrderQuery) (shopify.Orders, error) {
 
 	url := c.createURL(fmt.Sprintf("customers/%v/orders.json%v", id, parseOrderQuery(query)))
@@ -279,4 +313,28 @@ func (e ErrCustomerUnprocessableEntity) Error() string {
 	}
 
 	return strings.Join(errorMessages, ", ")
+}
+
+func parseCustomerQuery(query shopify.CustomerSearchQuery) string {
+	queryStrings := make([]string, 0)
+
+	if query.IDs != nil {
+		queryStrings = append(queryStrings, fmt.Sprintf("ids=%v", slices.JoinInt64(query.IDs, ",")))
+	}
+
+	if len(queryStrings) == 0 {
+		return ""
+	}
+
+	queryString := "?"
+
+	for i, str := range queryStrings {
+		if i != 0 {
+			queryString = queryString + "&"
+		}
+
+		queryString = queryString + str
+	}
+
+	return queryString
 }
