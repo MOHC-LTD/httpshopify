@@ -2,6 +2,7 @@ package httpshopify
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -109,21 +110,48 @@ func (repository orderRepository) Close(id int64) error {
 	return nil
 }
 
+// ErrMetafieldValueType is thrown when the metafield value type is unexpected.
+var ErrMetafieldValueType = errors.New("http shopify: unexpected value type for passed metafield type")
+
+func newMetafieldDTO(metafield shopify.Metafield) (metafieldDTO, error) {
+	value := metafield.Value
+	switch metafield.Type {
+	case shopify.ListSingleLineTextFieldMetaFieldType:
+		v, ok := metafield.Value.([]string)
+		if !ok {
+			return metafieldDTO{}, ErrMetafieldValueType
+		}
+
+		b, err := json.Marshal(v)
+		if err != nil {
+			return metafieldDTO{}, err
+		}
+
+		value = string(b)
+	}
+
+	return metafieldDTO{
+		ID:            metafield.ID,
+		Description:   metafield.Description,
+		Key:           metafield.Key,
+		Namespace:     metafield.Namespace,
+		OwnerID:       metafield.Resource.OwnerID,
+		Value:         value,
+		Type:          metafield.Type,
+		OwnerResource: metafield.Resource.OwnerResource,
+	}, nil
+}
+
 func (repository orderRepository) UpdateMetafield(orderID int64, metafield shopify.Metafield) (shopify.Metafield, error) {
+	dto, err := newMetafieldDTO(metafield)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
 
 	bodyData := struct {
 		Metafield metafieldDTO `json:"metafield"`
 	}{
-		Metafield: metafieldDTO{
-			ID:            metafield.ID,
-			Description:   metafield.Description,
-			Key:           metafield.Key,
-			Namespace:     metafield.Namespace,
-			OwnerID:       metafield.Resource.OwnerID,
-			Value:         metafield.Value,
-			Type:          metafield.Type,
-			OwnerResource: metafield.Resource.OwnerResource,
-		},
+		Metafield: dto,
 	}
 
 	body, err := json.Marshal(&bodyData)
@@ -146,20 +174,19 @@ func (repository orderRepository) UpdateMetafield(orderID int64, metafield shopi
 		return shopify.Metafield{}, err
 	}
 
-	return response.Metafield.toShopify(), nil
+	return response.Metafield.toShopify()
 }
 
 func (repository orderRepository) CreateMetafield(orderID int64, metafield shopify.Metafield) (shopify.Metafield, error) {
+	dto, err := newMetafieldDTO(metafield)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
 
 	bodyData := struct {
 		Metafield metafieldDTO `json:"metafield"`
 	}{
-		Metafield: metafieldDTO{
-			Key:       metafield.Key,
-			Namespace: metafield.Namespace,
-			Value:     metafield.Value,
-			Type:      metafield.Type,
-		},
+		Metafield: dto,
 	}
 
 	body, err := json.Marshal(&bodyData)
@@ -182,7 +209,7 @@ func (repository orderRepository) CreateMetafield(orderID int64, metafield shopi
 		return shopify.Metafield{}, err
 	}
 
-	return response.Metafield.toShopify(), nil
+	return response.Metafield.toShopify()
 }
 
 func (repository orderRepository) Create(order shopify.Order) (shopify.Order, error) {
