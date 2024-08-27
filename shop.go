@@ -31,49 +31,54 @@ type Shop struct {
 
 // NewShop builds a shopify shop based on the shopify admin REST API
 /*
-	This constructor automatically determines the URL of the store from the store name.
+	This constructor automatically determines the URL of the store from the store name. It also
+	allows client configuration to retry failed queries by passing in optionsFns e.g. WithExponentialBackoff().
 	If you would like to use a custom store URL use the `NewCustomShop` constructor instread.
 	Example:
-	shop := shopify.NewShop("my-shop-name", "shppy_21u92h2184ho912h29r01")
+	shop := shopify.NewShop("my-shop-name", "shppy_21u92h2184ho912h29r01", "2022-07")
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewShop(shop string, accessToken string, version string) Shop {
+func NewShop(shop string, accessToken string, version string, optionsFns ...OptionFunc) Shop {
 	return NewCustomShop(
 		fmt.Sprintf("https://%v.myshopify.com/admin/api/%v", shop, version),
 		accessToken,
 		IsDefault,
+		optionsFns...,
 	)
 }
 
 // NewPlusShop builds a shopify plus shop based on the shopify admin REST API
 /*
 	This shop uses the Shopify plus rate limits allowing for higher throughput.
-	This constructor automatically determines the URL of the store from the store name.
-	If you would like to use a custom store URL use the `NewCustomShop` constructor instread.
+	This constructor automatically determines the URL of the store from the store name. It also
+	allows client configuration to retry failed queries by passing in optionsFns e.g. WithExponentialBackoff().
+	If you would like to use a custom store URL use the `NewCustomShop` constructor instead.
 	Example:
-	shop := shopify.NewShop("my-shop-name", "shppy_21u92h2184ho912h29r01")
+	shop := shopify.NewShop("my-shop-name", "shppy_21u92h2184ho912h29r01", "2022-07")
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewPlusShop(shop string, accessToken string, version string) Shop {
+func NewPlusShop(shop string, accessToken string, version string, optionsFns ...OptionFunc) Shop {
 	return NewCustomShop(
 		fmt.Sprintf("https://%v.myshopify.com/admin/api/%v", shop, version),
 		accessToken,
 		IsPlus,
+		optionsFns...,
 	)
 }
 
 // NewCustomShop builds a shopify shop based on the shopify admin REST API
 /*
-	This constructor automatically uses the URL passed to it to communicate with the store.
+	This constructor automatically uses the URL passed to it to communicate with the store. It also
+	allows client configuration to retry failed queries by passing in optionsFns e.g. WithExponentialBackoff().
 	If you would like to use an auto store URL use the `NewShop` constructor instead.
 	Example:
 	shop := shopify.NewCustomShop("https://my-shop-domain.com/foo/bar", "shppy_21u92h2184ho912h29r01", httpshopify.IsPlus)
 	shippedOrders, err := shop.Orders().List(shopify.OrderQuery{FulfillmentStatus:"shipped"})
 	For the full shopify admin REST API documentation see https://shopify.dev/docs/admin-api/rest/reference
 */
-func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
+func NewCustomShop(url string, accessToken string, isPlus bool, optionsFns ...OptionFunc) Shop {
 	var rateLimitOption http.Option
 	if isPlus {
 		rateLimitOption = RateLimitPlus()
@@ -90,6 +95,15 @@ func NewCustomShop(url string, accessToken string, isPlus bool) Shop {
 	createURL := func(endpoint string) string {
 		return fmt.Sprintf("%v/%v", url, endpoint)
 	}
+
+	options := Options{}
+	for _, fn := range optionsFns {
+		fn(&options)
+	}
+
+	client.RetryMaxDuration = options.retryMaxDuration
+	client.RetryBaseDuration = options.retryBaseDuration
+	client.RetryCount = options.retryCount
 
 	return Shop{
 		orders:            newOrderRepository(client, createURL),
