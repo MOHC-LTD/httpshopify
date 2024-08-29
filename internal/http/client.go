@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -70,7 +69,7 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 	var err error
 
 	if body != nil {
-		requestBody, err = ioutil.ReadAll(body)
+		requestBody, err = io.ReadAll(body)
 		if err != nil {
 			return nil, ResponseHeaders{}, err
 		}
@@ -104,7 +103,7 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 
 			// Retry using exp backoff
 			time.Sleep(c.retryDuration(i))
-			req.Body = ioutil.NopCloser(bytes.NewReader(requestBody))
+			req.Body = io.NopCloser(bytes.NewReader(requestBody))
 
 			continue
 		}
@@ -136,10 +135,10 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 
 		time.Sleep(waitTime)
 
-		req.Body = ioutil.NopCloser(bytes.NewReader(requestBody))
+		req.Body = io.NopCloser(bytes.NewReader(requestBody))
 	}
 
-	responseBody, err := ioutil.ReadAll(resp.Body)
+	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ResponseHeaders{}, err
 	}
