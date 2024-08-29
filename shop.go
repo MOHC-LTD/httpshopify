@@ -101,9 +101,7 @@ func NewCustomShop(url string, accessToken string, isPlus bool, optionsFns ...Op
 		fn(&options)
 	}
 
-	client.RetryMaxDuration = options.retryMaxDuration
-	client.RetryBaseDuration = options.retryBaseDuration
-	client.RetryCount = options.retryCount
+	client.WithExponentialBackoff(options.retryCount, options.retryBaseDuration, options.retryMaxDuration)
 
 	return Shop{
 		orders:            newOrderRepository(client, createURL),
