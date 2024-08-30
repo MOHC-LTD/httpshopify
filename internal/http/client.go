@@ -77,10 +77,9 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 	headers = c.AppendDefaultHeaders(headers)
 
 	var resp *http.Response
-	var req *http.Request
 
 	for i := 0; i < c.retryCount+1; i++ {
-		req, err = http.NewRequest(method, url, bytes.NewReader(requestBody))
+		req, err := http.NewRequest(method, url, bytes.NewReader(requestBody))
 		if err != nil {
 			return nil, ResponseHeaders{}, err
 		}
