@@ -35,12 +35,6 @@ func NewClient(options ...Option) Client {
 	return client
 }
 
-func (c *Client) WithExponentialBackoff(retryCount int, retryBaseDuration time.Duration, retryMaxDuration time.Duration) {
-	c.retryCount = retryCount
-	c.retryBaseDuration = retryBaseDuration
-	c.retryMaxDuration = retryMaxDuration
-}
-
 // AppendDefaultHeaders appends the default headers to the passed ones.
 func (c Client) AppendDefaultHeaders(headers RequestHeaders) RequestHeaders {
 	for _, header := range c.defaultHeaders {
@@ -54,13 +48,13 @@ func (c Client) AppendDefaultHeaders(headers RequestHeaders) RequestHeaders {
 
 func (c Client) retryDuration(retry int) time.Duration {
 	duration := c.retryBaseDuration * (1 << retry)
+	jitter := time.Duration(rand.Float64() * float64(time.Second))
+
 	if duration > c.retryMaxDuration {
-		return c.retryMaxDuration
+		return c.retryMaxDuration + jitter
 	}
 
-	duration += time.Duration(rand.Float64() * float64(time.Second))
-
-	return duration
+	return duration + jitter
 }
 
 // Do does a request
@@ -83,9 +77,10 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 	headers = c.AppendDefaultHeaders(headers)
 
 	var resp *http.Response
+	var req *http.Request
 
 	for i := 0; i < c.retryCount+1; i++ {
-		req, err := http.NewRequest(method, url, bytes.NewReader(requestBody))
+		req, err = http.NewRequest(method, url, bytes.NewReader(requestBody))
 		if err != nil {
 			return nil, ResponseHeaders{}, err
 		}
@@ -95,47 +90,36 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 		}
 
 		resp, err = c.client.Do(req)
-		if err != nil {
-			// If no need to retry, return early
-			if i == c.retryCount {
-				return nil, ResponseHeaders{}, err
-			}
 
-			// Retry using exp backoff
-			time.Sleep(c.retryDuration(i))
-			req.Body = io.NopCloser(bytes.NewReader(requestBody))
-
-			continue
-		}
-
-		defer resp.Body.Close()
-
-		// Break if client config not set for retries or retries maxed out
+		// Break if client config not set for retries
 		if c.retryCount == i {
 			break
 		}
 
-		isRetryResponse := resp.StatusCode == 429 || resp.StatusCode > 500
-		if !isRetryResponse {
-			break
-		}
+		// Default wait time to exp backoff
+		waitTime := c.retryDuration(i)
 
-		var waitTime time.Duration
+		if err == nil {
+			defer resp.Body.Close()
 
-		// Use Shopify's retry after duration if any
-		if retryAfterHeader := resp.Header.Get("Retry-After"); retryAfterHeader != "" {
-			retryAfter, _ := strconv.ParseFloat(retryAfterHeader, 64)
-			waitTime = time.Duration(retryAfter) * time.Second
-		}
+			isRetryResponse := resp.StatusCode == 429 || resp.StatusCode >= 500
+			if !isRetryResponse {
+				break
+			}
 
-		// Default to exponential backoff and jitter
-		if waitTime == 0 {
-			waitTime = c.retryDuration(i)
+			// Use Shopify's retry after duration if exists
+			if retryAfterHeader := resp.Header.Get("Retry-After"); retryAfterHeader != "" {
+				retryAfter, _ := strconv.ParseFloat(retryAfterHeader, 64)
+				waitTime = time.Duration(retryAfter * float64(time.Second))
+			}
 		}
 
 		time.Sleep(waitTime)
-
 		req.Body = io.NopCloser(bytes.NewReader(requestBody))
+	}
+
+	if err != nil {
+		return nil, ResponseHeaders{}, err
 	}
 
 	responseBody, err := io.ReadAll(resp.Body)

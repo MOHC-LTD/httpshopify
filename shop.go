@@ -86,22 +86,22 @@ func NewCustomShop(url string, accessToken string, isPlus bool, optionsFns ...Op
 		rateLimitOption = RateLimitDefault()
 	}
 
-	client := http.NewClient(
-		http.WithDefaultHeader("X-Shopify-Access-Token", accessToken),
-		http.WithDefaultHeader("Content-Type", "application/json"),
-		rateLimitOption,
-	)
-
-	createURL := func(endpoint string) string {
-		return fmt.Sprintf("%v/%v", url, endpoint)
-	}
-
+	// Apply OptionFuncs to Options
 	options := Options{}
 	for _, fn := range optionsFns {
 		fn(&options)
 	}
 
-	client.WithExponentialBackoff(options.retryCount, options.retryBaseDuration, options.retryMaxDuration)
+	client := http.NewClient(
+		http.WithDefaultHeader("X-Shopify-Access-Token", accessToken),
+		http.WithDefaultHeader("Content-Type", "application/json"),
+		rateLimitOption,
+		http.WithBackoffOptions(options.retryCount, options.retryBaseDuration, options.retryMaxDuration),
+	)
+
+	createURL := func(endpoint string) string {
+		return fmt.Sprintf("%v/%v", url, endpoint)
+	}
 
 	return Shop{
 		orders:            newOrderRepository(client, createURL),
