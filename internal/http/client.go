@@ -114,7 +114,6 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 		}
 
 		time.Sleep(waitTime)
-		req.Body = io.NopCloser(bytes.NewReader(requestBody))
 	}
 
 	if err != nil {
