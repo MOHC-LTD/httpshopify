@@ -189,9 +189,9 @@ func (repository orderRepository) Create(order shopify.Order) (shopify.Order, er
 	url := repository.createURL("orders.json")
 
 	bodyData := struct {
-		Order OrderDTO `json:"order"`
+		Order CreateOrderDTO `json:"order"`
 	}{
-		Order: BuildOrderDTO(order),
+		Order: BuildCreateOrderDTO(order),
 	}
 
 	body, err := json.Marshal(&bodyData)
@@ -205,7 +205,7 @@ func (repository orderRepository) Create(order shopify.Order) (shopify.Order, er
 	}
 
 	var response struct {
-		Order OrderDTO `json:"order"`
+		Order CreateOrderDTO `json:"order"`
 	}
 	err = json.Unmarshal(responseBody, &response)
 	if err != nil {
@@ -293,6 +293,21 @@ type OrderDTO struct {
 	UpdatedAt                *time.Time              `json:"updated_at,omitempty"`
 }
 
+type CreateOrderDTO struct {
+	ClosedAt    *time.Time   `json:"closed_at,omitempty"`
+	CreatedAt   *time.Time   `json:"created_at,omitempty"`
+	Email       string       `json:"email,omitempty"`
+	ID          int64        `json:"id,omitempty"`
+	LineItems   LineItemDTOs `json:"line_items,omitempty"`
+	Name        string       `json:"name,omitempty"`
+	OrderNumber int          `json:"order_number,omitempty"`
+	ProcessedAt *time.Time   `json:"processed_at,omitempty"`
+	TotalPrice  string       `json:"total_price,omitempty"`
+	TotalTax    string       `json:"total_tax,omitempty"`
+	TotalTaxSet PriceSetDTO  `json:"total_tax_set,omitempty"`
+	UpdatedAt   *time.Time   `json:"updated_at,omitempty"`
+}
+
 // ToShopify converts the DTO to the Shopify equivalent
 func (dto OrderDTO) ToShopify() shopify.Order {
 	var createdAt time.Time
@@ -358,7 +373,45 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 	}
 }
 
-// OrderDTOs is a collection of Order DTOs
+// ToShopify converts the CreateOrderDTO to the Shopify equivalent
+func (dto CreateOrderDTO) ToShopify() shopify.Order {
+	var createdAt time.Time
+	if dto.CreatedAt != nil {
+		createdAt = *dto.CreatedAt
+	}
+
+	var closedAt time.Time
+	if dto.ClosedAt != nil {
+		closedAt = *dto.ClosedAt
+	}
+
+	var processedAt time.Time
+	if dto.ProcessedAt != nil {
+		processedAt = *dto.ProcessedAt
+	}
+
+	var updatedAt time.Time
+	if dto.UpdatedAt != nil {
+		updatedAt = *dto.UpdatedAt
+	}
+
+	return shopify.Order{
+		ClosedAt:    closedAt,
+		CreatedAt:   createdAt,
+		Email:       dto.Email,
+		ID:          dto.ID,
+		LineItems:   dto.LineItems.ToShopify(),
+		Name:        dto.Name,
+		OrderNumber: dto.OrderNumber,
+		ProcessedAt: processedAt,
+		TotalPrice:  dto.TotalPrice,
+		TotalTax:    dto.TotalTax,
+		TotalTaxSet: dto.TotalTaxSet.ToShopify(),
+		UpdatedAt:   updatedAt,
+	}
+}
+
+// OrderDTOs is a collection of Order DTOs - RL DOES THIS NEED COPYING?
 type OrderDTOs []OrderDTO
 
 // ToShopify converts the DTOs to the Shopify equivalent
@@ -437,6 +490,44 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	}
 
 	return orderDTO
+}
+
+// BuildCreateOrderDTO converts a Shopify order to the CreateOrderDTO equivalent
+func BuildCreateOrderDTO(order shopify.Order) CreateOrderDTO {
+	var createdAt *time.Time
+	if !order.CreatedAt.IsZero() {
+		createdAt = &order.CreatedAt
+	}
+
+	var closedAt *time.Time
+	if !order.ClosedAt.IsZero() {
+		closedAt = &order.ClosedAt
+	}
+
+	var processedAt *time.Time
+	if !order.ProcessedAt.IsZero() {
+		processedAt = &order.ProcessedAt
+	}
+
+	var updatedAt *time.Time
+	if !order.UpdatedAt.IsZero() {
+		updatedAt = &order.UpdatedAt
+	}
+
+	return CreateOrderDTO{
+		Email:       order.Email,
+		ID:          order.ID,
+		LineItems:   BuildLineItemDTOs(order.LineItems),
+		Name:        order.Name,
+		OrderNumber: order.OrderNumber,
+		TotalPrice:  order.TotalPrice,
+		TotalTax:    order.TotalTax,
+		TotalTaxSet: BuildPriceSetDTO(order.TotalTaxSet),
+		CreatedAt:   createdAt,
+		ClosedAt:    closedAt,
+		ProcessedAt: processedAt,
+		UpdatedAt:   updatedAt,
+	}
 }
 
 // NoteAttributeDTOs represents a collection of Shopify note attributes in HTTP requests and responses
