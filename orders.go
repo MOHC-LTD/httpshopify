@@ -252,7 +252,6 @@ func (repository orderRepository) Update(order shopify.Order) (shopify.Order, er
 
 // OrderDTO represents a Shopify order in HTTP requests and responses
 type OrderDTO struct {
-	BillingAddress           AddressDTO              `json:"billing_address,omitempty"`
 	ClosedAt                 *time.Time              `json:"closed_at,omitempty"`
 	CreatedAt                *time.Time              `json:"created_at,omitempty"`
 	Currency                 string                  `json:"currency,omitempty"`
@@ -264,11 +263,9 @@ type OrderDTO struct {
 	CurrentSubtotalPriceSet  PriceSetDTO             `json:"current_subtotal_price_set,omitempty"`
 	CurrentTotalTax          string                  `json:"current_total_tax,omitempty"`
 	CurrentTotalTaxSet       PriceSetDTO             `json:"current_total_tax_set,omitempty"`
-	Customer                 CustomerDTO             `json:"customer,omitempty"`
 	DiscountApplications     DiscountApplicationDTOs `json:"discount_applications,omitempty"`
 	Email                    string                  `json:"email,omitempty"`
 	FinancialStatus          string                  `json:"financial_status,omitempty"`
-	Fulfillments             FulfillmentDTOs         `json:"fulfillments,omitempty"`
 	FulfillmentStatus        string                  `json:"fulfillment_status,omitempty"`
 	ID                       int64                   `json:"id,omitempty"`
 	LineItems                LineItemDTOs            `json:"line_items,omitempty"`
@@ -277,7 +274,6 @@ type OrderDTO struct {
 	OrderNumber              int                     `json:"order_number,omitempty"`
 	PresentmentCurrency      string                  `json:"presentment_currency,omitempty"`
 	ProcessedAt              *time.Time              `json:"processed_at,omitempty"`
-	ShippingAddress          AddressDTO              `json:"shipping_address,omitempty"`
 	ShippingLines            ShippingLineDTOs        `json:"shipping_lines,omitempty"`
 	SubtotalPrice            string                  `json:"subtotal_price,omitempty"`
 	SubtotalPriceSet         PriceSetDTO             `json:"subtotal_price_set,omitempty"`
@@ -331,7 +327,6 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 	}
 
 	return shopify.Order{
-		BillingAddress:           dto.BillingAddress.ToShopify(),
 		ClosedAt:                 closedAt,
 		CreatedAt:                createdAt,
 		Currency:                 dto.Currency,
@@ -343,11 +338,9 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		CurrentSubtotalPriceSet:  dto.CurrentSubtotalPriceSet.ToShopify(),
 		CurrentTotalTax:          dto.CurrentTotalTax,
 		CurrentTotalTaxSet:       dto.CurrentTotalTaxSet.ToShopify(),
-		Customer:                 dto.Customer.ToShopify(),
 		DiscountApplications:     dto.DiscountApplications.ToShopify(),
 		Email:                    dto.Email,
 		FinancialStatus:          dto.FinancialStatus,
-		Fulfillments:             dto.Fulfillments.ToShopify(),
 		FulfillmentStatus:        dto.FulfillmentStatus,
 		ID:                       dto.ID,
 		LineItems:                dto.LineItems.ToShopify(),
@@ -356,7 +349,6 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		OrderNumber:              dto.OrderNumber,
 		PresentmentCurrency:      dto.PresentmentCurrency,
 		ProcessedAt:              processedAt,
-		ShippingAddress:          dto.ShippingAddress.ToShopify(),
 		ShippingLines:            dto.ShippingLines.ToShopify(),
 		SubtotalPrice:            dto.SubtotalPrice,
 		SubtotalPriceSet:         dto.SubtotalPriceSet.ToShopify(),
@@ -448,7 +440,6 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	}
 
 	orderDTO := OrderDTO{
-		BillingAddress:           BuildAddressDTO(order.BillingAddress),
 		Currency:                 order.Currency,
 		CurrentTotalDiscounts:    order.CurrentTotalDiscounts,
 		CurrentTotalDiscountsSet: BuildPriceSetDTO(order.CurrentTotalDiscountsSet),
@@ -458,11 +449,9 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		CurrentSubtotalPriceSet:  BuildPriceSetDTO(order.CurrentSubtotalPriceSet),
 		CurrentTotalTax:          order.CurrentTotalTax,
 		CurrentTotalTaxSet:       BuildPriceSetDTO(order.CurrentTotalTaxSet),
-		Customer:                 BuildCustomerDTO(order.Customer),
 		DiscountApplications:     BuildDiscountApplicationDTOs(order.DiscountApplications),
 		Email:                    order.Email,
 		FinancialStatus:          order.FinancialStatus,
-		Fulfillments:             BuildFulfillmentDTOs(order.Fulfillments),
 		FulfillmentStatus:        order.FulfillmentStatus,
 		ID:                       order.ID,
 		LineItems:                BuildLineItemDTOs(order.LineItems),
@@ -470,7 +459,6 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		NoteAttributes:           BuildNoteAttributeDTOs(order.NoteAttributes),
 		OrderNumber:              order.OrderNumber,
 		PresentmentCurrency:      order.PresentmentCurrency,
-		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
 		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
 		SubtotalPrice:            order.SubtotalPrice,
 		SubtotalPriceSet:         BuildPriceSetDTO(order.SubtotalPriceSet),
