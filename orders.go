@@ -290,18 +290,19 @@ type OrderDTO struct {
 }
 
 type CreateOrderDTO struct {
-	ClosedAt    *time.Time   `json:"closed_at,omitempty"`
-	CreatedAt   *time.Time   `json:"created_at,omitempty"`
-	Email       string       `json:"email,omitempty"`
-	ID          int64        `json:"id,omitempty"`
-	LineItems   LineItemDTOs `json:"line_items,omitempty"`
-	Name        string       `json:"name,omitempty"`
-	OrderNumber int          `json:"order_number,omitempty"`
-	ProcessedAt *time.Time   `json:"processed_at,omitempty"`
-	TotalPrice  string       `json:"total_price,omitempty"`
-	TotalTax    string       `json:"total_tax,omitempty"`
-	TotalTaxSet PriceSetDTO  `json:"total_tax_set,omitempty"`
-	UpdatedAt   *time.Time   `json:"updated_at,omitempty"`
+	ClosedAt       *time.Time   `json:"closed_at,omitempty"`
+	CreatedAt      *time.Time   `json:"created_at,omitempty"`
+	Email          string       `json:"email,omitempty"`
+	ID             int64        `json:"id,omitempty"`
+	LineItems      LineItemDTOs `json:"line_items,omitempty"`
+	Name           string       `json:"name,omitempty"`
+	OrderNumber    int          `json:"order_number,omitempty"`
+	ProcessedAt    *time.Time   `json:"processed_at,omitempty"`
+	TotalPrice     string       `json:"total_price,omitempty"`
+	TotalTax       string       `json:"total_tax,omitempty"`
+	TotalTaxSet    PriceSetDTO  `json:"total_tax_set,omitempty"`
+	UpdatedAt      *time.Time   `json:"updated_at,omitempty"`
+	OrderStatusURL string       `json:"order_status_url,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -388,22 +389,23 @@ func (dto CreateOrderDTO) ToShopify() shopify.Order {
 	}
 
 	return shopify.Order{
-		ClosedAt:    closedAt,
-		CreatedAt:   createdAt,
-		Email:       dto.Email,
-		ID:          dto.ID,
-		LineItems:   dto.LineItems.ToShopify(),
-		Name:        dto.Name,
-		OrderNumber: dto.OrderNumber,
-		ProcessedAt: processedAt,
-		TotalPrice:  dto.TotalPrice,
-		TotalTax:    dto.TotalTax,
-		TotalTaxSet: dto.TotalTaxSet.ToShopify(),
-		UpdatedAt:   updatedAt,
+		ClosedAt:       closedAt,
+		CreatedAt:      createdAt,
+		Email:          dto.Email,
+		ID:             dto.ID,
+		LineItems:      dto.LineItems.ToShopify(),
+		Name:           dto.Name,
+		OrderNumber:    dto.OrderNumber,
+		OrderStatusURL: dto.OrderStatusURL,
+		ProcessedAt:    processedAt,
+		TotalPrice:     dto.TotalPrice,
+		TotalTax:       dto.TotalTax,
+		TotalTaxSet:    dto.TotalTaxSet.ToShopify(),
+		UpdatedAt:      updatedAt,
 	}
 }
 
-// OrderDTOs is a collection of Order DTOs - RL DOES THIS NEED COPYING?
+// OrderDTOs is a collection of Order DTOs
 type OrderDTOs []OrderDTO
 
 // ToShopify converts the DTOs to the Shopify equivalent
