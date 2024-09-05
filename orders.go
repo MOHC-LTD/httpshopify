@@ -189,6 +189,36 @@ func (repository orderRepository) Create(order shopify.Order) (shopify.Order, er
 	url := repository.createURL("orders.json")
 
 	bodyData := struct {
+		Order OrderDTO `json:"order"`
+	}{
+		Order: BuildOrderDTO(order),
+	}
+
+	body, err := json.Marshal(&bodyData)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	responseBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	var response struct {
+		Order OrderDTO `json:"order"`
+	}
+	err = json.Unmarshal(responseBody, &response)
+	if err != nil {
+		return shopify.Order{}, err
+	}
+
+	return response.Order.ToShopify(), nil
+}
+
+func (repository orderRepository) CreateSkipCheckout(order shopify.Order) (shopify.Order, error) {
+	url := repository.createURL("orders.json")
+
+	bodyData := struct {
 		Order CreateOrderDTO `json:"order"`
 	}{
 		Order: BuildCreateOrderDTO(order),
