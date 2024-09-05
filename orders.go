@@ -450,6 +450,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	}
 
 	orderDTO := OrderDTO{
+		BillingAddress:           BuildAddressDTO(order.BillingAddress),
 		Currency:                 order.Currency,
 		CurrentTotalDiscounts:    order.CurrentTotalDiscounts,
 		CurrentTotalDiscountsSet: BuildPriceSetDTO(order.CurrentTotalDiscountsSet),
