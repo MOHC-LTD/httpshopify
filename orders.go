@@ -215,7 +215,7 @@ func (repository orderRepository) Create(order shopify.Order) (shopify.Order, er
 	return response.Order.ToShopify(), nil
 }
 
-func (repository orderRepository) CreateSkipCheckout(order shopify.Order) (shopify.Order, error) {
+func (repository orderRepository) CreateFulfilled(order shopify.Order) (shopify.Order, error) {
 	url := repository.createURL("orders.json")
 
 	bodyData := struct {
