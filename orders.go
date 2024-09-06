@@ -17,6 +17,11 @@ type orderRepository struct {
 	createURL func(endpoint string) string
 }
 
+// CreateSkipCheckout implements shopify.OrderRepository.
+func (repository orderRepository) CreateSkipCheckout(order shopify.Order) (shopify.Order, error) {
+	panic("unimplemented")
+}
+
 func newOrderRepository(client http.Client, createURL func(endpoint string) string) orderRepository {
 	return orderRepository{
 		client,
