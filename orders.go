@@ -17,11 +17,6 @@ type orderRepository struct {
 	createURL func(endpoint string) string
 }
 
-// CreateSkipCheckout implements shopify.OrderRepository.
-func (repository orderRepository) CreateSkipCheckout(order shopify.Order) (shopify.Order, error) {
-	panic("unimplemented")
-}
-
 func newOrderRepository(client http.Client, createURL func(endpoint string) string) orderRepository {
 	return orderRepository{
 		client,
@@ -229,6 +224,8 @@ func (repository orderRepository) CreateFulfilled(order shopify.Order) (shopify.
 		Order: BuildCreateOrderDTO(order),
 	}
 
+	bodyData.Order.FulfillmentStatus = "fulfilled"
+
 	body, err := json.Marshal(&bodyData)
 	if err != nil {
 		return shopify.Order{}, err
@@ -329,19 +326,20 @@ type OrderDTO struct {
 }
 
 type CreateOrderDTO struct {
-	ClosedAt       *time.Time   `json:"closed_at,omitempty"`
-	CreatedAt      *time.Time   `json:"created_at,omitempty"`
-	Email          string       `json:"email,omitempty"`
-	ID             int64        `json:"id,omitempty"`
-	LineItems      LineItemDTOs `json:"line_items,omitempty"`
-	Name           string       `json:"name,omitempty"`
-	OrderNumber    int          `json:"order_number,omitempty"`
-	ProcessedAt    *time.Time   `json:"processed_at,omitempty"`
-	TotalPrice     string       `json:"total_price,omitempty"`
-	TotalTax       string       `json:"total_tax,omitempty"`
-	TotalTaxSet    PriceSetDTO  `json:"total_tax_set,omitempty"`
-	UpdatedAt      *time.Time   `json:"updated_at,omitempty"`
-	OrderStatusURL string       `json:"order_status_url,omitempty"`
+	ClosedAt          *time.Time   `json:"closed_at,omitempty"`
+	CreatedAt         *time.Time   `json:"created_at,omitempty"`
+	Email             string       `json:"email,omitempty"`
+	FulfillmentStatus string       `json:"fulfillment_status"`
+	ID                int64        `json:"id,omitempty"`
+	LineItems         LineItemDTOs `json:"line_items,omitempty"`
+	Name              string       `json:"name,omitempty"`
+	OrderNumber       int          `json:"order_number,omitempty"`
+	ProcessedAt       *time.Time   `json:"processed_at,omitempty"`
+	TotalPrice        string       `json:"total_price,omitempty"`
+	TotalTax          string       `json:"total_tax,omitempty"`
+	TotalTaxSet       PriceSetDTO  `json:"total_tax_set,omitempty"`
+	UpdatedAt         *time.Time   `json:"updated_at,omitempty"`
+	OrderStatusURL    string       `json:"order_status_url,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -485,6 +483,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	}
 
 	orderDTO := OrderDTO{
+		Customer:                 BuildCustomerDTO(order.Customer),
 		BillingAddress:           BuildAddressDTO(order.BillingAddress),
 		Currency:                 order.Currency,
 		CurrentTotalDiscounts:    order.CurrentTotalDiscounts,
@@ -498,6 +497,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		DiscountApplications:     BuildDiscountApplicationDTOs(order.DiscountApplications),
 		Email:                    order.Email,
 		FinancialStatus:          order.FinancialStatus,
+		Fulfillments:             BuildFulfillmentDTOs(order.Fulfillments),
 		FulfillmentStatus:        order.FulfillmentStatus,
 		ID:                       order.ID,
 		LineItems:                BuildLineItemDTOs(order.LineItems),
@@ -505,6 +505,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		NoteAttributes:           BuildNoteAttributeDTOs(order.NoteAttributes),
 		OrderNumber:              order.OrderNumber,
 		PresentmentCurrency:      order.PresentmentCurrency,
+		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
 		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
 		SubtotalPrice:            order.SubtotalPrice,
 		SubtotalPriceSet:         BuildPriceSetDTO(order.SubtotalPriceSet),
