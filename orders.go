@@ -224,6 +224,7 @@ func (repository orderRepository) CreateFulfilled(order shopify.Order) (shopify.
 		Order: BuildCreateOrderDTO(order),
 	}
 
+	// We are hard coding the value to "fulfilled" to make that sure this function creates fulfilled orders
 	bodyData.Order.FulfillmentStatus = "fulfilled"
 
 	body, err := json.Marshal(&bodyData)
@@ -483,7 +484,6 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	}
 
 	orderDTO := OrderDTO{
-		Customer:                 BuildCustomerDTO(order.Customer),
 		BillingAddress:           BuildAddressDTO(order.BillingAddress),
 		Currency:                 order.Currency,
 		CurrentTotalDiscounts:    order.CurrentTotalDiscounts,
@@ -494,6 +494,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		CurrentSubtotalPriceSet:  BuildPriceSetDTO(order.CurrentSubtotalPriceSet),
 		CurrentTotalTax:          order.CurrentTotalTax,
 		CurrentTotalTaxSet:       BuildPriceSetDTO(order.CurrentTotalTaxSet),
+		Customer:                 BuildCustomerDTO(order.Customer),
 		DiscountApplications:     BuildDiscountApplicationDTOs(order.DiscountApplications),
 		Email:                    order.Email,
 		FinancialStatus:          order.FinancialStatus,
