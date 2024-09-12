@@ -327,20 +327,21 @@ type OrderDTO struct {
 }
 
 type CreateOrderDTO struct {
-	ClosedAt          *time.Time   `json:"closed_at,omitempty"`
-	CreatedAt         *time.Time   `json:"created_at,omitempty"`
-	Email             string       `json:"email,omitempty"`
-	FulfillmentStatus string       `json:"fulfillment_status"`
-	ID                int64        `json:"id,omitempty"`
-	LineItems         LineItemDTOs `json:"line_items,omitempty"`
-	Name              string       `json:"name,omitempty"`
-	OrderNumber       int          `json:"order_number,omitempty"`
-	ProcessedAt       *time.Time   `json:"processed_at,omitempty"`
-	TotalPrice        string       `json:"total_price,omitempty"`
-	TotalTax          string       `json:"total_tax,omitempty"`
-	TotalTaxSet       PriceSetDTO  `json:"total_tax_set,omitempty"`
-	UpdatedAt         *time.Time   `json:"updated_at,omitempty"`
-	OrderStatusURL    string       `json:"order_status_url,omitempty"`
+	ClosedAt          *time.Time        `json:"closed_at,omitempty"`
+	CreatedAt         *time.Time        `json:"created_at,omitempty"`
+	Email             string            `json:"email,omitempty"`
+	FulfillmentStatus string            `json:"fulfillment_status"`
+	ID                int64             `json:"id,omitempty"`
+	LineItems         LineItemDTOs      `json:"line_items,omitempty"`
+	Name              string            `json:"name,omitempty"`
+	NoteAttributes    NoteAttributeDTOs `json:"note_attributes,omitempty"`
+	OrderNumber       int               `json:"order_number,omitempty"`
+	OrderStatusURL    string            `json:"order_status_url,omitempty"`
+	ProcessedAt       *time.Time        `json:"processed_at,omitempty"`
+	TotalPrice        string            `json:"total_price,omitempty"`
+	TotalTax          string            `json:"total_tax,omitempty"`
+	TotalTaxSet       PriceSetDTO       `json:"total_tax_set,omitempty"`
+	UpdatedAt         *time.Time        `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -550,18 +551,19 @@ func BuildCreateOrderDTO(order shopify.Order) CreateOrderDTO {
 	}
 
 	return CreateOrderDTO{
-		Email:       order.Email,
-		ID:          order.ID,
-		LineItems:   BuildLineItemDTOs(order.LineItems),
-		Name:        order.Name,
-		OrderNumber: order.OrderNumber,
-		TotalPrice:  order.TotalPrice,
-		TotalTax:    order.TotalTax,
-		TotalTaxSet: BuildPriceSetDTO(order.TotalTaxSet),
-		CreatedAt:   createdAt,
-		ClosedAt:    closedAt,
-		ProcessedAt: processedAt,
-		UpdatedAt:   updatedAt,
+		Email:          order.Email,
+		ID:             order.ID,
+		LineItems:      BuildLineItemDTOs(order.LineItems),
+		Name:           order.Name,
+		NoteAttributes: BuildNoteAttributeDTOs(order.NoteAttributes),
+		OrderNumber:    order.OrderNumber,
+		TotalPrice:     order.TotalPrice,
+		TotalTax:       order.TotalTax,
+		TotalTaxSet:    BuildPriceSetDTO(order.TotalTaxSet),
+		CreatedAt:      createdAt,
+		ClosedAt:       closedAt,
+		ProcessedAt:    processedAt,
+		UpdatedAt:      updatedAt,
 	}
 }
 
