@@ -40,15 +40,58 @@ func (repository metafieldRepository) List(query shopify.MetafieldQuery) (shopif
 	return response.Metafields.toShopify(), nil
 }
 
+func (repository metafieldRepository) Create(metafield shopify.Metafield) (shopify.Metafield, error) {
+	url := repository.createURL("metafields.json")
+
+	request := struct {
+		Metafield MetafieldDTO `json:"metafield"`
+	}{
+		Metafield: BuildMetafieldDTO(metafield),
+	}
+
+	body, err := json.Marshal(request)
+
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	respBody, _, err := repository.client.Post(url, body, nil)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	var response struct {
+		Metafield metafieldDTO `json:"metafield"`
+	}
+	err = json.Unmarshal(respBody, &response)
+	if err != nil {
+		return shopify.Metafield{}, err
+	}
+
+	return response.Metafield.toShopify(), nil
+}
+
 func parseMetafieldQuery(query shopify.MetafieldQuery) string {
 	params := url.Values{}
 
 	if query.Resource.OwnerID != 0 {
-		params.Add("metafield[owner_id]", strconv.FormatInt(query.Resource.OwnerID, 10))
+		params.Add("owner_id", strconv.FormatInt(query.Resource.OwnerID, 10))
 	}
 
 	if query.Resource.OwnerResource != "" {
-		params.Add("metafield[owner_resource]", string(query.Resource.OwnerResource))
+		params.Add("owner_resource", string(query.Resource.OwnerResource))
+	}
+
+	if query.Namespace != "" {
+		params.Add("namespace", string(query.Namespace))
+	}
+
+	if query.Type != "" {
+		params.Add("type", string(query.Type))
+	}
+
+	if query.Key != "" {
+		params.Add("key", string(query.Key))
 	}
 
 	return params.Encode()
@@ -70,17 +113,19 @@ func BuildMetafieldDTOs(metafields shopify.Metafields) MetafieldsDTO {
 	dtos := make(MetafieldsDTO, 0, len(metafields))
 
 	for _, metafield := range metafields {
-		metafieldDTO := MetafieldDTO{
-			Key:       metafield.Key,
-			Namespace: metafield.Namespace,
-			Value:     metafield.Value,
-			Type:      metafield.Type,
-		}
-
-		dtos = append(dtos, metafieldDTO)
+		dtos = append(dtos, BuildMetafieldDTO(metafield))
 	}
 
 	return dtos
+}
+
+func BuildMetafieldDTO(metafield shopify.Metafield) MetafieldDTO {
+	return MetafieldDTO{
+		Key:       metafield.Key,
+		Namespace: metafield.Namespace,
+		Value:     metafield.Value,
+		Type:      metafield.Type,
+	}
 }
 
 type metafieldsDTO []metafieldDTO
