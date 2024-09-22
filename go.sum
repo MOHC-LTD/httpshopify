@@ -1,5 +1,7 @@
 github.com/MOHC-LTD/shopify/v2 v2.8.2-0.20240920075503-8efbe8a03fb8 h1:B+P+0GPBoMroNsF7OrxKi1/dqtO1rhDLAqvTyN7lAFo=
 github.com/MOHC-LTD/shopify/v2 v2.8.2-0.20240920075503-8efbe8a03fb8/go.mod h1:IhfjtrQ2MVrAC2RxvraJXZln/1LZCi8Gk17wZnIKHfs=
+github.com/MOHC-LTD/shopify/v2 v2.8.2-0.20240922171832-c97390dfcef3 h1:5pRFDGvJskeFQxNPEJv/TPHK80xFr5iMqHeJ5Ou0tVs=
+github.com/MOHC-LTD/shopify/v2 v2.8.2-0.20240922171832-c97390dfcef3/go.mod h1:IhfjtrQ2MVrAC2RxvraJXZln/1LZCi8Gk17wZnIKHfs=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/jaswdr/faker v1.15.0 h1:wcEVaPKFE53NvdT4fl+w3b0IXdefp1Yk0BdBs0APCoA=

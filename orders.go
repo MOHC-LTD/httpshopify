@@ -265,6 +265,7 @@ type OrderDTO struct {
 	CurrentTotalTax          string                  `json:"current_total_tax,omitempty"`
 	CurrentTotalTaxSet       PriceSetDTO             `json:"current_total_tax_set,omitempty"`
 	Customer                 CustomerDTO             `json:"customer,omitempty"`
+	CustomerLocale           string                  `json:"customer_locale,omitempty"`
 	DiscountApplications     DiscountApplicationDTOs `json:"discount_applications,omitempty"`
 	Email                    string                  `json:"email,omitempty"`
 	FinancialStatus          string                  `json:"financial_status,omitempty"`
@@ -329,6 +330,7 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		CurrentTotalTax:          dto.CurrentTotalTax,
 		CurrentTotalTaxSet:       dto.CurrentTotalTaxSet.ToShopify(),
 		Customer:                 dto.Customer.ToShopify(),
+		CustomerLocale:           dto.CustomerLocale,
 		DiscountApplications:     dto.DiscountApplications.ToShopify(),
 		Email:                    dto.Email,
 		FinancialStatus:          dto.FinancialStatus,
@@ -406,6 +408,7 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		CurrentTotalTax:          order.CurrentTotalTax,
 		CurrentTotalTaxSet:       BuildPriceSetDTO(order.CurrentTotalTaxSet),
 		Customer:                 BuildCustomerDTO(order.Customer),
+		CustomerLocale:           order.CustomerLocale,
 		DiscountApplications:     BuildDiscountApplicationDTOs(order.DiscountApplications),
 		Email:                    order.Email,
 		FinancialStatus:          order.FinancialStatus,
