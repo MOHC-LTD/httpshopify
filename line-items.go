@@ -9,6 +9,7 @@ type LineItemDTO struct {
 	PriceSet            PriceSetDTO            `json:"price_set,omitempty"`
 	ProductID           int64                  `json:"product_id,omitempty"`
 	Quantity            int                    `json:"quantity,omitempty"`
+	RequiresShipping    bool                   `json:"requires_shipping,omitempty"`
 	SKU                 string                 `json:"sku,omitempty"`
 	Title               string                 `json:"title,omitempty"`
 	VariantID           int64                  `json:"variant_id,omitempty"`
@@ -29,6 +30,7 @@ func (dto LineItemDTO) ToShopify() shopify.LineItem {
 		PriceSet:            dto.PriceSet.ToShopify(),
 		ProductID:           dto.ProductID,
 		Quantity:            dto.Quantity,
+		RequiresShipping:    dto.RequiresShipping,
 		SKU:                 dto.SKU,
 		Title:               dto.Title,
 		VariantID:           dto.VariantID,
@@ -50,6 +52,7 @@ func BuildLineItemDTO(lineItem shopify.LineItem) LineItemDTO {
 		PriceSet:            BuildPriceSetDTO(lineItem.PriceSet),
 		ProductID:           lineItem.ProductID,
 		Quantity:            lineItem.Quantity,
+		RequiresShipping:    lineItem.RequiresShipping,
 		SKU:                 lineItem.SKU,
 		Title:               lineItem.Title,
 		VariantID:           lineItem.VariantID,
