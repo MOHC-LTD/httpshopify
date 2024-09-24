@@ -215,39 +215,6 @@ func (repository orderRepository) Create(order shopify.Order) (shopify.Order, er
 	return response.Order.ToShopify(), nil
 }
 
-func (repository orderRepository) CreateFulfilled(order shopify.Order) (shopify.Order, error) {
-	url := repository.createURL("orders.json")
-
-	bodyData := struct {
-		Order CreateOrderDTO `json:"order"`
-	}{
-		Order: BuildCreateOrderDTO(order),
-	}
-
-	// We are hard coding the value to "fulfilled" to make that sure this function creates fulfilled orders
-	bodyData.Order.FulfillmentStatus = "fulfilled"
-
-	body, err := json.Marshal(&bodyData)
-	if err != nil {
-		return shopify.Order{}, err
-	}
-
-	responseBody, _, err := repository.client.Post(url, body, nil)
-	if err != nil {
-		return shopify.Order{}, err
-	}
-
-	var response struct {
-		Order OrderDTO `json:"order"`
-	}
-	err = json.Unmarshal(responseBody, &response)
-	if err != nil {
-		return shopify.Order{}, err
-	}
-
-	return response.Order.ToShopify(), nil
-}
-
 func (repository orderRepository) Update(order shopify.Order) (shopify.Order, error) {
 
 	updateOrderDTO := BuildOrderDTO(order)
@@ -308,7 +275,6 @@ type OrderDTO struct {
 	Name                     string                  `json:"name,omitempty"`
 	NoteAttributes           NoteAttributeDTOs       `json:"note_attributes,omitempty"`
 	OrderNumber              int                     `json:"order_number,omitempty"`
-	OrderStatusURL           string                  `json:"order_status_url,omitempty"`
 	PresentmentCurrency      string                  `json:"presentment_currency,omitempty"`
 	ProcessedAt              *time.Time              `json:"processed_at,omitempty"`
 	ShippingAddress          AddressDTO              `json:"shipping_address,omitempty"`
@@ -325,24 +291,6 @@ type OrderDTO struct {
 	TotalTax                 string                  `json:"total_tax,omitempty"`
 	TotalTaxSet              PriceSetDTO             `json:"total_tax_set,omitempty"`
 	UpdatedAt                *time.Time              `json:"updated_at,omitempty"`
-}
-
-type CreateOrderDTO struct {
-	ClosedAt          *time.Time        `json:"closed_at,omitempty"`
-	CreatedAt         *time.Time        `json:"created_at,omitempty"`
-	Email             string            `json:"email,omitempty"`
-	FulfillmentStatus string            `json:"fulfillment_status"`
-	ID                int64             `json:"id,omitempty"`
-	LineItems         LineItemDTOs      `json:"line_items,omitempty"`
-	Name              string            `json:"name,omitempty"`
-	NoteAttributes    NoteAttributeDTOs `json:"note_attributes,omitempty"`
-	OrderNumber       int               `json:"order_number,omitempty"`
-	OrderStatusURL    string            `json:"order_status_url,omitempty"`
-	ProcessedAt       *time.Time        `json:"processed_at,omitempty"`
-	TotalPrice        string            `json:"total_price,omitempty"`
-	TotalTax          string            `json:"total_tax,omitempty"`
-	TotalTaxSet       PriceSetDTO       `json:"total_tax_set,omitempty"`
-	UpdatedAt         *time.Time        `json:"updated_at,omitempty"`
 }
 
 // ToShopify converts the DTO to the Shopify equivalent
@@ -391,7 +339,6 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		Name:                     dto.Name,
 		NoteAttributes:           dto.NoteAttributes.ToShopify(),
 		OrderNumber:              dto.OrderNumber,
-		OrderStatusURL:           dto.OrderStatusURL,
 		PresentmentCurrency:      dto.PresentmentCurrency,
 		ProcessedAt:              processedAt,
 		ShippingAddress:          dto.ShippingAddress.ToShopify(),
@@ -408,45 +355,6 @@ func (dto OrderDTO) ToShopify() shopify.Order {
 		TotalTax:                 dto.TotalTax,
 		TotalTaxSet:              dto.TotalTaxSet.ToShopify(),
 		UpdatedAt:                updatedAt,
-	}
-}
-
-// ToShopify converts the CreateOrderDTO to the Shopify equivalent
-func (dto CreateOrderDTO) ToShopify() shopify.Order {
-	var createdAt time.Time
-	if dto.CreatedAt != nil {
-		createdAt = *dto.CreatedAt
-	}
-
-	var closedAt time.Time
-	if dto.ClosedAt != nil {
-		closedAt = *dto.ClosedAt
-	}
-
-	var processedAt time.Time
-	if dto.ProcessedAt != nil {
-		processedAt = *dto.ProcessedAt
-	}
-
-	var updatedAt time.Time
-	if dto.UpdatedAt != nil {
-		updatedAt = *dto.UpdatedAt
-	}
-
-	return shopify.Order{
-		ClosedAt:       closedAt,
-		CreatedAt:      createdAt,
-		Email:          dto.Email,
-		ID:             dto.ID,
-		LineItems:      dto.LineItems.ToShopify(),
-		Name:           dto.Name,
-		OrderNumber:    dto.OrderNumber,
-		OrderStatusURL: dto.OrderStatusURL,
-		ProcessedAt:    processedAt,
-		TotalPrice:     dto.TotalPrice,
-		TotalTax:       dto.TotalTax,
-		TotalTaxSet:    dto.TotalTaxSet.ToShopify(),
-		UpdatedAt:      updatedAt,
 	}
 }
 
@@ -508,7 +416,6 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 		Name:                     order.Name,
 		NoteAttributes:           BuildNoteAttributeDTOs(order.NoteAttributes),
 		OrderNumber:              order.OrderNumber,
-		OrderStatusURL:           order.OrderStatusURL,
 		PresentmentCurrency:      order.PresentmentCurrency,
 		ShippingAddress:          BuildAddressDTO(order.ShippingAddress),
 		ShippingLines:            BuildShippingLineDTOs(order.ShippingLines),
@@ -530,44 +437,6 @@ func BuildOrderDTO(order shopify.Order) OrderDTO {
 	}
 
 	return orderDTO
-}
-
-func BuildCreateOrderDTO(order shopify.Order) CreateOrderDTO {
-	var createdAt *time.Time
-	if !order.CreatedAt.IsZero() {
-		createdAt = &order.CreatedAt
-	}
-
-	var closedAt *time.Time
-	if !order.ClosedAt.IsZero() {
-		closedAt = &order.ClosedAt
-	}
-
-	var processedAt *time.Time
-	if !order.ProcessedAt.IsZero() {
-		processedAt = &order.ProcessedAt
-	}
-
-	var updatedAt *time.Time
-	if !order.UpdatedAt.IsZero() {
-		updatedAt = &order.UpdatedAt
-	}
-
-	return CreateOrderDTO{
-		Email:          order.Email,
-		ID:             order.ID,
-		LineItems:      BuildLineItemDTOs(order.LineItems),
-		Name:           order.Name,
-		NoteAttributes: BuildNoteAttributeDTOs(order.NoteAttributes),
-		OrderNumber:    order.OrderNumber,
-		TotalPrice:     order.TotalPrice,
-		TotalTax:       order.TotalTax,
-		TotalTaxSet:    BuildPriceSetDTO(order.TotalTaxSet),
-		CreatedAt:      createdAt,
-		ClosedAt:       closedAt,
-		ProcessedAt:    processedAt,
-		UpdatedAt:      updatedAt,
-	}
 }
 
 // NoteAttributeDTOs represents a collection of Shopify note attributes in HTTP requests and responses
