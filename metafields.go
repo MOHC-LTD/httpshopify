@@ -37,7 +37,7 @@ func (repository metafieldRepository) List(query shopify.MetafieldQuery) (shopif
 		return shopify.Metafields{}, err
 	}
 
-	return response.Metafields.toShopify(), nil
+	return response.Metafields.toShopify()
 }
 
 func parseMetafieldQuery(query shopify.MetafieldQuery) string {
@@ -85,14 +85,19 @@ func BuildMetafieldDTOs(metafields shopify.Metafields) MetafieldsDTO {
 
 type metafieldsDTO []metafieldDTO
 
-func (dto metafieldsDTO) toShopify() shopify.Metafields {
+func (dto metafieldsDTO) toShopify() (shopify.Metafields, error) {
 	metafields := shopify.Metafields{}
 
 	for _, metafieldDTO := range dto {
-		metafields = append(metafields, metafieldDTO.toShopify())
+		m, err := metafieldDTO.toShopify()
+		if err != nil {
+			return nil, err
+		}
+
+		metafields = append(metafields, m)
 	}
 
-	return metafields
+	return metafields, nil
 }
 
 type metafieldDTO struct {
@@ -109,7 +114,7 @@ type metafieldDTO struct {
 	UpdatedAt     *time.Time  `json:"updated_at,omitempty"`
 }
 
-func (dto metafieldDTO) toShopify() shopify.Metafield {
+func (dto metafieldDTO) toShopify() (shopify.Metafield, error) {
 	var createdAt time.Time
 	if dto.CreatedAt != nil {
 		createdAt = *dto.CreatedAt
@@ -118,6 +123,23 @@ func (dto metafieldDTO) toShopify() shopify.Metafield {
 	var updatedAt time.Time
 	if dto.UpdatedAt != nil {
 		updatedAt = *dto.UpdatedAt
+	}
+
+	value := dto.Value
+	switch dto.Type {
+	case shopify.ListSingleLineTextFieldMetaFieldType:
+		v, ok := dto.Value.(string)
+		if !ok {
+			return shopify.Metafield{}, ErrMetafieldValueType
+		}
+
+		var d []string
+		err := json.Unmarshal([]byte(v), &d)
+		if err != nil {
+			return shopify.Metafield{}, err
+		}
+
+		value = d
 	}
 
 	return shopify.Metafield{
@@ -129,9 +151,9 @@ func (dto metafieldDTO) toShopify() shopify.Metafield {
 			OwnerID:       dto.OwnerID,
 			OwnerResource: dto.OwnerResource,
 		},
-		Value:     fmt.Sprintf("%v", dto.Value),
+		Value:     value,
 		Type:      dto.Type,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
-	}
+	}, nil
 }
