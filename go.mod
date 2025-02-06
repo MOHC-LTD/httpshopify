@@ -5,6 +5,6 @@ go 1.21
 toolchain go1.22.3
 
 require (
-	github.com/MOHC-LTD/shopify/v2 v2.8.5-0.20250130103444-4239b5af273e
+	github.com/MOHC-LTD/shopify/v2 v2.9.0
 	golang.org/x/time v0.0.0-20210611083556-38a9dc6acbc6
 )
