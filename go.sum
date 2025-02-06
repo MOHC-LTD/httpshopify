@@ -1,11 +1,3 @@
-github.com/MOHC-LTD/shopify/v2 v2.8.2 h1:qg2rSHAZlYjdYjx49R3WTu7YbPN6MK08MnHDKzw1i4A=
-github.com/MOHC-LTD/shopify/v2 v2.8.2/go.mod h1:IhfjtrQ2MVrAC2RxvraJXZln/1LZCi8Gk17wZnIKHfs=
-github.com/MOHC-LTD/shopify/v2 v2.8.3 h1:UZEvjtiq2gCPWbjTgDw1cjD63u54/I/y8LZXnBGZDfE=
-github.com/MOHC-LTD/shopify/v2 v2.8.3/go.mod h1:IhfjtrQ2MVrAC2RxvraJXZln/1LZCi8Gk17wZnIKHfs=
-github.com/MOHC-LTD/shopify/v2 v2.8.4 h1:FlwyDmY5d4sDx9+oOqt4WwVt4vd1KgaRxYJSblCgtOM=
-github.com/MOHC-LTD/shopify/v2 v2.8.4/go.mod h1:IhfjtrQ2MVrAC2RxvraJXZln/1LZCi8Gk17wZnIKHfs=
-github.com/MOHC-LTD/shopify/v2 v2.8.5-0.20250130103444-4239b5af273e h1:8yzyIOEFTWQQvAvRJyKTrtP58sjdWjEG0AUqMFdHa9E=
-github.com/MOHC-LTD/shopify/v2 v2.8.5-0.20250130103444-4239b5af273e/go.mod h1:IhfjtrQ2MVrAC2RxvraJXZln/1LZCi8Gk17wZnIKHfs=
 github.com/MOHC-LTD/shopify/v2 v2.9.0 h1:p6Qk1wcBbBcsZf9UEQKMBuZu2Lmy62EQ63inoCBacY0=
 github.com/MOHC-LTD/shopify/v2 v2.9.0/go.mod h1:IhfjtrQ2MVrAC2RxvraJXZln/1LZCi8Gk17wZnIKHfs=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
