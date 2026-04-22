@@ -44,7 +44,23 @@ func (dto AddressDTO) ToShopify() shopify.Address {
 
 // BuildAddressDTO converts a Shopify address to its DTO equivalent
 func BuildAddressDTO(address shopify.Address) AddressDTO {
-	return AddressDTO(address)
+	return AddressDTO{
+		Address1:     address.Address1,
+		Address2:     address.Address2,
+		City:         address.City,
+		Company:      address.Company,
+		Country:      address.Country,
+		CountryCode:  address.CountryCode,
+		FirstName:    address.FirstName,
+		LastName:     address.LastName,
+		Latitude:     address.Latitude,
+		Longitude:    address.Longitude,
+		Name:         address.Name,
+		Phone:        address.Phone,
+		Province:     address.Province,
+		ProvinceCode: address.ProvinceCode,
+		Zip:          address.Zip,
+	}
 }
 
 // CustomerAddressDTO represents a Shopify customer address in HTTP requests and responses
