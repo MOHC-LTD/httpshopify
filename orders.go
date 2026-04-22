@@ -623,7 +623,7 @@ func parseOrderQuery(query shopify.OrderQuery) string {
 	}
 
 	if !query.CreatedAtMin.IsZero() {
-		queryStrings = append(queryStrings, fmt.Sprintf("created_at_min=%v", query.CreatedAtMin))
+		queryStrings = append(queryStrings, fmt.Sprintf("created_at_min=%v", query.CreatedAtMin.Format(time.RFC3339)))
 	}
 
 	if query.Status != "" {
