@@ -79,7 +79,8 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 	var resp *http.Response
 
 	for i := 0; i < c.retryCount+1; i++ {
-		req, err := http.NewRequest(method, url, bytes.NewReader(requestBody))
+		var req *http.Request
+		req, err = http.NewRequest(method, url, bytes.NewReader(requestBody))
 		if err != nil {
 			return nil, ResponseHeaders{}, err
 		}
@@ -99,8 +100,6 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 		waitTime := c.retryDuration(i)
 
 		if err == nil {
-			defer resp.Body.Close()
-
 			isRetryResponse := resp.StatusCode == 429 || resp.StatusCode >= 500
 			if !isRetryResponse {
 				break
@@ -111,14 +110,17 @@ func (c Client) Do(method string, url string, headers RequestHeaders, body io.Re
 				retryAfter, _ := strconv.ParseFloat(retryAfterHeader, 64)
 				waitTime = time.Duration(retryAfter * float64(time.Second))
 			}
+
+			// Close the body from this attempt before retrying to avoid leaking resources
+			resp.Body.Close()
 		}
 
 		time.Sleep(waitTime)
 	}
-
 	if err != nil {
 		return nil, ResponseHeaders{}, err
 	}
+	defer resp.Body.Close()
 
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
