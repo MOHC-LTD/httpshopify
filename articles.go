@@ -39,7 +39,7 @@ func (repository articleRepository) Get(blogID, id int64) (shopify.Article, erro
 }
 
 func (repository articleRepository) GetAll(blogID int64) (shopify.Articles, error) {
-	url := repository.createURL(fmt.Sprintf("blogs/%v/articles.json", blogID))
+	url := repository.createURL(fmt.Sprintf("blogs/%v/articles.json?limit=250", blogID))
 
 	body, _, err := repository.client.Get(url, nil)
 	if err != nil {
