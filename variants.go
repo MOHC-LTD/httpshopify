@@ -112,7 +112,7 @@ type VariantDTO struct {
 	CompareAtPrice      string     `json:"compare_at_price,omitempty"`
 	ProductID           int64      `json:"product_id,omitempty"`
 	Barcode             string     `json:"barcode,omitempty"`
-	Taxable             bool       `json:"taxable,omitempty"`
+	Taxable             bool       `json:"taxable"`
 	CreatedAt           *time.Time `json:"created_at,omitempty"`
 	UpdatedAt           *time.Time `json:"updated_at,omitempty"`
 }
