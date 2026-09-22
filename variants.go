@@ -84,6 +84,7 @@ func BuildVariantDTOs(variants shopify.Variants) VariantDTOs {
 			Price:               variant.Price,
 			CompareAtPrice:      variant.CompareAtPrice,
 			Barcode:             variant.Barcode,
+			Taxable:             variant.Taxable,
 			CreatedAt:           createdAt,
 			UpdatedAt:           updatedAt,
 		}
@@ -111,6 +112,7 @@ type VariantDTO struct {
 	CompareAtPrice      string     `json:"compare_at_price,omitempty"`
 	ProductID           int64      `json:"product_id,omitempty"`
 	Barcode             string     `json:"barcode,omitempty"`
+	Taxable             bool       `json:"taxable,omitempty"`
 	CreatedAt           *time.Time `json:"created_at,omitempty"`
 	UpdatedAt           *time.Time `json:"updated_at,omitempty"`
 }
@@ -145,6 +147,7 @@ func (dto VariantDTO) ToShopify() shopify.Variant {
 		Barcode:             dto.Barcode,
 		CreatedAt:           createdAt,
 		UpdatedAt:           updatedAt,
+		Taxable:             dto.Taxable,
 	}
 }
 
@@ -187,6 +190,7 @@ func (repository variantRepository) Create(productID int64, variant shopify.Vari
 		CompareAtPrice:      variant.CompareAtPrice,
 		ProductID:           variant.ProductID,
 		Barcode:             variant.Barcode,
+		Taxable:             variant.Taxable,
 	}
 
 	request := struct {
